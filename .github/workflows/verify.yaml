@@ -38,7 +38,7 @@ jobs:
       - name: Pre-Commit Check
         run: |
           which git
-          ls
+          ls -al
           ./scripts/ci/verify-pre-commit.sh
 
       - name: Cache NIX environment
