@@ -24,6 +24,7 @@ let pkgs = {
       nodejs-12_x
       sd
       gnugrep
+      git
     ]
   );
 }; in
