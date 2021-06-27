@@ -1,7 +1,11 @@
 version: "3"
 
-dotenv:
-  - .env
+env:
+  PATH: "{{.PWD}}/node_modules/.bin:{{.PATH}}"
+  jest: ./node_modules/.bin/jest
+  webpack: ./node_modules/.bin/webpack
+  eslint: ./node_modules/.bin/eslint
+
 tasks:
   setup:
     desc: install node modules
@@ -9,7 +13,30 @@ tasks:
       - yarn install --prefer-offiline
       - pre-commit install --install-hooks
       - pre-commit install -t commit-msg
-      - sd  '^(\s*)<property name="nodejs_interpreter_path" value=".*" />(\s*)$' "$1<property name=\"nodejs_interpreter_path\" value=\"$(which node)\" />$2" .idea/workspace.xml
+      - sd  '^(\s*)<property name="nodejs_interpreter_path" value=".*" />(\s*)$' "$1<property name=\"nodejs_interpreter_path\" value=\"$(which node)\" />$2" .idea/workspace.xml || true
+
+  emulate:ci:
+    deps:
+      - cfg:scripts
+    desc: Enter an emuated CI environment
+    env:
+      NIX_CACHE_PATH: /cache
+    cmds:
+      - ./scripts/emulate-ci.sh
+
+  run:ci:
+    deps:
+      - cfg:scripts
+    env:
+      NIX_CACHE_PATH: /cache
+    desc: Run CI scripts (in scripts/ci folder) in Alpine NixOS. Usage - run:ci -- <script-name>
+    cmds:
+      - ./scripts/emulate-ci.sh {{.CLI_ARGS}}
+
+  cfg:scripts:
+    desc: Make scripts executable
+    cmds:
+      - chmod -R +x ./scripts
 
   clean:
     desc: Clean coverage and build
@@ -32,29 +59,29 @@ tasks:
       - clean:build
     desc: Builds the project
     cmds:
-      - webpack --config ./config/webpack.dist.ts
+      - $webpack --config ./config/webpack.dist.ts
 
   dev:
     desc: Watches for changes and constantly rebuild the dist folder
     cmds:
-      - webpack --config ./config/webpack.dist.ts --watch
+      - $webpack --config ./config/webpack.dist.ts --watch
 
   test:
     desc: Runs unit tests
     cmds:
-      - jest
+      - $jest
 
   test:w:
     desc: Runs and watches unit tests
     cmds:
-      - jest --watch
+      - $jest --watch
 
   cover:
     deps:
       - clean:coverage
     desc: Get test coverage
     cmds:
-      - jest --collect-coverage
+      - $jest --collect-coverage
 
   run:
     desc: Runs the CLI
@@ -64,12 +91,12 @@ tasks:
   lint:
     desc: Lints all Javascript and Typescript files
     cmds:
-      - eslint .
+      - $eslint .
 
   lint:fix:
     desc: Fix all Typescript and Javascript files
     cmds:
-      - eslint --fix .
+      - $eslint --fix .
 
   fmt:
     desc: Run all formatting supported.

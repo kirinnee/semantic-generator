@@ -1,0 +1,18 @@
+name: Continuous Integrtaion
+on: pull_request
+jobs:
+  Pre-Commit-Validation:
+    env:
+      NIX_CACHE_PATH: /cache
+    container: nixos/nix
+    steps:
+      - name: Checkout Git
+        uses: actions/checkout@v2.3.4
+      - name: Cache multiple paths
+        uses: actions/cache@v2
+        with:
+          path: |
+            /cache
+          key: ${{ runner.os }}
+      - name: Pre-Commit Check
+        run: ./scripts/ci/verify-pre-commit.sh

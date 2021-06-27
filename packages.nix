@@ -23,6 +23,7 @@ let pkgs = {
       yarn
       nodejs-12_x
       sd
+      gnugrep
     ]
   );
 }; in
