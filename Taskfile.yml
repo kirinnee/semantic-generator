@@ -1,0 +1,112 @@
+version: "3"
+
+dotenv:
+  - .env
+tasks:
+  setup:
+    desc: install node modules
+    cmds:
+      - yarn install --prefer-offiline
+      - pre-commit install --install-hooks
+      - pre-commit install -t commit-msg
+      - sd  '^(\s*)<property name="nodejs_interpreter_path" value=".*" />(\s*)$' "$1<property name=\"nodejs_interpreter_path\" value=\"$(which node)\" />$2" .idea/workspace.xml
+
+  clean:
+    desc: Clean coverage and build
+    cmds:
+      - task: clean:coverage
+      - task: clean:build
+
+  clean:coverage:
+    desc: Remove test coverage
+    cmds:
+      - rm -rf coverage
+
+  clean:build:
+    desc: Remove build artifact, dist folder
+    cmds:
+      - rm -rf dist
+
+  build:
+    deps:
+      - clean:build
+    desc: Builds the project
+    cmds:
+      - webpack --config ./config/webpack.dist.ts
+
+  dev:
+    desc: Watches for changes and constantly rebuild the dist folder
+    cmds:
+      - webpack --config ./config/webpack.dist.ts --watch
+
+  test:
+    desc: Runs unit tests
+    cmds:
+      - jest
+
+  test:w:
+    desc: Runs and watches unit tests
+    cmds:
+      - jest --watch
+
+  cover:
+    deps:
+      - clean:coverage
+    desc: Get test coverage
+    cmds:
+      - jest --collect-coverage
+
+  run:
+    desc: Runs the CLI
+    cmds:
+      - node ./dist/semantic-generator {{.CLI_ARGS}}
+
+  lint:
+    desc: Lints all Javascript and Typescript files
+    cmds:
+      - eslint .
+
+  lint:fix:
+    desc: Fix all Typescript and Javascript files
+    cmds:
+      - eslint --fix .
+
+  fmt:
+    desc: Run all formatting supported.
+    ignore_error: true
+    summary: |
+      Runs all formatting supported.
+      1. Runs fmt:md, which formats all Markdown using prettier
+      2. Runs fmt:yaml, which formats all YAML using prettier
+      3. Runs fmt:json, which formats all JSON using prettier
+      5. Runs fmt:nix, which formats all Nix files with nixpkgs-fmt
+    cmds:
+      - task: fmt:md
+      - task: fmt:yaml
+      - task: fmt:json
+      - task: fmt:nix
+
+  fmt:json:
+    ignore_error: true
+    desc: Format JSON files
+    cmds:
+      - prettier -w "**/*.json"
+
+  fmt:md:
+    ignore_error: true
+    desc: Formats Markdown with prettier
+    cmds:
+      - prettier -w "**/*.MD"
+
+  fmt:yaml:
+    ignore_error: true
+    desc: Formats YAML with prettier
+    cmds:
+      - prettier -w "**/*.yaml"
+      - prettier -w "**/*.yml"
+
+  fmt:nix:
+    ignore_error: true
+    desc: Formats Nix files
+    cmds:
+      - nixpkgs-fmt .

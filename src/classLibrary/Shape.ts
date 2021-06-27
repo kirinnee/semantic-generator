@@ -1,6 +1,6 @@
 interface Shape {
-	area : number;
-	parameter():number;
+  area: number;
+  parameter(): number;
 }
 
-export {Shape};
+export { Shape };

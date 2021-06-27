@@ -1,17 +1,11 @@
-import {Options} from "webpack";
-const TerserPlugin = require('terser-webpack-plugin'); 
+import TerserPlugin from "terser-webpack-plugin";
 
-let opti : Options.Optimization = {};
-
-opti = {
-	minimizer: [
-		new TerserPlugin({
-			terserOptions: {
-				compress: {
-				},
-			}
-		})
-	]
+const opti = {
+    minimizer: [
+        new TerserPlugin({
+            terserOptions: {},
+        }),
+    ],
 };
 
-export {opti};
+export { opti };

@@ -1,19 +1,15 @@
-import {should} from 'chai';
 import {Shape} from "../src/classLibrary/Shape";
 import {Square} from "../src/classLibrary/Square";
 
-should();
 
 describe("Square", () => {
+    const square: Shape = new Square(5);
 
-    let square: Shape = new Square(5);
-    
     it("should return correct area", () => {
-        square.area.should.be.equal(25);
+        expect(square.area).toBe(25);
     });
 
     it("should return correct parameter", () => {
-        square.parameter().should.equal(20);
+        expect(square.parameter()).toBe(20);
     });
-
 });

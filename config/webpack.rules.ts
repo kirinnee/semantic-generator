@@ -1,24 +1,15 @@
-import {RuleSetRule, RuleSetUseItem} from "webpack";
-
 /*===================
  TS LOADER
  ===================== */
 
-let uses: RuleSetUseItem[] = [
-	{loader: 'ts-loader'}
+import { RuleSetRule } from "webpack";
+
+const rules: RuleSetRule[] = [
+    {
+        test: /\.tsx?$/,
+        exclude: /(node_modules|bower_components)/,
+        use: "ts-loader",
+    },
 ];
 
-let scripts: RuleSetRule = {
-	test: /\.tsx?$/,
-	exclude: /(node_modules|bower_components)/,
-	use: uses
-};
-
-
-/*===================
- EXPORT
- ===================== */
-
-let rules: RuleSetRule[] = [scripts];
-
-export {rules};
+export { rules };
