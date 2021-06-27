@@ -9,6 +9,10 @@ jobs:
     steps:
       - name: Checkout Git
         uses: actions/checkout@v2.3.4
+
+      - name: Install git
+        run: apk add git
+
       - name: Cache Nix
         uses: actions/cache@v2
         with:
