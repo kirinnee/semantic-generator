@@ -2,6 +2,7 @@ name: Continuous Integrtaion
 on: pull_request
 jobs:
   Pre-Commit-Validation:
+    runs-on: ubuntu-20.04
     env:
       NIX_CACHE_PATH: /cache
     container: nixos/nix
