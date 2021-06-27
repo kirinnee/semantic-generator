@@ -36,7 +36,10 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Pre-Commit Check
-        run: ./scripts/ci/verify-pre-commit.sh
+        run: |
+          which git
+          ls
+          ./scripts/ci/verify-pre-commit.sh
 
       - name: Cache NIX environment
         run: . ./scripts/ci/lib.sh && postScript
