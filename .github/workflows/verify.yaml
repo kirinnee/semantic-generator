@@ -39,10 +39,9 @@ jobs:
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v2
+        path: junit.xml
         with:
           name: test-report-${{ github.sha }}
-        path: junit.xml
-
       - name: Upload Test Coverage
         uses: actions/upload-artifact@v2
         with:
