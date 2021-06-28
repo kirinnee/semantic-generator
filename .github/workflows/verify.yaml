@@ -13,6 +13,9 @@ jobs:
       - name: Checkout Git
         uses: actions/checkout@v2.3.4
 
+      - name: Make NIX dir
+        run: sudo mkdir -p /nix/store
+
       - name: Cache Nix
         uses: actions/cache@v2
         with:
