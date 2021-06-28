@@ -39,14 +39,14 @@ jobs:
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v2
-        path: junit.xml
         with:
           name: test-report-${{ github.sha }}
+          path: junit.xml
       - name: Upload Test Coverage
         uses: actions/upload-artifact@v2
         with:
           name: test-coverage-${{ github.sha }}
-        path: coverage
+          path: coverage
 
   Pre-Commit-Validation:
     runs-on: ubuntu-20.04
