@@ -36,7 +36,7 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Pre-Commit Check
-        run: ls && ./scripts/ci/verify-pre-commit.sh
+        run: ./scripts/ci/verify-pre-commit.sh
 #      - uses: actions/upload-artifact@v2
 #        with:
 #          name: test-coverage
