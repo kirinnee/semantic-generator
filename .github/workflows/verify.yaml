@@ -92,5 +92,5 @@ jobs:
         with:
           artifact: test-report-${{ github.sha }}
           name: Jest Tests
-          path: "*.xml"
+          path: "junit.xml"
           reporter: jest-junit
