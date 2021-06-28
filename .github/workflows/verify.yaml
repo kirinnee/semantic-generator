@@ -1,14 +1,20 @@
 name: Continuous Integrtaion
 on: pull_request
 jobs:
+  Test:
+
   Pre-Commit-Validation:
     runs-on: ubuntu-20.04
-    #    env:
-    #      NIX_CACHE_PATH: /cache
     container: nixos/nix
     steps:
       - name: Install git and tar
         run: apk add git tar
+
+      - name: Cache Whole of NIX
+        uses: actions/cache@v2
+        with:
+          path: /nix
+          key: ${{ runner.os }}-alpine-nix
 
       - name: Checkout Git
         uses: actions/checkout@v2.3.4
