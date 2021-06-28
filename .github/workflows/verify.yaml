@@ -19,8 +19,8 @@ jobs:
       - name: Cache Nix
         uses: actions/cache@v2
         with:
-          path: /nix
-          key: ${{ runner.os }}-nix-path-alpine
+          path: /nix/store
+          key: ${{ runner.os }}-nix-path-alpine-key
 
       # install nix
       - name: Install Nix if cache not nit
@@ -31,9 +31,6 @@ jobs:
 
       - name: Install Environment
         run: nix-env -i -f ./ci-env.nix
-
-      - name: Chmod nix
-        run: sudo chmod -R a+rwx /nix
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
