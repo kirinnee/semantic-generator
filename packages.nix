@@ -21,7 +21,7 @@ let pkgs = {
       nodePackages.prettier
       bash
       yarn
-      nodejs-12_x
+      nodejs-16_x
       sd
       gnugrep
       git

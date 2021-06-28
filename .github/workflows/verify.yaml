@@ -40,3 +40,13 @@ jobs:
           which git
           ls -al
           ./scripts/ci/verify-pre-commit.sh
+      - name: Ensure can build
+        run: pls build
+
+      - name: Ensure coverage is ran
+        run: pls cover
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test-coverage
+          path: coverage

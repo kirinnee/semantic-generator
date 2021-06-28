@@ -15,6 +15,13 @@ tasks:
       - pre-commit install -t commit-msg
       - sd  '^(\s*)<property name="nodejs_interpreter_path" value=".*" />(\s*)$' "$1<property name=\"nodejs_interpreter_path\" value=\"$(which node)\" />$2" .idea/workspace.xml || true
 
+  isolate:
+    deps:
+      - cfg:scripts
+    desc: Isolate the code in an emulated ubuntu 20.04 environment (within docker)
+    cmds:
+      - ./scripts/isolate.sh
+
   emulate:ci:
     deps:
       - cfg:scripts
