@@ -1,8 +1,6 @@
 name: Continuous Integrtaion
 on: pull_request
 jobs:
-  Tests:
-
   Pre-Commit-Validation:
     runs-on: ubuntu-20.04
     env:
