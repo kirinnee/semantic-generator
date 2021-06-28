@@ -17,7 +17,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /nix
-          key: ${{ runner.os }}-nix-installation
+          key: ${{ runner.os }}-nix-path
 
       # install nix
       - name: Install Nix if cache not nit
