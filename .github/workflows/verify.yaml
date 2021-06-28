@@ -5,22 +5,22 @@ jobs:
     runs-on: ubuntu-20.04
     #    env:
     #      NIX_CACHE_PATH: /cache
-    #    container: nixos/nix
+    container: nixos/nix
     steps:
-      #      - name: Install git and tar
-      #        run: apk add git tar
+      - name: Install git and tar
+        run: apk add git tar
 
       - name: Checkout Git
         uses: actions/checkout@v2.3.4
 
       - name: Make NIX dir
-        run: sudo mkdir -p /nix/ && sudo chmod -R a+rwx /nix
+        run: mkdir -p /nix/store
 
       - name: Cache Nix
         uses: actions/cache@v2
         with:
           path: /nix
-          key: ${{ runner.os }}-nix-path
+          key: ${{ runner.os }}-nix-path-alpine
 
       # install nix
       - name: Install Nix if cache not nit
