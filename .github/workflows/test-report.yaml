@@ -9,17 +9,10 @@ jobs:
   Report:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Download Test Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: test-reports-${{ github.sha }
-          path: junit.xml
       - name: Test Report
         uses: dorny/test-reporter@v1
         with:
+          artifact: test-reports-${{ github.sha }
           name: Jest Tests
           path: "junit.xml"
           reporter: jest-junit
