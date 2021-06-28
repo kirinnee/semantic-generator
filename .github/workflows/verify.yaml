@@ -1,11 +1,13 @@
 name: Continuous Integrtaion
 on: pull_request
 jobs:
+  Tests:
+
   Pre-Commit-Validation:
     runs-on: ubuntu-20.04
     env:
-      NIX_CACHE_PATH: /cache
-    container: nixos/nix
+    #      NIX_CACHE_PATH: /cache
+    #    container: nixos/nix
     steps:
       - name: Install git and tar
         run: apk add git tar
@@ -16,11 +18,15 @@ jobs:
       - name: Cache Nix
         uses: actions/cache@v2
         with:
-          path: /cache
-          key: ${{ runner.os }}-nix
+          path: /nix
+          key: ${{ runner.os }}-nix-installation
 
-      - name: Setup NIX env
-        run: ./scripts/ci/nix-cache.sh
+      # install nix
+      - name: Install Nix if cache not nit
+        if: steps.cache-primes.outputs.cache-hit != 'true'
+        uses: cachix/install-nix-action@v13
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -40,13 +46,8 @@ jobs:
           which git
           ls -al
           ./scripts/ci/verify-pre-commit.sh
-      - name: Ensure can build
-        run: pls build
 
-      - name: Ensure coverage is ran
-        run: pls cover
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: test-coverage
-          path: coverage
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: test-coverage
+#          path: coverage

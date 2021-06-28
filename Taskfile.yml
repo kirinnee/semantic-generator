@@ -6,6 +6,9 @@ env:
   webpack: ./node_modules/.bin/webpack
   eslint: ./node_modules/.bin/eslint
 
+includes:
+  ci: ./scripts/ci/ci.Taskfile.yaml
+
 tasks:
   setup:
     desc: install node modules
@@ -21,29 +24,6 @@ tasks:
     desc: Isolate the code in an emulated ubuntu 20.04 environment (within docker)
     cmds:
       - ./scripts/isolate.sh
-
-  emulate:ci:
-    deps:
-      - cfg:scripts
-    desc: Enter an emuated CI environment
-    env:
-      NIX_CACHE_PATH: /cache
-    cmds:
-      - ./scripts/emulate-ci.sh
-
-  run:ci:
-    deps:
-      - cfg:scripts
-    env:
-      NIX_CACHE_PATH: /cache
-    desc: Run CI scripts (in scripts/ci folder) in Alpine NixOS. Usage - run:ci -- <script-name>
-    cmds:
-      - ./scripts/emulate-ci.sh {{.CLI_ARGS}}
-
-  cfg:scripts:
-    desc: Make scripts executable
-    cmds:
-      - chmod -R +x ./scripts
 
   clean:
     desc: Clean coverage and build
