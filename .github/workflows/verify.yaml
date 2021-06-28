@@ -23,11 +23,11 @@ jobs:
           key: ${{ runner.os }}-nix-path-alpine-key
 
       # install nix
-      - name: Install Nix if cache not nit
-        if: steps.cache-primes.outputs.cache-hit != 'true'
-        uses: cachix/install-nix-action@v13
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
+      #      - name: Install Nix if cache not nit
+      #        if: steps.cache-primes.outputs.cache-hit != 'true'
+      #        uses: cachix/install-nix-action@v13
+      #        with:
+      #          nix_path: nixpkgs=channel:nixos-unstable
 
       - name: Install Environment
         run: nix-env -i -f ./ci-env.nix
