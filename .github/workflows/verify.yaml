@@ -48,7 +48,6 @@ jobs:
       - name: Pre-Commit Check
         run: |
           which git
-          ls -al
           ./scripts/ci/verify-pre-commit.sh
 
 #      - uses: actions/upload-artifact@v2
