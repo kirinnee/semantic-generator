@@ -2,6 +2,9 @@
     <img src="logo.png" width="100px" height="100px" />
     <h1 align="center">Semantic Generator</h1>
     <p align="center">Generate basic documentation, conventional commit configurations and semantic release configurations</p>
+    <p align="center">
+        <a href="https://github.com/kirinnee/semantic-generator/actions"><img src="https://github.com/kirinnee/semantic-generator/actions/workflows/ci.yaml/badge.svg"/></a>
+    </p>
 </p>
 
 # Quick Start
