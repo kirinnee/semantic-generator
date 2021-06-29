@@ -82,3 +82,13 @@ jobs:
 
       - name: Pre-Commit Check
         run: ./scripts/ci/verify-pre-commit.sh
+  Report:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        with:
+          artifact: test-reports-${{ github.sha }
+          name: Jest Tests
+          path: "junit.xml"
+          reporter: jest-junit
