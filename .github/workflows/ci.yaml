@@ -87,21 +87,21 @@ jobs:
     runs-on: ubuntu-20.04
     needs: ["Test"]
     steps:
-      #      - name: Check out
-      #        uses: actions/checkout@v2
-      #        with:
-      #          fetch-depth: 0
-      #      - name: Download Test Artifacts
-      #        uses: actions/download-artifact@v2
-      #        with:
-      #          name: test-report-${{ github.sha }}
-      #          path: junit.xml
-      #      - name: Check FS
-      #        run: ls
+      - name: Check out
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Download Test Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: test-report-${{ github.sha }}
+          path: junit.xml
+      - name: Check FS
+        run: ls
       - name: Test Report
         uses: dorny/test-reporter@v1
         with:
-          artifact: test-report-${{ github.sha }}
+          #          artifact: test-report-${{ github.sha }}
           name: Jest Tests
           path: "*.xml"
           reporter: jest-junit
