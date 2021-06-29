@@ -41,66 +41,67 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: test-report-${{ github.sha }}
-          path: junit.xml
+          path: reports
       - name: Upload Test Coverage
         uses: actions/upload-artifact@v2
         with:
           name: test-coverage-${{ github.sha }}
           path: coverage
 
-  Pre-Commit-Validation:
-    runs-on: ubuntu-20.04
-    container: nixos/nix
-    steps:
-      - name: Install git and tar
-        run: apk add git tar
+  #  Pre-Commit-Validation:
+  #    runs-on: ubuntu-20.04
+  #    container: nixos/nix
+  #    steps:
+  #      - name: Install git and tar
+  #        run: apk add git tar
+  #
+  #      - name: Cache Whole of NIX
+  #        uses: actions/cache@v2
+  #        with:
+  #          path: /nix
+  #          key: ${{ runner.os }}-alpine-nix
+  #
+  #      - name: Checkout Git
+  #        uses: actions/checkout@v2.3.4
+  #
+  #      - name: Install Environment
+  #        run: nix-env -i -f ./ci-env.nix
+  #
+  #      - name: Get yarn cache directory path
+  #        id: yarn-cache-dir-path
+  #        run: echo "::set-output name=dir::$(yarn cache dir)"
+  #
+  #      - name: Cache Yarn
+  #        uses: actions/cache@v2
+  #        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+  #        with:
+  #          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+  #          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+  #          restore-keys: |
+  #            ${{ runner.os }}-yarn-
+  #
+  #      - name: Pre-Commit Check
+  #        run: ./scripts/ci/verify-pre-commit.sh
 
-      - name: Cache Whole of NIX
-        uses: actions/cache@v2
-        with:
-          path: /nix
-          key: ${{ runner.os }}-alpine-nix
-
-      - name: Checkout Git
-        uses: actions/checkout@v2.3.4
-
-      - name: Install Environment
-        run: nix-env -i -f ./ci-env.nix
-
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache Yarn
-        uses: actions/cache@v2
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
-      - name: Pre-Commit Check
-        run: ./scripts/ci/verify-pre-commit.sh
   Report:
     runs-on: ubuntu-20.04
     needs: ["Test"]
     steps:
-      - name: Check out
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Download Test Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: test-report-${{ github.sha }}
-          path: junit.xml
-      - name: Check FS
-        run: ls
+      #      - name: Check out
+      #        uses: actions/checkout@v2
+      #        with:
+      #          fetch-depth: 0
+      #      - name: Download Test Artifacts
+      #        uses: actions/download-artifact@v2
+      #        with:
+      #          name: test-report-${{ github.sha }}
+      #          path: junit.xml
+      #      - name: Check FS
+      #        run: ls
       - name: Test Report
         uses: dorny/test-reporter@v1
         with:
-          #          artifact: test-report-${{ github.sha }}
+          artifact: test-report-${{ github.sha }}
           name: Jest Tests
-          path: ${{ github.workspace }}/junit.xml
+          path: "*.xml"
           reporter: jest-junit
