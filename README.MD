@@ -4,24 +4,24 @@
     <p align="center">Generate basic documentation, conventional commit configurations and semantic release configurations</p>
 </p>
 
-# Getting Started
+# Quick Start
 
 Install via NPM
 
 ```bash
-$ npm i @kirinnee/semantic-generator -g
+npm i @kirinnee/semantic-generator -g
 ```
 
 or via Yarn
 
 ```bash
-$ yarn global add @kirinnee/semantic-generator
+yarn global add @kirinnee/semantic-generator
 ```
 
 Execute the help command
 
 ```bash
-$ semantic-generator --help
+semantic-generator --help
 ```
 
 # Contributing
