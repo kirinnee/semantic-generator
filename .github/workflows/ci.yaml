@@ -86,6 +86,15 @@ jobs:
     runs-on: ubuntu-20.04
     needs: ["Test"]
     steps:
+      - name: Check out
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Download Test Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: test-reports-${{ github.sha }}
+          path: junit.xml
       - name: Test Report
         uses: dorny/test-reporter@v1
         with:
