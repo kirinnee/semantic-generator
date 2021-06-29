@@ -95,6 +95,8 @@ jobs:
         with:
           name: test-report-${{ github.sha }}
           path: junit.xml
+      - name: Check FS
+        run: ls
       - name: Test Report
         uses: dorny/test-reporter@v1
         with:
