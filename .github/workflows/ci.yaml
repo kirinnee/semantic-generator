@@ -99,7 +99,6 @@ jobs:
       - name: Test Report
         uses: dorny/test-reporter@v1
         with:
-          artifact: test-report-${{ github.sha }}
           name: Jest Tests
           path: "reports/*.xml"
           reporter: jest-junit

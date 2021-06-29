@@ -4,7 +4,10 @@
     <p align="center">Generate basic documentation, conventional commit configurations and semantic release configurations</p>
     <p align="center">
         <a href="https://github.com/kirinnee/semantic-generator/actions"><img src="https://github.com/kirinnee/semantic-generator/actions/workflows/ci.yaml/badge.svg"/></a>
+        <a href="https://github.com/kirinnee/semantic-generator/blob/master/LICENSE.MDactions"><img src="https://img.shields.io/github/license/kirinnee/semantic-generator"/></a>
+
     </p>
+
 </p>
 
 # Quick Start
