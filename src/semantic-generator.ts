@@ -1,12 +1,10 @@
-import { Core, Kore } from "@kirinnee/core";
-import { program } from "commander";
+import {Core, Kore} from "@kirinnee/core";
+import {program} from "commander";
+import * as process from "process";
+import {DocController} from "./controllers/doc-controller";
 
 const core: Core = new Kore();
 core.ExtendPrimitives();
-
-declare global {
-  const VERSION: string;
-}
 
 program.on("command:*", function () {
     console.error(
@@ -18,9 +16,13 @@ program.on("command:*", function () {
 
 program
     .name("Semantic Generator")
-    .version(VERSION)
+    .version("var___INJECT_VERSION___")
     .description(
         "Semantic Release configuration generator for conventional commits"
     );
+
+
+const docs = program.command("docs");
+DocController(core, docs);
 
 program.parse(process.argv);

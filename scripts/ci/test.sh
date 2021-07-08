@@ -1,4 +1,5 @@
 #! /bin/sh
-yarn --prefer-offline
+
+pnpm i
 pls ci:build
 pls ci:cover

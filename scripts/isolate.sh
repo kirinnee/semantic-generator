@@ -1,5 +1,7 @@
 #! /bin/sh
-container_id=$(docker run -id -w=/workspace kirinnee/ubuntu-nix:2.3.13)
+
+# shellcheck disable=SC2068
+container_id=$(docker run -id -w=/workspace $@ kirinnee/ubuntu-nix:2.3.13)
 
 cleanup() {
 	echo "Clean up containers removing containers..."

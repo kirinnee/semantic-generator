@@ -1,13 +1,14 @@
 <p align="center">
-    <img src="logo.png" width="100px" height="100px" />
-    <h1 align="center">Semantic Generator</h1>
-    <p align="center">Generate basic documentation, conventional commit configurations and semantic release configurations</p>
-    <p align="center">
-        <a href="https://github.com/kirinnee/semantic-generator/actions"><img src="https://github.com/kirinnee/semantic-generator/actions/workflows/ci.yaml/badge.svg"/></a>
-        <a href="https://github.com/kirinnee/semantic-generator/blob/master/LICENSE.MDactions"><img src="https://img.shields.io/github/license/kirinnee/semantic-generator"/></a>
+    <img src="sample/b/logo.png" width="100px" height="100px" />
+</p>
 
-    </p>
+<h1 align="center">Semantic Generator</h1>
 
+<p align="center">Generate basic documentation, conventional commit configurations and semantic release configurations</p>
+
+<p align="center">
+    <a href="https://github.com/kirinnee/semantic-generator/actions"><img src="https://github.com/kirinnee/semantic-generator/actions/workflows/ci.yaml/badge.svg"/></a>
+    <a href="https://github.com/kirinnee/semantic-generator/blob/master/LICENSE.MDactions"><img src="https://img.shields.io/github/license/kirinnee/semantic-generator"/></a>
 </p>
 
 # Quick Start

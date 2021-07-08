@@ -6,7 +6,7 @@ tasks:
       - cfg:scripts
     desc: CI building
     cmds:
-      - $webpack --config ./config/webpack.dist.ts
+      - $tsc
 
   cover:
     deps:
@@ -27,7 +27,7 @@ tasks:
       - cfg:scripts
     desc: Enter an emuated CI environment
     env:
-      NIX_CACHE_PATH: /cache
+      NIX_CACHE_PATH: /cache/nix
     cmds:
       - ./scripts/emulate-ci.sh
 
@@ -35,7 +35,7 @@ tasks:
     deps:
       - cfg:scripts
     env:
-      NIX_CACHE_PATH: /cache
+      NIX_CACHE_PATH: /cache/nix
     desc: Run CI scripts (in scripts/ci folder) in Alpine NixOS. Usage - run:ci -- <script-name>
     cmds:
       - ./scripts/emulate-ci.sh {{.CLI_ARGS}}

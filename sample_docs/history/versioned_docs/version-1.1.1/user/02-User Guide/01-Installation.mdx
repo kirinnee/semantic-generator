@@ -1,0 +1,36 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+  className="unique-tabs"
+  defaultValue="npm"
+  values={[
+    {label: 'NPM', value: 'npm'},
+    {label: 'Yarn', value: 'yarn'},
+    {label: 'Nix', value: 'nix'},
+  ]}>
+  <TabItem value="npm">
+
+```bash
+npm i -g @atomi/cyanprint
+```
+
+  </TabItem>
+  <TabItem value="yarn">
+
+```bash
+yarn global add @atomi/cyanprint
+```
+
+  </TabItem>
+  <TabItem value="nix">
+
+```bash
+nix-channel --add ...
+nix-channel --update
+nix-env -i atomi.cyanprint
+```
+
+  </TabItem>
+
+</Tabs>

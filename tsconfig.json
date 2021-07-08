@@ -15,7 +15,10 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "lib": ["dom", "es5", "es6", "es7", "esnext"]
+    "resolveJsonModule": true,
+    "lib": ["dom", "es5", "es6", "es7", "esnext"],
+    "outDir": "dist"
+    //    "rootDir": "src",
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "jest.config.ts", "config", "test"]
 }

@@ -1,5 +1,5 @@
 #! /bin/sh
 
-yarn --prefer-offline
+pnpm i
 pre-commit install --install-hooks
 pre-commit run --all

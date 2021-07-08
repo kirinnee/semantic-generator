@@ -1,0 +1,31 @@
+title: CyanPrint
+organization: AtomiCloud
+description: Production ready projects in seconds
+github:
+  org: AtomiCloud
+  project: cyanprint
+logo: logo.svg
+color: "#008b8b"
+url: https://cyanprint-demo-test-1.netlify.app
+historyDir: history
+staticDir: static
+landing:
+  enable: true
+  button:
+    text: Get Started with CyanPrint - 1min ⏱
+    to: docs/user/index
+  features:
+    - title: With Ease
+      desc: Very long text here for example. Very long text here for example. Very long text here for example. Very long text here for example
+      svg: feat1.svg
+    - title: Shoot Moon
+      desc: Even longer example can be placed here for demonstartion purposes. Even longer example can be placed here for demonstartion purposes. Even longer example can be placed here for demonstartion purposes
+      svg: feat2.svg
+navbar:
+  tabs:
+    - name: User Guide
+      folder: user
+      id: index
+    - name: Developer Guide
+      folder: developer
+      id: index

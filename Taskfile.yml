@@ -3,7 +3,7 @@ version: "3"
 env:
   PATH: "{{.PWD}}/node_modules/.bin:{{.PATH}}"
   jest: ./node_modules/.bin/jest
-  webpack: ./node_modules/.bin/webpack
+  tsc: ./node_modules/.bin/tsc
   eslint: ./node_modules/.bin/eslint
 
 includes:
@@ -13,17 +13,15 @@ tasks:
   setup:
     desc: install node modules
     cmds:
-      - yarn install --prefer-offiline
+      - pnpm install
       - pre-commit install --install-hooks
       - pre-commit install -t commit-msg
       - sd  '^(\s*)<property name="nodejs_interpreter_path" value=".*" />(\s*)$' "$1<property name=\"nodejs_interpreter_path\" value=\"$(which node)\" />$2" .idea/workspace.xml || true
 
   isolate:
-    deps:
-      - cfg:scripts
     desc: Isolate the code in an emulated ubuntu 20.04 environment (within docker)
     cmds:
-      - ./scripts/isolate.sh
+      - ./scripts/isolate.sh {{.CLI_ARGS}}
 
   clean:
     desc: Clean coverage and build
@@ -46,12 +44,13 @@ tasks:
       - clean:build
     desc: Builds the project
     cmds:
-      - $webpack --config ./config/webpack.dist.ts
+      - $tsc
+      - sd var___INJECT_VERSION___ {{.CLI_ARGS}} dist/semantic-generator.js
 
   dev:
     desc: Watches for changes and constantly rebuild the dist folder
     cmds:
-      - $webpack --config ./config/webpack.dist.ts --watch
+      - $tsc --watch
 
   test:
     desc: Runs unit tests

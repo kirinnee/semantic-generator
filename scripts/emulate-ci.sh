@@ -2,7 +2,11 @@
 
 script="$1"
 
-container_id=$(docker run -e "NIX_CACHE_PATH=${NIX_CACHE_PATH}" -id -w=/workspace -v "$(pwd)/binary_cache:/cache" nixos/nix:latest sh)
+dockerVolumeName='semantic-generator-cache-volume'
+
+docker volume create "${dockerVolumeName}" || true
+
+container_id=$(docker run -e NIX_CACHE_PATH="${NIX_CACHE_PATH}" -id -w=/workspace -v "${dockerVolumeName}:/cache" nixos/nix:latest sh)
 
 cleanup() {
 	echo "Clean up containers removing containers..."
@@ -16,10 +20,11 @@ trap cleanup EXIT
 docker cp . "$container_id:/data"
 docker exec "${container_id}" /data/scripts/emulate-commit.sh >/dev/null
 docker exec "${container_id}" git clone /data /workspace >/dev/null
-docker exec "${container_id}" ./scripts/ci/nix-cache.sh
+docker exec "${container_id}" ./scripts/ci/cache-nix-store.sh
+docker exec "${container_id}" ./scripts/ci/cache-pnpm-store.sh
 
 if [ "${script}" = '' ]; then
 	docker exec -ti "${container_id}" ash
 else
-	docker exec "${container_id}" "./scripts/ci/${script}.sh"
+	docker exec -t "${container_id}" "./scripts/ci/${script}.sh"
 fi

@@ -25,3 +25,6 @@ rules:
   semi:
     - error
     - always
+  "@typescript-eslint/no-this-alias":
+    - error
+    - allowedNames: ["parent"]

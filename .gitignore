@@ -7,3 +7,6 @@ coverage/
 .idea/workspace.xml
 .idea/vcs.xml
 binary_cache
+target
+tmp
+dist
