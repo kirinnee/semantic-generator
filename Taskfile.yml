@@ -24,10 +24,11 @@ tasks:
       - ./scripts/isolate.sh {{.CLI_ARGS}}
 
   clean:
-    desc: Clean coverage and build
+    desc: Clean coverage and build, and docs testing generated files
     cmds:
       - task: clean:coverage
       - task: clean:build
+      - task: clean:docs
 
   clean:coverage:
     desc: Remove test coverage
@@ -38,6 +39,21 @@ tasks:
     desc: Remove build artifact, dist folder
     cmds:
       - rm -rf dist
+  clean:docs:
+    desc: Remove documents generation command's generated folders - `tmp` and `target`
+    cmds:
+      - rm -rf tmp
+      - rm -rf target
+
+  try:docs:build:
+    desc: Try documentation building feature. Runs <cli> docs build -k -t ./tmp sample_docs target
+    cmds:
+      - node ./dist/semantic-generator docs build -k -t ./tmp sample_docs target
+
+  try:docs:host:
+    desc: Try hosting the documentation site
+    cmds:
+      - pnpx -y http-server -p 9090 ./target
 
   build:
     deps:

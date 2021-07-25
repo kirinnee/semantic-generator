@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {Core, Kore} from "@kirinnee/core";
 import {program} from "commander";
 import * as process from "process";

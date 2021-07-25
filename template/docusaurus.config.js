@@ -4,7 +4,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const meta = require('./meta.json');
 
 
-const preLinks = (meta.navbar.preLinks ?? []).map(({name, url}) => {
+const preLinks = (meta.navbar.preLinks ?? []).map(({ name, url }) => {
     return {
         position: 'left',
         label: name,
@@ -12,7 +12,7 @@ const preLinks = (meta.navbar.preLinks ?? []).map(({name, url}) => {
     };
 });
 
-const tabs = (meta.navbar.tabs ?? []).map(({name, folder, id}) => {
+const tabs = (meta.navbar.tabs ?? []).map(({ name, folder, id }) => {
     return {
         type: 'doc',
         docId: `${folder}/${id ?? 'index'}`,
@@ -22,7 +22,7 @@ const tabs = (meta.navbar.tabs ?? []).map(({name, folder, id}) => {
 });
 
 
-const postLinks = (meta.navbar.postLinks ?? []).map(({title, url}) => {
+const postLinks = (meta.navbar.postLinks ?? []).map(({ title, url }) => {
     return {
         position: 'right',
         label: title,
@@ -95,7 +95,10 @@ module.exports = {
         ],
     ],
     plugins: [
-        require.resolve('docusaurus-lunr-search'),
+        [
+            require.resolve("@easyops-cn/docusaurus-search-local"),
+            { hashed: true, },
+        ],
         [
             '@docusaurus/plugin-pwa',
             {
