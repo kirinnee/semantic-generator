@@ -1,6 +1,6 @@
 {
   "name": "@atomi-user-first/semantic-generator",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Semantic Release configuration generator for conventional commits",
   "main": "dist/semantic-generator.js",
   "license": "MIT",
@@ -37,6 +37,7 @@
     "istextorbinary": "^5.12.0",
     "mkdirp": "^1.0.4",
     "node-html-parser": "^4.1.1",
+    "superstruct": "^0.15.2",
     "tmp-promise": "^3.0.2",
     "ts-union": "^2.3.0",
     "yaml": "^1.10.2"

@@ -29,6 +29,7 @@ specifiers:
   mkdirp: ^1.0.4
   node-html-parser: ^4.1.1
   rimraf: ^3.0.2
+  superstruct: ^0.15.2
   tmp-promise: ^3.0.2
   ts-jest: ^27.0.4
   ts-node: ^10.1.0
@@ -50,6 +51,7 @@ dependencies:
   istextorbinary: 5.12.0
   mkdirp: 1.0.4
   node-html-parser: 4.1.1
+  superstruct: 0.15.2
   tmp-promise: 3.0.2
   ts-union: 2.3.0
   yaml: 1.10.2
@@ -5890,6 +5892,13 @@ packages:
       }
     engines: { node: ">=8" }
     dev: true
+
+  /superstruct/0.15.2:
+    resolution:
+      {
+        integrity: sha512-OsJI8lv6/PsInwCf4ultejmsJYseYshKhkcbDendqNwj3MeGXENajl3ujMGMU4FDDSSeJTOwFn9T6pnfsS9DYA==,
+      }
+    dev: false
 
   /supports-color/5.5.0:
     resolution:

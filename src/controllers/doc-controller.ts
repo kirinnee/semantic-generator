@@ -54,7 +54,6 @@ export function DocController(core: Core, c: Command): void {
                 const tgtPath = path.resolve(target);
                 const tplPath = path.resolve(__dirname, "../../template");
 
-
                 const sourceFileFactory = new BasicFileFactory(srcPath, core);
                 const templateFileFactory = new BasicFileFactory(tplPath, core);
                 const targetWriter = new BasicWriter(core, tgtPath);

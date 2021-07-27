@@ -1,5 +1,5 @@
 import {Option, Result} from "@hqoss/monads";
-import {InputConfig} from "./configuration";
+import {InputConfig, InputConfigValid} from "./configuration";
 import {IFileFactory, ReadBinary} from "../engine/basicFileFactory";
 import {ContentToBuffer} from "../engine/vfs";
 import yaml from "yaml";
@@ -28,7 +28,10 @@ class ConfigReader {
                         return b.map(v => ContentToBuffer(v.content).toString("utf8")).mapErr(x => [x]);
                     }
                 });
-            return await r.map(x => yaml.parse(x) as InputConfig).promise;
+            return await r
+                .map(x => yaml.parse(x) as InputConfig)
+                .andThen(x => InputConfigValid(x))
+                .promise;
         };
         return new PromiseResult<InputConfig, string[]>(closure());
     }

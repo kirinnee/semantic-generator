@@ -8,7 +8,6 @@ import mkdirp from "mkdirp";
 import {OptionAllNone} from "../util";
 import {Core} from "@kirinnee/core";
 
-
 const IWritable = Union({
     File: of<VFile>(),
     FaviconImage: of<FaviconImage>(),
