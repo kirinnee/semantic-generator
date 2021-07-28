@@ -1,7 +1,6 @@
 version: "3"
 
 env:
-  PATH: "{{.PWD}}/node_modules/.bin:{{.PATH}}"
   jest: ./node_modules/.bin/jest
   tsc: ./node_modules/.bin/tsc
   eslint: ./node_modules/.bin/eslint

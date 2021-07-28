@@ -184,7 +184,7 @@ describe("PromiseResult", function () {
         it("should not map error if the operation is not unsuccessful", function () {
 
             const ex = new PromiseResult<number, string>(Ok(5));
-            const subj = new PromiseResult<number, string>(Ok(5));
+            const subj = new PromiseResult<number, string>(Ok(4));
             const mapFunc = (s: string) => `${s} other`;
 
             const act = subj.mapErr(mapFunc);
