@@ -16,6 +16,18 @@ interface ReleaseRule {
     release: Release
 }
 
+type SemanticReleasePlugin = ([string, unknown] | string);
+
+
+interface ReleaseRc {
+    branches: string[]
+    plugins: SemanticReleasePlugin[]
+}
+
+function PluginToSemanticReleasePlugin(p: Plugin): SemanticReleasePlugin {
+    return p.config ? [p.module, p.config] : p.module;
+}
+
 function ToMap<V>(i: { [s: string]: V }): Map<string, V> {
     return new Map<string, V>(Object.entries(i));
 }
@@ -91,4 +103,12 @@ class ReleaseParser {
 
 }
 
-export {ReleaseParser, PresetConfig, ReleaseRule, ToMap};
+export {
+    ReleaseParser,
+    PresetConfig,
+    ReleaseRule,
+    ToMap,
+    ReleaseRc,
+    SemanticReleasePlugin,
+    PluginToSemanticReleasePlugin
+};

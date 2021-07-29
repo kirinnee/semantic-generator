@@ -1,5 +1,12 @@
-import {PresetConfig, ReleaseParser, ReleaseRule, ToMap} from "../../src/classLibrary/release/releaseParser";
-import {ReleaseConfiguration} from "../../src/classLibrary/release/configuration";
+import {
+    PluginToSemanticReleasePlugin,
+    PresetConfig,
+    ReleaseParser,
+    ReleaseRule,
+    SemanticReleasePlugin,
+    ToMap
+} from "../../src/classLibrary/release/releaseParser";
+import {ReleaseConfiguration, Plugin} from "../../src/classLibrary/release/configuration";
 import {Kore} from "@kirinnee/core";
 
 const core = new Kore();
@@ -58,6 +65,37 @@ describe("ToMap", function () {
         expect(ex2).toEqual(act2);
         expect(ex3).toEqual(act3);
 
+    });
+});
+
+
+describe("PluginToSemanticReleasePlugin", function () {
+    it("should convert plugins with config to Semantic Release Plugin (double)", function () {
+        const subj: Plugin = {
+            module: "@semantic-release/changelog",
+            config: {
+                changelogFile: "CHANGELOG.MD",
+            }
+        };
+
+        const ex: SemanticReleasePlugin = [
+            "@semantic-release/changelog",
+            {
+                changelogFile: "CHANGELOG.MD"
+            }
+        ];
+        const act = PluginToSemanticReleasePlugin(subj);
+        expect(act).toEqual(ex);
+    });
+
+    it("should convert plugins without config to Semantic Release Plugin (single)", function () {
+        const subj: Plugin = {
+            module: "@semantic-release/github"
+        };
+        const ex: SemanticReleasePlugin = "@semantic-release/github";
+
+        const act = PluginToSemanticReleasePlugin(subj);
+        expect(act).toEqual(ex);
     });
 });
 
