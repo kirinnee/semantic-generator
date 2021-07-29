@@ -1,4 +1,4 @@
-import {ReleaseParser, ReleaseRule, ToMap} from "../../src/classLibrary/release/releaseParser";
+import {PresetConfig, ReleaseParser, ReleaseRule, ToMap} from "../../src/classLibrary/release/releaseParser";
 import {ReleaseConfiguration} from "../../src/classLibrary/release/configuration";
 import {Kore} from "@kirinnee/core";
 
@@ -153,7 +153,7 @@ var___convention_docs___
             },
             {
                 type: "remove",
-                section: "Packages Updated",
+                section: "Removed Packages",
                 desc: "Update a package's version",
                 scopes: {
                     default: {
@@ -165,6 +165,7 @@ var___convention_docs___
             {
                 type: "docs",
                 desc: "Add documentation",
+                section: "Documentation Updates",
                 scopes: {
                     default: {
                         desc: "Adds a generic documentation not related to `dev`, `pkg` or `user`",
@@ -236,7 +237,17 @@ var___convention_docs___
                         release: false
                     }
                 }
-            }
+            },
+            {
+                type: "chore",
+                desc: "Any chores, uncategorized, or small mistakes (like typos)",
+                scopes: {
+                    default: {
+                        desc: "chores",
+                        release: false
+                    }
+                }
+            },
         ]
     };
 
@@ -334,12 +345,281 @@ var___convention_docs___
                     scope: "ignore"
                 },
                 {
+                    type: "chore",
+                    release: false,
+                },
+                {
                     scope: "no-release",
                     release: false
                 }
             ];
 
             const act = parser.parseReleaseRules();
+
+            expect(act).toEqual(ex);
+
+        });
+    });
+
+    describe("parsePresetConfig", function () {
+        it("should return a presetConfig for conventional commits", function () {
+            const ex: PresetConfig = {
+                types: [
+                    {
+                        type: "fix",
+                        section: "Bug Fixes"
+                    },
+                    {
+                        type: "new",
+                        section: "New Packages"
+                    },
+                    {
+                        type: "update",
+                        section: "Packages Updated"
+                    },
+                    {
+                        type: "remove",
+                        section: "Removed Packages"
+                    },
+                    {
+                        type: "docs",
+                        section: "Documentation Updates"
+                    },
+                    {
+                        type: "ci",
+                        hidden: true
+                    },
+                    {
+                        type: "release",
+                        hidden: true
+                    },
+                    {
+                        type: "config",
+                        hidden: true
+                    },
+                    {
+                        type: "chore",
+                        hidden: true
+                    }
+                ]
+            };
+
+            const act = parser.parsePresetConfig();
+            expect(act).toEqual(ex);
+        });
+    });
+
+    describe("generateDefaultPlugins", function () {
+        it("should generate the default plugins `commit-analyzer` and `release-note-generator`", function () {
+            const ex = [
+                {
+                    module: "@semantic-release/commit-analyzer",
+                    config: {
+                        preset: "conventionalcommits",
+                        parserOpts: [
+                            "BREAKING CHANGE",
+                            "BREAKING CHANGES",
+                            "BREAKING"
+                        ],
+                        releaseRules: [
+                            {
+                                type: "fix",
+                                release: "patch"
+                            },
+                            {
+                                type: "fix",
+                                scope: "drv",
+                                release: "patch"
+                            },
+                            {
+                                type: "fix",
+                                scope: "config",
+                                release: false
+                            },
+                            {
+                                type: "new",
+                                release: "minor"
+                            },
+                            {
+                                type: "update",
+                                release: "major"
+                            },
+                            {
+                                type: "remove",
+                                release: "major"
+                            },
+                            {
+                                type: "docs",
+                                release: false
+                            },
+                            {
+                                type: "docs",
+                                scope: "user",
+                                release: false
+                            },
+                            {
+                                type: "docs",
+                                scope: "dev",
+                                release: false
+                            },
+                            {
+                                type: "docs",
+                                scope: "pkg",
+                                release: "patch"
+                            },
+                            {
+                                type: "ci",
+                                release: false
+                            },
+                            {
+                                type: "release",
+                                release: false
+                            },
+                            {
+                                type: "config",
+                                release: false
+                            },
+                            {
+                                type: "config",
+                                release: false,
+                                scope: "lint"
+                            },
+                            {
+                                type: "config",
+                                release: false,
+                                scope: "fmt"
+                            },
+                            {
+                                type: "config",
+                                release: false,
+                                scope: "build"
+                            },
+                            {
+                                type: "config",
+                                release: false,
+                                scope: "nix"
+                            },
+                            {
+                                type: "config",
+                                release: false,
+                                scope: "env"
+                            },
+                            {
+                                type: "config",
+                                release: false,
+                                scope: "ignore"
+                            },
+                            {
+                                type: "chore",
+                                release: false
+                            },
+                            {
+                                scope: "no-release",
+                                release: false
+                            }
+                        ],
+                        presetConfig: {
+                            types: [
+                                {
+                                    type: "fix",
+                                    section: "Bug Fixes"
+                                },
+                                {
+                                    type: "new",
+                                    section: "New Packages"
+                                },
+                                {
+                                    type: "update",
+                                    section: "Packages Updated"
+                                },
+                                {
+                                    type: "remove",
+                                    section: "Removed Packages"
+                                },
+                                {
+                                    type: "docs",
+                                    section: "Documentation Updates"
+                                },
+                                {
+                                    type: "ci",
+                                    hidden: true
+                                },
+                                {
+                                    type: "release",
+                                    hidden: true
+                                },
+                                {
+                                    type: "config",
+                                    hidden: true
+                                },
+                                {
+                                    type: "chore",
+                                    hidden: true
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    module: "@semantic-release/release-notes-generator",
+                    config: {
+                        preset: "conventionalcommits",
+                        parserOpts: [
+                            "BREAKING CHANGE",
+                            "BREAKING CHANGES",
+                            "BREAKING"
+                        ],
+                        writerOpts: {
+                            commitsSort: [
+                                "subject",
+                                "scope"
+                            ]
+                        },
+                        presetConfig: {
+                            types: [
+                                {
+                                    type: "fix",
+                                    section: "Bug Fixes"
+                                },
+                                {
+                                    type: "new",
+                                    section: "New Packages"
+                                },
+                                {
+                                    type: "update",
+                                    section: "Packages Updated"
+                                },
+                                {
+                                    type: "remove",
+                                    section: "Removed Packages"
+                                },
+                                {
+                                    type: "docs",
+                                    section: "Documentation Updates"
+                                },
+                                {
+                                    type: "ci",
+                                    hidden: true
+                                },
+                                {
+                                    type: "release",
+                                    hidden: true
+                                },
+                                {
+                                    type: "config",
+                                    hidden: true
+                                },
+                                {
+                                    type: "chore",
+                                    hidden: true
+                                }
+                            ]
+                        }
+                    }
+                }
+            ];
+
+            const act = parser.generateDefaultPlugins();
 
             expect(act).toEqual(ex);
 
