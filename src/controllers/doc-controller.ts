@@ -3,21 +3,35 @@ import rimraf from "rimraf";
 import * as path from "path";
 
 import {Command} from "commander";
-import {Pnpm} from "../classLibrary/docs/runtimes/pnpm";
-import {Yarn} from "../classLibrary/docs/runtimes/yarn";
-import {Npm} from "../classLibrary/docs/runtimes/npm";
 import {Core} from "@kirinnee/core";
 import {Generator} from "../classLibrary/docs/generate";
 import {Wrap} from "../classLibrary/util";
 import {BasicWriter} from "../classLibrary/engine/writer";
-import {None, Some} from "@hqoss/monads";
+import {None, Option, Some} from "@hqoss/monads";
 import {BasicFileFactory, IFileFactory} from "../classLibrary/engine/basicFileFactory";
 import {FlagResolver, VarResolver} from "../classLibrary/engine/resolver";
 import {ConfigReader} from "../classLibrary/docs/config-reader";
-import {Executor, Installer} from "../classLibrary/docs/executor";
 import {ArtifactManager} from "../classLibrary/docs/artifactManager";
 import {Versioner} from "../classLibrary/docs/history_writer";
 import {InputConfig} from "../classLibrary/docs/configuration";
+import {Executor, Installer} from "../classLibrary/executor/executor";
+import {Yarn} from "../classLibrary/executor/runtimes/yarn";
+import {Npm} from "../classLibrary/executor/runtimes/npm";
+import {Pnpm} from "../classLibrary/executor/runtimes/pnpm";
+
+
+function ToInstaller(s?: string): Option<Installer> {
+    return Wrap(s).andThen(x => {
+        switch (x) {
+        case "npm":
+        case"pnpm":
+        case "yarn":
+            return Some(x as Installer);
+        default:
+            return None;
+        }
+    });
+}
 
 export function DocController(core: Core, c: Command): void {
     c.command("build <src> <target>")
@@ -39,16 +53,7 @@ export function DocController(core: Core, c: Command): void {
             const keepTemp = opts.keepTmp;
             try {
                 const configPath = Wrap(opts.config);
-                const installer = Wrap(opts.installer).andThen(x => {
-                    switch (x) {
-                    case "npm":
-                    case"pnpm":
-                    case "yarn":
-                        return Some(x as Installer);
-                    default:
-                        return None;
-                    }
-                });
+                const installer = ToInstaller(opts.installer);
 
                 const srcPath = path.resolve(src);
                 const tgtPath = path.resolve(target);
@@ -107,17 +112,9 @@ export function DocController(core: Core, c: Command): void {
 
             const keepTemp = opts.keepTmp;
             try {
+
                 const configPath = Wrap(opts.config);
-                const installer = Wrap(opts.installer).andThen(x => {
-                    switch (x) {
-                    case "npm":
-                    case"pnpm":
-                    case "yarn":
-                        return Some(x as Installer);
-                    default:
-                        return None;
-                    }
-                });
+                const installer = ToInstaller(opts.installer);
 
                 const srcPath = path.resolve(src);
                 const tplPath = path.resolve(__dirname, "../../template");

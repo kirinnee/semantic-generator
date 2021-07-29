@@ -30,12 +30,21 @@ repos:
         files: ^.*\.(ts|js)$
         pass_filenames: false
         language: system
+
+      - id: build
+        name: Build
+        entry: pls build -- 0.1.0
+        files: ^.*$
+        pass_filenames: false
+        language: system
+
       - id: json-fmt
         name: Format JSON with prettier
         entry: pls fmt:json
         files: ^.*\.json$
         pass_filenames: false
         language: system
+
       - id: yaml-fmt
         name: Format YAML with prettier
         entry: pls fmt:yaml

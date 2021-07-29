@@ -1,7 +1,7 @@
-import {Option, Result} from "@hqoss/monads";
+import {Option} from "@hqoss/monads";
 import {InputConfig, InputConfigValid} from "./configuration";
-import {IFileFactory, ReadBinary} from "../engine/basicFileFactory";
-import {ContentToBuffer} from "../engine/vfs";
+import {IFileFactory, ReadFile} from "../engine/basicFileFactory";
+import {ContentToString} from "../engine/vfs";
 import yaml from "yaml";
 import {PromiseResult} from "../resultUtil";
 
@@ -14,26 +14,15 @@ class ConfigReader {
     }
 
     Read(c: Option<string>): PromiseResult<InputConfig, string[]> {
-        const closure = async (): Promise<Result<InputConfig, string[]>> => {
-            const r = await c.map(async x => {
-                // try read if exist
-                const content = await ReadBinary(x).mapErr(x => [x]);
-                return content.map(b => b.toString("utf8"));
+        return c
+            .match({
+                none: () => this.srcFileFactory.ReadSingle("atomi_docs.yaml").map(x => x.content),
+                some: (val: string) => ReadFile(val),
             })
-                .match({
-                    some: (p) => p,
-                    // if doesnt exist, read default file
-                    none: async () => {
-                        const b = await this.srcFileFactory.ReadSingle("atomi_docs.yaml");
-                        return b.map(v => ContentToBuffer(v.content).toString("utf8")).mapErr(x => [x]);
-                    }
-                });
-            return await r
-                .map(x => yaml.parse(x) as InputConfig)
-                .andThen(x => InputConfigValid(x))
-                .promise;
-        };
-        return new PromiseResult<InputConfig, string[]>(closure());
+            .andThen(c => ContentToString(c))
+            .mapErr(x => [x])
+            .map(s => yaml.parse(s))
+            .andThen(s => InputConfigValid(s));
     }
 }
 

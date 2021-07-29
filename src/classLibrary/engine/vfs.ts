@@ -1,4 +1,6 @@
 import {of, Union} from "ts-union";
+import {Err, Ok, Result} from "@hqoss/monads";
+import {isText} from "istextorbinary";
 
 
 interface FileMetadata {
@@ -13,6 +15,13 @@ const Content = Union({
 
 type Content = typeof Content.T;
 
+function ContentToString(c: Content): Result<string, string> {
+    return Content.match(c, {
+        String: (s: string) => Ok(s),
+        Binary: (b: Buffer) => isText(null, b) ? Ok(b.toString("utf8")) : Err("Expect string but got binary"),
+    });
+}
+
 function ContentToBuffer(c: Content): Buffer {
     return Content.match(c, {
         String: (s: string) => Buffer.from(s, "utf8"),
@@ -26,4 +35,4 @@ interface VFile {
 }
 
 
-export {VFile, FileMetadata, Content, ContentToBuffer};
+export {VFile, FileMetadata, Content, ContentToBuffer, ContentToString};
