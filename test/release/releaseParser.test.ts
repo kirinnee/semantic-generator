@@ -1,7 +1,7 @@
 import {
     PluginToSemanticReleasePlugin,
     PresetConfig,
-    ReleaseParser,
+    ReleaseParser, ReleaseRc,
     ReleaseRule,
     SemanticReleasePlugin,
     ToMap
@@ -661,6 +661,240 @@ var___convention_docs___
 
             expect(act).toEqual(ex);
 
+        });
+    });
+
+
+    describe("generateReleaseRc", () => {
+        it("should generate accurate release rc", function () {
+            const ex: ReleaseRc = {
+                branches: [
+                    "main"
+                ],
+                plugins: [
+                    [
+                        "@semantic-release/commit-analyzer",
+                        {
+                            preset: "conventionalcommits",
+                            parserOpts: [
+                                "BREAKING CHANGE",
+                                "BREAKING CHANGES",
+                                "BREAKING"
+                            ],
+                            releaseRules: [
+                                {
+                                    type: "fix",
+                                    release: "patch"
+                                },
+                                {
+                                    type: "fix",
+                                    scope: "drv",
+                                    release: "patch"
+                                },
+                                {
+                                    type: "fix",
+                                    scope: "config",
+                                    release: false
+                                },
+                                {
+                                    type: "new",
+                                    release: "minor"
+                                },
+                                {
+                                    type: "update",
+                                    release: "major"
+                                },
+                                {
+                                    type: "remove",
+                                    release: "major"
+                                },
+                                {
+                                    type: "docs",
+                                    release: false
+                                },
+                                {
+                                    type: "docs",
+                                    scope: "user",
+                                    release: false
+                                },
+                                {
+                                    type: "docs",
+                                    scope: "dev",
+                                    release: false
+                                },
+                                {
+                                    type: "docs",
+                                    scope: "pkg",
+                                    release: "patch"
+                                },
+                                {
+                                    type: "ci",
+                                    release: false
+                                },
+                                {
+                                    type: "release",
+                                    release: false
+                                },
+                                {
+                                    type: "config",
+                                    release: false
+                                },
+                                {
+                                    type: "config",
+                                    release: false,
+                                    scope: "lint"
+                                },
+                                {
+                                    type: "config",
+                                    release: false,
+                                    scope: "fmt"
+                                },
+                                {
+                                    type: "config",
+                                    release: false,
+                                    scope: "build"
+                                },
+                                {
+                                    type: "config",
+                                    release: false,
+                                    scope: "nix"
+                                },
+                                {
+                                    type: "config",
+                                    release: false,
+                                    scope: "env"
+                                },
+                                {
+                                    type: "config",
+                                    release: false,
+                                    scope: "ignore"
+                                },
+                                {
+                                    type: "chore",
+                                    release: false
+                                },
+                                {
+                                    scope: "no-release",
+                                    release: false
+                                }
+                            ],
+                            presetConfig: {
+                                types: [
+                                    {
+                                        type: "fix",
+                                        section: "Bug Fixes"
+                                    },
+                                    {
+                                        type: "new",
+                                        section: "New Packages"
+                                    },
+                                    {
+                                        type: "update",
+                                        section: "Packages Updated"
+                                    },
+                                    {
+                                        type: "remove",
+                                        section: "Removed Packages"
+                                    },
+                                    {
+                                        type: "docs",
+                                        section: "Documentation Updates"
+                                    },
+                                    {
+                                        type: "ci",
+                                        hidden: true
+                                    },
+                                    {
+                                        type: "release",
+                                        hidden: true
+                                    },
+                                    {
+                                        type: "config",
+                                        hidden: true
+                                    },
+                                    {
+                                        type: "chore",
+                                        hidden: true
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        "@semantic-release/release-notes-generator",
+                        {
+                            preset: "conventionalcommits",
+                            parserOpts: [
+                                "BREAKING CHANGE",
+                                "BREAKING CHANGES",
+                                "BREAKING"
+                            ],
+                            writerOpts: {
+                                commitsSort: [
+                                    "subject",
+                                    "scope"
+                                ]
+                            },
+                            presetConfig: {
+                                types: [
+                                    {
+                                        type: "fix",
+                                        section: "Bug Fixes"
+                                    },
+                                    {
+                                        type: "new",
+                                        section: "New Packages"
+                                    },
+                                    {
+                                        type: "update",
+                                        section: "Packages Updated"
+                                    },
+                                    {
+                                        type: "remove",
+                                        section: "Removed Packages"
+                                    },
+                                    {
+                                        type: "docs",
+                                        section: "Documentation Updates"
+                                    },
+                                    {
+                                        type: "ci",
+                                        hidden: true
+                                    },
+                                    {
+                                        type: "release",
+                                        hidden: true
+                                    },
+                                    {
+                                        type: "config",
+                                        hidden: true
+                                    },
+                                    {
+                                        type: "chore",
+                                        hidden: true
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        "@semantic-release/changelog",
+                        {
+                            changelogFile: "CHANGELOG.md"
+                        }
+                    ],
+                    [
+                        "@semantic-release/git",
+                        {
+                            message: "release: ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
+                        }
+                    ],
+                    "@semantic-release/github"
+                ]
+            };
+            const act = parser.GenerateReleaseRc();
+
+            expect(act).toEqual(ex);
         });
     });
 

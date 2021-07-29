@@ -101,6 +101,15 @@ class ReleaseParser {
         ];
     }
 
+    GenerateReleaseRc(): ReleaseRc {
+        const plugins = [...this.generateDefaultPlugins(), ...(this.rc.plugins ?? [])]
+            .Map(PluginToSemanticReleasePlugin);
+        return {
+            branches: this.rc.branches,
+            plugins,
+        };
+    }
+
 }
 
 export {
