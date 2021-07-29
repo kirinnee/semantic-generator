@@ -50,10 +50,19 @@ var___convention_docs___
                         example: "fix: dropdown flickering",
                     },
                     scopes: {
-                        default: "patch",
-                        drv: "patch",
-                        config: "patch",
-                    }
+                        default: {
+                            desc: "Generic fixes not under `drv` or `patch`",
+                            release: "patch",
+                        },
+                        drv: {
+                            desc: "Fixes in nix derivations in the repository",
+                            release: "patch",
+                        },
+                        config: {
+                            desc: "Fixes in configuration",
+                            release: "patch",
+                        },
+                    },
                 },
                 {
                     type: "new",
@@ -65,17 +74,23 @@ var___convention_docs___
                         example: "new(narwhal): a aswiss army knife for docker"
                     },
                     scopes: {
-                        default: "minor"
+                        default: {
+                            desc: "Release a new package",
+                            release: "minor",
+                        }
                     }
                 },
                 {
                     type: "update",
                     section: "Packages Updated",
-                    desc: "Fixed a bug within the repository",
+                    desc: "Update a package's version",
                     scopes: {
-                        default: "major"
+                        default: {
+                            desc: "Update a package's version",
+                            release: "major",
+                        },
                     }
-                }
+                },
             ]
         };
         const valid2 = {
@@ -91,22 +106,34 @@ var___convention_docs___
                         example: "fix: dropdown flickering",
                     },
                     scopes: {
-                        default: "patch",
-                        drv: "patch",
-                        config: "patch",
-                    }
+                        default: {
+                            desc: "Generic fixes not under `drv` or `patch`",
+                            release: "patch",
+                        },
+                        drv: {
+                            desc: "Fixes in nix derivations in the repository",
+                            release: "patch",
+                        },
+                        config: {
+                            desc: "Fixes in configuration",
+                            release: "patch",
+                        },
+                    },
                 },
                 {
                     type: "new",
                     section: "New Packages",
-                    desc: "Fixed a bug within the repository",
+                    desc: "Release a new package",
                     vae: {
                         verb: "add",
                         application: "<scope>, <title>",
                         example: "new(narwhal): a aswiss army knife for docker"
                     },
                     scopes: {
-                        default: "minor"
+                        default: {
+                            desc: "Release a new package",
+                            release: "minor",
+                        },
                     }
                 },
                 {
@@ -114,7 +141,10 @@ var___convention_docs___
                     section: "Packages Updated",
                     desc: "Fixed a bug within the repository",
                     scopes: {
-                        default: "major"
+                        default: {
+                            desc: "Update a package's version",
+                            release: "major"
+                        }
                     }
                 }
 
@@ -154,9 +184,18 @@ var___convention_docs___
                         example: "fix: dropdown flickering",
                     },
                     scopes: {
-                        default: "patch",
-                        drv: "patch",
-                        config: "patch",
+                        default: {
+                            desc: "Generic fixes not under `drv` or `patch`",
+                            release: "patch",
+                        },
+                        drv: {
+                            desc: "Fixes in nix derivations in the repository",
+                            release: "patch",
+                        },
+                        config: {
+                            desc: "Fixes in configuration",
+                            release: "patch",
+                        },
                     }
                 },
             ]
@@ -210,9 +249,18 @@ var___convention_docs___
                         example: "fix: dropdown flickering",
                     },
                     scopes: {
-                        default: "patch",
-                        drv: "patch",
-                        config: "patch",
+                        default: {
+                            desc: "Generic fixes not under `drv` or `patch`",
+                            release: "patch",
+                        },
+                        drv: {
+                            desc: "Fixes in nix derivations in the repository",
+                            release: "patch",
+                        },
+                        config: {
+                            desc: "Fixes in configuration",
+                            release: "patch",
+                        },
                     }
                 },
                 {
@@ -225,15 +273,21 @@ var___convention_docs___
                         example: "new(narwhal): a aswiss army knife for docker"
                     },
                     scopes: {
-                        default: "minor"
+                        default: {
+                            desc: "Release a new package",
+                            release: "minor",
+                        }
                     }
                 },
                 {
                     type: "update",
                     section: "Packages Updated",
-                    desc: "Fixed a bug within the repository",
+                    desc: "Update a package's version",
                     scopes: {
-                        default: "major"
+                        default: {
+                            desc: "Update a package's version",
+                            release: "major",
+                        },
                     }
                 }
             ]
@@ -257,22 +311,34 @@ var___convention_docs___
                         example: "fix: dropdown flickering",
                     },
                     scopes: {
-                        default: "patch",
-                        drv: "patch",
-                        config: "patch",
-                    }
+                        default: {
+                            desc: "Generic fixes not under `drv` or `patch`",
+                            release: "patch",
+                        },
+                        drv: {
+                            desc: "Fixes in nix derivations in the repository",
+                            release: "patch",
+                        },
+                        config: {
+                            desc: "Fixes in configuration",
+                            release: "patch",
+                        },
+                    },
                 },
                 {
                     type: "new",
                     section: "New Packages",
-                    desc: "Fixed a bug within the repository",
+                    desc: "Release a new package",
                     vae: {
                         verb: "add",
                         application: "<scope>, <title>",
                         example: "new(narwhal): a aswiss army knife for docker"
                     },
                     scopes: {
-                        default: "minor"
+                        default: {
+                            desc: "Release a new package",
+                            release: "minor",
+                        },
                     }
                 },
                 {
@@ -280,7 +346,10 @@ var___convention_docs___
                     section: "Packages Updated",
                     desc: "Fixed a bug within the repository",
                     scopes: {
-                        default: "major"
+                        default: {
+                            desc: "Update a package's version",
+                            release: "major"
+                        }
                     }
                 }
 
@@ -323,9 +392,18 @@ var___convention_docs___
                         example: "fix: dropdown flickering",
                     },
                     scopes: {
-                        default: "patch",
-                        drv: "patch",
-                        config: "patch",
+                        default: {
+                            desc: "Generic fixes not under `drv` or `patch`",
+                            release: "patch",
+                        },
+                        drv: {
+                            desc: "Fixes in nix derivations in the repository",
+                            release: "patch",
+                        },
+                        config: {
+                            desc: "Fixes in configuration",
+                            release: "patch",
+                        },
                     }
                 },
             ]
@@ -394,10 +472,19 @@ var___convention_docs___
                         example: "fix: dropdown flickering",
                     },
                     scopes: {
-                        default: "patch",
-                        drv: "patch",
-                        config: "patch",
-                    }
+                        default: {
+                            desc: "Generic fixes not under `drv` or `patch`",
+                            release: "patch",
+                        },
+                        drv: {
+                            desc: "Fixes in nix derivations in the repository",
+                            release: "patch",
+                        },
+                        config: {
+                            desc: "Fixes in configuration",
+                            release: "patch",
+                        },
+                    },
                 },
                 {
                     type: "new",
@@ -409,17 +496,23 @@ var___convention_docs___
                         example: "new(narwhal): a aswiss army knife for docker"
                     },
                     scopes: {
-                        default: "minor"
+                        default: {
+                            desc: "Release a new package",
+                            release: "minor",
+                        }
                     }
                 },
                 {
                     type: "update",
                     section: "Packages Updated",
-                    desc: "Fixed a bug within the repository",
+                    desc: "Update a package's version",
                     scopes: {
-                        default: "major"
+                        default: {
+                            desc: "Update a package's version",
+                            release: "major",
+                        },
                     }
-                }
+                },
             ]
         };
         const subj2 = {
@@ -434,10 +527,19 @@ var___convention_docs___
                         example: "fix: dropdown flickering",
                     },
                     scopes: {
-                        default: "patch",
-                        drv: "patch1",
-                        config: "patch",
-                    }
+                        default: {
+                            desc: "Generic fixes not under `drv` or `patch`",
+                            release: "patch",
+                        },
+                        drv: {
+                            desc: "Fixes in nix derivations in the repository",
+                            release: "patch1",
+                        },
+                        config: {
+                            desc: "Fixes in configuration",
+                            release: "patch",
+                        },
+                    },
                 },
                 {
                     type: "new",
@@ -449,17 +551,23 @@ var___convention_docs___
                         example: "new(narwhal): a aswiss army knife for docker"
                     },
                     scopes: {
-                        default: "minor"
+                        default: {
+                            desc: "Release a new package",
+                            release: "minor",
+                        }
                     }
                 },
                 {
                     type: "update",
                     section: "Packages Updated",
-                    desc: "Fixed a bug within the repository",
+                    desc: "Update a package's version",
                     scopes: {
-                        default: "major"
+                        default: {
+                            desc: "Update a package's version",
+                            release: "major",
+                        },
                     }
-                }
+                },
 
             ]
         };
@@ -511,19 +619,15 @@ var___convention_docs___
         ];
         const ex2 = [
             "\u001b[36mtypes.0.type\u001b[39m: Expected a string, but received: undefined",
-            "\u001b[36mtypes.0.scopes.drv\u001b[39m: Expected the value to satisfy a union of `literal | literal | literal | literal`, but received: \"patch1\"",
-            "\u001b[36mtypes.0.scopes.drv\u001b[39m: Expected the literal `false`, but received: \"patch1\"",
-            "\u001b[36mtypes.0.scopes.drv\u001b[39m: Expected the literal `\"major\"`, but received: \"patch1\"",
-            "\u001b[36mtypes.0.scopes.drv\u001b[39m: Expected the literal `\"minor\"`, but received: \"patch1\"",
-            "\u001b[36mtypes.0.scopes.drv\u001b[39m: Expected the literal `\"patch\"`, but received: \"patch1\""
+            "\u001b[36mtypes.0.scopes.drv.release\u001b[39m: Expected the value to satisfy a union of `literal | literal | literal | literal`, but received: \"patch1\"",
+            "\u001b[36mtypes.0.scopes.drv.release\u001b[39m: Expected the literal `false`, but received: \"patch1\"",
+            "\u001b[36mtypes.0.scopes.drv.release\u001b[39m: Expected the literal `\"major\"`, but received: \"patch1\"",
+            "\u001b[36mtypes.0.scopes.drv.release\u001b[39m: Expected the literal `\"minor\"`, but received: \"patch1\"",
+            "\u001b[36mtypes.0.scopes.drv.release\u001b[39m: Expected the literal `\"patch\"`, but received: \"patch1\""
         ];
         const ex3 = [
             "\u001b[36mplugins.0.module\u001b[39m: Expected a string, but received: undefined",
-            "\u001b[36mtypes.0.scopes.0\u001b[39m: Expected the value to satisfy a union of `literal | literal | literal | literal`, but received: \"default\"",
-            "\u001b[36mtypes.0.scopes.0\u001b[39m: Expected the literal `false`, but received: \"default\"",
-            "\u001b[36mtypes.0.scopes.0\u001b[39m: Expected the literal `\"major\"`, but received: \"default\"",
-            "\u001b[36mtypes.0.scopes.0\u001b[39m: Expected the literal `\"minor\"`, but received: \"default\"",
-            "\u001b[36mtypes.0.scopes.0\u001b[39m: Expected the literal `\"patch\"`, but received: \"default\""
+            "\u001b[36mtypes.0.scopes.0\u001b[39m: Expected an object, but received: \"default\""
         ];
 
         const act1 = ReleaseConfigurationValid(subj1);

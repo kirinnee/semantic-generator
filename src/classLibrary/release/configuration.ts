@@ -49,7 +49,10 @@ type Release = Infer<typeof ReleaseTypeSchema>
 const TypeSchema = object({
     type: string(),
     section: optional(string()),
-    scopes: record(string(), ReleaseTypeSchema),
+    scopes: record(string(), object({
+        desc: string(),
+        release: ReleaseTypeSchema,
+    })),
     // Docs stuff
     desc: optional(string()),
     vae: optional(VaeSchema),
@@ -86,7 +89,7 @@ interface ReleaseConfiguration {
     types: {
         type: string,
         section?: string,
-        scopes: { [s: string]: Release },
+        scopes: { [s: string]:  { desc: string, release: Release } },
         // Docs stuff
         desc?: string,
         vae?: Vae,
