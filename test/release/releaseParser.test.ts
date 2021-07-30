@@ -3,11 +3,11 @@ import {
     PresetConfig,
     ReleaseParser, ReleaseRc,
     ReleaseRule,
-    SemanticReleasePlugin,
-    ToMap
+    SemanticReleasePlugin
 } from "../../src/classLibrary/release/releaseParser";
 import {ReleaseConfiguration, Plugin} from "../../src/classLibrary/release/configuration";
 import {Kore} from "@kirinnee/core";
+import {ToMap} from "../../src/classLibrary/release/toMap";
 
 const core = new Kore();
 core.ExtendPrimitives();

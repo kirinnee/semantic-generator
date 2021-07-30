@@ -1,6 +1,7 @@
 import {Plugin, Release, ReleaseConfiguration} from "./configuration";
 import {Core} from "@kirinnee/core";
 import {Wrap} from "../util";
+import {ToMap} from "./toMap";
 
 interface PresetConfig {
     types: {
@@ -26,10 +27,6 @@ interface ReleaseRc {
 
 function PluginToSemanticReleasePlugin(p: Plugin): SemanticReleasePlugin {
     return p.config ? [p.module, p.config] : p.module;
-}
-
-function ToMap<V>(i: { [s: string]: V }): Map<string, V> {
-    return new Map<string, V>(Object.entries(i));
 }
 
 
@@ -58,7 +55,6 @@ class ReleaseParser {
                 };
             })).unwrapOr([]);
         return [...base, ...additional];
-
     }
 
     parsePresetConfig(): PresetConfig {
@@ -116,7 +112,6 @@ export {
     ReleaseParser,
     PresetConfig,
     ReleaseRule,
-    ToMap,
     ReleaseRc,
     SemanticReleasePlugin,
     PluginToSemanticReleasePlugin

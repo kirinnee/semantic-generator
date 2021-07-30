@@ -34,6 +34,10 @@ function PromiseResultAll<T, E>(i: PromiseResult<T, E>[]): PromiseResult<T[], E[
 }
 
 
+function PadRight(s: string, length: number, padding = " "): string {
+    return s + padding.Repeat((length - s.length).AtMin(0));
+}
+
 type PromiseResultErr<T extends unknown[]> = T extends Array<PromiseResult<unknown, infer E>> ? E : never
 type PromiseResultOk<T extends unknown[]> = { [K in keyof T]: T[K] extends PromiseResult<infer U, unknown> ? U : never }
 type ResultErr<T extends unknown[]> = T extends Array<Result<unknown, infer E>> ? E : never
@@ -79,4 +83,12 @@ function ResultAll<T, E>(i: Result<T, E>[]): Result<T[], E[]> {
     return Ok(ok);
 }
 
-export {Wrap, ResultAll, OptionAllNone, PromiseResultAll, ResultTupleAll, PromiseResultTupleAll};
+export {
+    Wrap,
+    ResultAll,
+    OptionAllNone,
+    PromiseResultAll,
+    ResultTupleAll,
+    PromiseResultTupleAll,
+    PadRight,
+};
