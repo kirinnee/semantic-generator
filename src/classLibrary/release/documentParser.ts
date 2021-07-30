@@ -15,8 +15,11 @@ class CommitConventionDocumentParser {
 
     generateToc(): string {
         const table = this.mdt.Render(
-            this.rc.types.Map(x => [`[${x.type}](#${x.type})`, `${x.desc}`])
-        );
+            [
+                ["Type", "Description"],
+                ...this.rc.types.Map(x => [`[${x.type}](#${x.type})`, `${x.desc}`]),
+            ]
+        ).unwrap();
         return `# Types\n\n${table}\n`;
     }
 
