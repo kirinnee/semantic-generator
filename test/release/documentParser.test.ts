@@ -62,11 +62,11 @@ var___convention_docs___
                         release: "patch",
                     },
                     drv: {
-                        desc: "Fixes in nix derivations in the repository",
+                        desc: "Fixes a bug in Nix derivations in the repository",
                         release: "patch",
                     },
                     config: {
-                        desc: "Fixes in configuration",
+                        desc: "Fixes a bug in repository configurations, such as scripts, rc files or ci files",
                         release: false,
                     },
                 },
@@ -91,6 +91,11 @@ var___convention_docs___
                 type: "update",
                 section: "Packages Updated",
                 desc: "Update a package's version",
+                vae: {
+                    verb: "update",
+                    application: "<scope> <title>",
+                    example: "update(narwhal): from v0.13.1 to v0.14.0",
+                },
                 scopes: {
                     default: {
                         desc: "Update a package's version",
@@ -101,7 +106,7 @@ var___convention_docs___
             {
                 type: "remove",
                 section: "Removed Packages",
-                desc: "Removes and existing package",
+                desc: "Removes an existing package",
                 scopes: {
                     default: {
                         desc: "Update a package's version",
@@ -113,22 +118,27 @@ var___convention_docs___
                 type: "docs",
                 desc: "Add documentation",
                 section: "Documentation Updates",
+                vae: {
+                    verb: "documents",
+                    application: "<title>",
+                    example: "docs(pkg): new features added in narwhal v0.14.0",
+                },
                 scopes: {
                     default: {
                         desc: "Adds a generic documentation not related to `dev`, `pkg` or `user`",
                         release: false
                     },
                     user: {
-                        desc: "Adds a user-side documentation",
+                        desc: "User-side documentation",
                         release: false
                     },
                     dev: {
-                        desc: "Adds a developer-side (contributing) documentation",
+                        desc: "Documentation for contributing processes",
                         release: false
                     },
                     pkg: {
-                        desc: "Updates a documentation on a package",
-                        release: "patch"
+                        desc: "Documentation for packages",
+                        release: false
                     }
                 }
             },
@@ -154,7 +164,7 @@ var___convention_docs___
             },
             {
                 type: "config",
-                desc: "Update configuration of the repository",
+                desc: "Configuration changes, such as build scripts, rc files or Taskfile.dev etc",
                 scopes: {
                     default: {
                         desc: "Updates the configuration of the repository, not related to the other scopes",
@@ -169,7 +179,7 @@ var___convention_docs___
                         release: false
                     },
                     build: {
-                        desc: "Add, update or change buyild pipelines and generators",
+                        desc: "Add, update or change build pipelines and generators",
                         release: false
                     }, nix: {
                         desc: "Add, update or change nix shell",
@@ -206,28 +216,25 @@ var___convention_docs___
             const ex =
                 `# Types
 
-| Type                | Description                                               |
-| ------------------- | --------------------------------------------------------- |
-| [fix](#fix)         | Fixed a bug within the repository                         |
-| [new](#new)         | Releases a new package in the repository                  |
-| [update](#update)   | Update a package's version                                |
-| [remove](#remove)   | Removes and existing package                              |
-| [docs](#docs)       | Add documentation                                         |
-| [ci](#ci)           | Changed the CI pipeline                                   |
-| [release](#release) | Initiate a release (machine initiated)                    |
-| [config](#config)   | Update configuration of the repository                    |
-| [chore](#chore)     | Any chores, uncategorized, or small mistakes (like typos) |
+| Type                | Description                                                                |
+| ------------------- | -------------------------------------------------------------------------- |
+| [fix](#fix)         | Fixed a bug within the repository                                          |
+| [new](#new)         | Releases a new package in the repository                                   |
+| [update](#update)   | Update a package's version                                                 |
+| [remove](#remove)   | Removes an existing package                                                |
+| [docs](#docs)       | Add documentation                                                          |
+| [ci](#ci)           | Changed the CI pipeline                                                    |
+| [release](#release) | Initiate a release (machine initiated)                                     |
+| [config](#config)   | Configuration changes, such as build scripts, rc files or Taskfile.dev etc |
+| [chore](#chore)     | Any chores, uncategorized, or small mistakes (like typos)                  |
 `;
             const act = parser.generateToc();
             expect(act).toBe(ex);
         });
-
-
     });
 
     describe("generateVaeDocs", () => {
         it("should generate vae with example substituted inside", function () {
-
             const cases: [string, string][] = [
                 ["fix", `| **V.A.E**       | V.A.E values                                                           |
 | --------------- | ---------------------------------------------------------------------- |
@@ -244,6 +251,7 @@ var___convention_docs___
             ];
             cases.Each(([a, e]: [string, string]) => {
                 const act = parser.generateVaeDocs(a);
+                console.log(act);
                 expect(act.isOk()).toBe(true);
                 expect(act.unwrap()).toBe(e);
             });
@@ -259,8 +267,8 @@ var___convention_docs___
 
         it("return empty string if no vae is specified", function () {
             const cases: [string, string][] = [
-                ["update", ""],
-                ["remove", ""],
+                ["ci", ""],
+                ["release", ""],
             ];
 
             cases.Each(([a, e]: [string, string]) => {
@@ -269,6 +277,39 @@ var___convention_docs___
                 expect(act.unwrap()).toBe(e);
             });
 
+        });
+    });
+
+    describe("generateScopeDocs", () => {
+        it("should generate scope documents", function () {
+            const cases: [string, string][] = [
+                ["fix", `| Scope    | Description                                                                     | Bump    |
+| -------- | ------------------------------------------------------------------------------- | ------- |
+| default  | Generic fixes not under \`drv\` or \`patch\`                                        | \`patch\` |
+| \`drv\`    | Fixes a bug in Nix derivations in the repository                                | \`patch\` |
+| \`config\` | Fixes a bug in repository configurations, such as scripts, rc files or ci files | \`nil\`   |`],
+                ["update", `| Scope   | Description                | Bump    |
+| ------- | -------------------------- | ------- |
+| default | Update a package's version | \`major\` |`],
+                ["docs", `| Scope   | Description                                                        | Bump  |
+| ------- | ------------------------------------------------------------------ | ----- |
+| default | Adds a generic documentation not related to \`dev\`, \`pkg\` or \`user\` | \`nil\` |
+| \`user\`  | User-side documentation                                            | \`nil\` |
+| \`dev\`   | Documentation for contributing processes                           | \`nil\` |
+| \`pkg\`   | Documentation for packages                                         | \`nil\` |`],
+            ];
+
+            cases.Each(([a, e]) => {
+                const act = parser.generateScopeDocs(a);
+                expect(act.isOk()).toBe(true);
+                expect(act.unwrap()).toBe(e);
+            });
+        });
+
+        it("should return error if scope does not exist", function () {
+            const act = parser.generateScopeDocs("random");
+            expect(act.isOk()).toBe(false);
+            expect(act.unwrapErr()).toBe("cannot find type entry: random");
         });
     });
 });

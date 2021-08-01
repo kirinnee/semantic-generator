@@ -4,6 +4,7 @@ import {MarkdownTable} from "../../markdown-table";
 import {Ok, Result} from "@hqoss/monads";
 import {Wrap, WrapAsError} from "../util";
 import conventionalCommitsParser from "conventional-commits-parser";
+import {ToMap} from "./toMap";
 
 class CommitConventionDocumentParser {
 
@@ -51,8 +52,22 @@ class CommitConventionDocumentParser {
             }));
     }
 
-    generateScopeDocs(t: string): string {
-        return "";
+    generateScopeDocs(t: string): Result<string, string> {
+        return WrapAsError(`cannot find type entry: ${t}`, this.rc.types.Find(x => x.type == t))
+            .andThen(x => this.mdt.Render(
+                [
+                    ["Scope", "Description", "Bump"],
+                    ...ToMap(x.scopes).Map((k, v) => {
+                        const scope = k === "default" ? k : `\`${k}\``;
+                        const bump = v.release === false ? "`nil`" : `\`${v.release}\``;
+                        return [scope, v.desc, bump] as [string, string, string];
+                    })
+                ]
+            ));
+    }
+
+    generateSpecialScopes(): Result<string, string> {
+        return Ok("");
     }
 
     generateType(): string {
