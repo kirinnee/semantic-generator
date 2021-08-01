@@ -1,4 +1,4 @@
-import {ReleaseConfiguration} from "../../src/classLibrary/release/configuration";
+import {ReleaseConfiguration, ReleaseConfigurationValid} from "../../src/classLibrary/release/configuration";
 import {CommitConventionDocumentParser} from "../../src/classLibrary/release/documentParser";
 import {Kore} from "@kirinnee/core";
 import {MarkdownTable} from "../../src/markdown-table";
@@ -25,7 +25,7 @@ var___convention_docs___
         branches: ["main"],
         specialScopes: {
             "no-release": {
-                desc: "Prevent release from happening",
+                desc: "Prevent release",
                 release: false,
             }
         },
@@ -207,9 +207,86 @@ var___convention_docs___
             },
         ]
     };
+    const configuration2 = ReleaseConfigurationValid({
+        branches: ["main"],
+        specialScopes: {
+            big: {
+                desc: "Makes it a major bump",
+                release: "major",
+            },
+            medium: {
+                desc: "Makes it a minor bump",
+                release: "minor",
+            },
+            small: {
+                desc: "Makes it a patch bump",
+                release: "patch",
+            },
+            no: {
+                desc: "Prevents version bumping",
+                release: false,
+            }
+        },
+        types: [
+            {
+                type: "ci",
+                desc: "Changed the CI pipeline",
+                scopes: {
+                    default: {
+                        desc: "Update CI configuration",
+                        release: false
+                    }
+                }
+            },
+        ]
+    }).unwrap();
+    const configuration3 = ReleaseConfigurationValid({
+        branches: ["main"],
+        specialScopes: {
+            major: {
+                desc: "Makes it a major bump",
+                release: "major"
+            },
+            minor: {
+                desc: "Makes it a minor bump",
+                release: "minor"
+            }
+        },
+        types: [
+            {
+                type: "ci",
+                desc: "Changed the CI pipeline",
+                scopes: {
+                    default: {
+                        desc: "Update CI configuration",
+                        release: false
+                    }
+                }
+            },
+        ]
+    }).unwrap();
+    const configuration4 = ReleaseConfigurationValid({
+        branches: ["main"],
+        types: [
+            {
+                type: "ci",
+                desc: "Changed the CI pipeline",
+                scopes: {
+                    default: {
+                        desc: "Update CI configuration",
+                        release: false
+                    }
+                }
+            },
+        ]
+    }).unwrap();
 
     const mdt = new MarkdownTable(core);
     const parser = new CommitConventionDocumentParser(configuration, mdt, core);
+
+    const parser2 = new CommitConventionDocumentParser(configuration2, mdt, core);
+    const parser3 = new CommitConventionDocumentParser(configuration3, mdt, core);
+    const parser4 = new CommitConventionDocumentParser(configuration4, mdt, core);
 
     describe("generateToc", () => {
         it("should generate markdown table as the table of content of all types with their respective descriptions", function () {
@@ -251,7 +328,6 @@ var___convention_docs___
             ];
             cases.Each(([a, e]: [string, string]) => {
                 const act = parser.generateVaeDocs(a);
-                console.log(act);
                 expect(act.isOk()).toBe(true);
                 expect(act.unwrap()).toBe(e);
             });
@@ -329,6 +405,35 @@ body
 This page will document the types and scopes used.`;
             const act = parser.preamble();
             expect(act).toBe(ex);
+        });
+    });
+
+    describe("generateSpecialScopes", () => {
+        it("should generate special scope table indicating the description and bump", function () {
+            const cases:  [CommitConventionDocumentParser, string][] = [
+                [parser, `| Scope        | Description     | Bump  |
+| ------------ | --------------- | ----- |
+| \`no-release\` | Prevent release | \`nil\` |`],
+                [parser2, `| Scope    | Description              | Bump    |
+| -------- | ------------------------ | ------- |
+| \`big\`    | Makes it a major bump    | \`major\` |
+| \`medium\` | Makes it a minor bump    | \`minor\` |
+| \`small\`  | Makes it a patch bump    | \`patch\` |
+| \`no\`     | Prevents version bumping | \`nil\`   |`],
+                [parser3, `| Scope   | Description           | Bump    |
+| ------- | --------------------- | ------- |
+| \`major\` | Makes it a major bump | \`major\` |
+| \`minor\` | Makes it a minor bump | \`minor\` |`],
+            ];
+
+            cases.Each(([a, s]) => {
+                expect(a.generateSpecialScopes()).toBe(s);
+            });
+
+        });
+
+        it("should return \"no special scopes\" if there isn't any special scopes" , function () {
+            expect(parser4.generateSpecialScopes()).toBe("no special scopes");
         });
     });
 });

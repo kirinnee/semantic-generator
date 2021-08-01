@@ -66,8 +66,20 @@ class CommitConventionDocumentParser {
             ));
     }
 
-    generateSpecialScopes(): Result<string, string> {
-        return Ok("");
+    generateSpecialScopes(): string {
+        return  Wrap(this.rc.specialScopes).match({
+            none: () => "no special scopes",
+            some: (s) =>
+                this.mdt.Render([
+                    ["Scope", "Description", "Bump"]
+                    ,
+                    ...ToMap(s).Map( (k,v)=> [
+                        `\`${k}\``,
+                        v.desc,
+                        `\`${v.release || "nil"}\``,
+                    ] as [string,string,string])
+                ]).unwrap()
+        });
     }
 
     generateType(t: string): Result<string, string> {
