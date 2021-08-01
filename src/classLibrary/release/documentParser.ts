@@ -2,7 +2,7 @@ import {ReleaseConfiguration, Vae} from "./configuration";
 import {Core} from "@kirinnee/core";
 import {MarkdownTable} from "../../markdown-table";
 import {Ok, Result} from "@hqoss/monads";
-import {ResultTupleAll, Wrap, WrapAsError} from "../util";
+import {ResultAll, ResultTupleAll, Wrap, WrapAsError} from "../util";
 import conventionalCommitsParser from "conventional-commits-parser";
 import {ToMap} from "./toMap";
 
@@ -110,7 +110,19 @@ This page will document the types and scopes used.`;
     }
 
     generateFullDocs(): string {
-        return "";
+
+        const types =  ResultAll(this.rc.types.Map(x => this.generateType(x.type)))
+            .unwrap().join("\n\n");
+
+        return `${this.preamble()}
+
+${this.generateToc()}
+${types}
+
+# Special Scopes
+
+${this.generateSpecialScopes()}
+`;
     }
 
     GenerateDocument(): string {
