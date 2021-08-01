@@ -70,12 +70,23 @@ class CommitConventionDocumentParser {
         return Ok("");
     }
 
-    generateType(): string {
-        return "";
+    generateType(t: string): Result<string, string> {
+        return Ok("");
     }
 
     preamble(): string {
-        return "";
+        return `This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) loosely as the specification
+for our commits.
+
+Commit message will be in the format:
+
+\`\`\`
+type(scope): title
+
+body
+\`\`\`
+
+This page will document the types and scopes used.`;
     }
 
     generateFullDocs(): string {

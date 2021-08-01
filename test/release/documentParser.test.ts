@@ -312,4 +312,23 @@ var___convention_docs___
             expect(act.unwrapErr()).toBe("cannot find type entry: random");
         });
     });
+
+    describe("preamble", () => {
+        it("should return the preamble", function () {
+            const ex = `This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) loosely as the specification
+for our commits.
+
+Commit message will be in the format:
+
+\`\`\`
+type(scope): title
+
+body
+\`\`\`
+
+This page will document the types and scopes used.`;
+            const act = parser.preamble();
+            expect(act).toBe(ex);
+        });
+    });
 });
