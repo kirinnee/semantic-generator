@@ -288,8 +288,30 @@ var___convention_docs___
             },
         ]
     };
+    const configuration2: ReleaseConfiguration = {
+        gitlint: ".gitlint",
+        conventionMarkdown: {
+            path: "docs/developer/03-Commit Conventions.md",
+            template: "var___convention_docs___"
+        },
+        keywords: ["BREAKING"],
+        branches: ["main"],
+        types: [
+            {
+                type: "release",
+                desc: "Initiate a release (machine initiated)",
+                scopes: {
+                    default: {
+                        desc: "Machine initiated release",
+                        release: false
+                    }
+                }
+            },
+        ]
+    };
 
     const parser = new ReleaseParser(configuration, core);
+    const parser2 = new ReleaseParser(configuration2, core);
 
     describe("parseReleaseRules", function () {
         it("should parse types in atomi config into release rules", function () {
@@ -667,7 +689,7 @@ var___convention_docs___
 
     describe("generateReleaseRc", () => {
         it("should generate accurate release rc", function () {
-            const ex: ReleaseRc = {
+            const ex1: ReleaseRc = {
                 branches: [
                     "main"
                 ],
@@ -892,10 +914,68 @@ var___convention_docs___
                     "@semantic-release/github"
                 ]
             };
-            const act = parser.GenerateReleaseRc();
+            const act1 = parser.GenerateReleaseRc();
 
-            expect(act).toEqual(ex);
+            expect(act1).toEqual(ex1);
+            const ex2: ReleaseRc = {
+                branches: [
+                    "main"
+                ],
+                plugins: [
+                    [
+                        "@semantic-release/commit-analyzer",
+                        {
+                            preset: "conventionalcommits",
+                            parserOpts: [
+                                "BREAKING"
+                            ],
+                            releaseRules: [
+                                {
+                                    type: "release",
+                                    release: false
+                                },
+                            ],
+                            presetConfig: {
+                                types: [
+                                    {
+                                        type: "release",
+                                        hidden: true
+                                    },
+
+                                ]
+                            }
+                        }
+                    ],
+                    [
+                        "@semantic-release/release-notes-generator",
+                        {
+                            preset: "conventionalcommits",
+                            parserOpts: [
+                                "BREAKING"
+                            ],
+                            writerOpts: {
+                                commitsSort: [
+                                    "subject",
+                                    "scope"
+                                ]
+                            },
+                            presetConfig: {
+                                types: [
+                                    {
+                                        type: "release",
+                                        hidden: true
+                                    },
+
+                                ]
+                            }
+                        }
+                    ],
+                ]
+            };
+            const act2 = parser2.GenerateReleaseRc();
+            expect(act2).toEqual(ex2);
         });
+
     });
 
 });
