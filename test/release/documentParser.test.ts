@@ -6,6 +6,7 @@ import {MarkdownTable} from "../../src/markdown-table";
 const core = new Kore();
 core.ExtendPrimitives();
 
+
 describe("CommitConventionDocumentParser", function () {
 
     const configuration: ReleaseConfiguration = {
@@ -53,7 +54,7 @@ var___convention_docs___
                 vae: {
                     verb: "fix",
                     application: "<title>",
-                    example: "fix: dropdown flickering",
+                    example: "fix: dropdown flickering bug",
                 },
                 scopes: {
                     default: {
@@ -76,7 +77,7 @@ var___convention_docs___
                 desc: "Releases a new package in the repository",
                 vae: {
                     verb: "add",
-                    application: "<scope>, <title>",
+                    application: "<scope> - <title>",
                     example: "new(narwhal): a swiss army knife for docker"
                 },
                 scopes: {
@@ -201,9 +202,9 @@ var___convention_docs___
     const parser = new CommitConventionDocumentParser(configuration, mdt, core);
 
     describe("generateToc", () => {
-        it("should generate markdown table with the correct", function () {
+        it("should generate markdown table as the table of content of all types with their respective descriptions", function () {
             const ex =
-`# Types
+                `# Types
 
 | Type                | Description                                               |
 | ------------------- | --------------------------------------------------------- |
@@ -219,6 +220,55 @@ var___convention_docs___
 `;
             const act = parser.generateToc();
             expect(act).toBe(ex);
+        });
+
+
+    });
+
+    describe("generateVaeDocs", () => {
+        it("should generate vae with example substituted inside", function () {
+
+            const cases: [string, string][] = [
+                ["fix", `| **V.A.E**       | V.A.E values                                                           |
+| --------------- | ---------------------------------------------------------------------- |
+| verb            | fix                                                                    |
+| application     | when this commit is applied, it will _fix_ \`<title>\`                   |
+| example         | fix: dropdown flickering bug                                           |
+| example applied | when this commit is applied, it will _fix_ **dropdown flickering bug** |`],
+                ["new", `| **V.A.E**       | V.A.E values                                                                             |
+| --------------- | ---------------------------------------------------------------------------------------- |
+| verb            | add                                                                                      |
+| application     | when this commit is applied, it will _add_ \`<scope> - <title>\`                           |
+| example         | new(narwhal): a swiss army knife for docker                                              |
+| example applied | when this commit is applied, it will _add_ \`narwhal\` - **a swiss army knife for docker** |`],
+            ];
+            cases.Each(([a, e]: [string, string]) => {
+                const act = parser.generateVaeDocs(a);
+                expect(act.isOk()).toBe(true);
+                expect(act.unwrap()).toBe(e);
+            });
+        });
+
+
+        it("should return error result if vae does not exist", function () {
+            const act = parser.generateVaeDocs("random");
+            expect(act.isOk()).toBe(false);
+            expect(act.unwrapErr()).toBe("cannot find type entry: random");
+        });
+
+
+        it("return empty string if no vae is specified", function () {
+            const cases: [string, string][] = [
+                ["update", ""],
+                ["remove", ""],
+            ];
+
+            cases.Each(([a, e]: [string, string]) => {
+                const act = parser.generateVaeDocs(a);
+                expect(act.isOk()).toBe(true);
+                expect(act.unwrap()).toBe(e);
+            });
+
         });
     });
 });

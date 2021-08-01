@@ -29,6 +29,7 @@
     "chalk": "^4.1.1",
     "color": "^3.2.1",
     "commander": "^8.1.0",
+    "conventional-commits-parser": "^3.2.1",
     "execa": "^5.1.1",
     "fast-glob": "^3.2.7",
     "favicons": "^6.2.2",
@@ -45,6 +46,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.14.8",
     "@types/color": "^3.0.2",
+    "@types/conventional-commits-parser": "^3.0.2",
     "@types/favicons": "^6.2.2",
     "@types/glob": "^7.1.4",
     "@types/jest": "^26.0.24",

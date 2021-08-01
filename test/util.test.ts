@@ -4,7 +4,7 @@ import {
     Wrap,
     ResultTupleAll,
     PromiseResultTupleAll,
-    PadRight
+    PadRight, WrapAsError
 } from "../src/classLibrary/util";
 import {Err, None, Ok, Result, Some} from "@hqoss/monads";
 import {PromiseResult} from "../src/classLibrary/resultUtil";
@@ -44,6 +44,34 @@ describe("PadRight", () => {
         });
     });
 });
+
+describe("WrapAsError", () => {
+    const a: { [s: string]: string } = {
+        "goodbye": "hello",
+    };
+    it("should wrap null into None", () => {
+        const a: string | null = null;
+        const act = WrapAsError("this is an error", a);
+        expect(act.isOk()).toBe(false);
+        expect(act.unwrapErr()).toBe("this is an error");
+    });
+
+    it("should wrap undefined into None", () => {
+
+        const act = WrapAsError(new Error("some error"), a["hello"]);
+
+        expect(act.isOk()).toBe(false);
+        expect(act.unwrapErr()).toEqual(new Error("some error"));
+    });
+
+    it("should wrap existing into Some", () => {
+        const act = WrapAsError({a:false, b: [1,2,3], c: {error: "this is an error"}}, a["goodbye"]);
+
+        expect(act.isOk()).toBe(true);
+        expect(act.unwrap()).toBe("hello");
+    });
+});
+
 
 describe("Wrap", () => {
     const a: { [s: string]: string } = {

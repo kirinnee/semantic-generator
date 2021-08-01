@@ -9,6 +9,13 @@ function Wrap<T>(s?: T | null): Option<T> {
     }
 }
 
+function WrapAsError<T, E>(err: E, s?: T | null): Result<T, E> {
+    return Wrap(s).match({
+        none: (): Result<T, E> => Err(err),
+        some: (some: T): Result<T, E> => Ok(some),
+    });
+}
+
 
 function OptionAllNone<T>(o: Option<T>[]): Option<T[]> {
     const some: T[] = [];
@@ -91,4 +98,5 @@ export {
     ResultTupleAll,
     PromiseResultTupleAll,
     PadRight,
+    WrapAsError,
 };
