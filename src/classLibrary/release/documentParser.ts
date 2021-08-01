@@ -2,7 +2,7 @@ import {ReleaseConfiguration, Vae} from "./configuration";
 import {Core} from "@kirinnee/core";
 import {MarkdownTable} from "../../markdown-table";
 import {Ok, Result} from "@hqoss/monads";
-import {Wrap, WrapAsError} from "../util";
+import {ResultTupleAll, Wrap, WrapAsError} from "../util";
 import conventionalCommitsParser from "conventional-commits-parser";
 import {ToMap} from "./toMap";
 
@@ -67,23 +67,31 @@ class CommitConventionDocumentParser {
     }
 
     generateSpecialScopes(): string {
-        return  Wrap(this.rc.specialScopes).match({
+        return Wrap(this.rc.specialScopes).match({
             none: () => "no special scopes",
             some: (s) =>
                 this.mdt.Render([
                     ["Scope", "Description", "Bump"]
                     ,
-                    ...ToMap(s).Map( (k,v)=> [
+                    ...ToMap(s).Map((k, v) => [
                         `\`${k}\``,
                         v.desc,
                         `\`${v.release || "nil"}\``,
-                    ] as [string,string,string])
+                    ] as [string, string, string])
                 ]).unwrap()
         });
     }
 
-    generateType(t: string): Result<string, string> {
-        return Ok("");
+    generateType(t: string): Result<string, string[]> {
+        return ResultTupleAll(
+            WrapAsError(`cannot find type entry: ${t}`, this.rc.types.Find(x => x.type == t)),
+            this.generateVaeDocs(t),
+            this.generateScopeDocs(t),
+        ).map(([type, vae, scope]) => [type, vae === "" ? "" : "\n\n" + vae, "\n\n" + scope] as [typeof type, string, string])
+            .map(([type, vae, scope]) =>
+                `## ${type.type}
+
+${type.desc}${vae}${scope}`);
     }
 
     preamble(): string {

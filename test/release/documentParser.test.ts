@@ -109,7 +109,7 @@ var___convention_docs___
                 desc: "Removes an existing package",
                 scopes: {
                     default: {
-                        desc: "Update a package's version",
+                        desc: "Removes an existing package",
                         release: "major",
                     },
                 }
@@ -119,7 +119,7 @@ var___convention_docs___
                 desc: "Add documentation",
                 section: "Documentation Updates",
                 vae: {
-                    verb: "documents",
+                    verb: "document",
                     application: "<title>",
                     example: "docs(pkg): new features added in narwhal v0.14.0",
                 },
@@ -410,7 +410,7 @@ This page will document the types and scopes used.`;
 
     describe("generateSpecialScopes", () => {
         it("should generate special scope table indicating the description and bump", function () {
-            const cases:  [CommitConventionDocumentParser, string][] = [
+            const cases: [CommitConventionDocumentParser, string][] = [
                 [parser, `| Scope        | Description     | Bump  |
 | ------------ | --------------- | ----- |
 | \`no-release\` | Prevent release | \`nil\` |`],
@@ -432,8 +432,69 @@ This page will document the types and scopes used.`;
 
         });
 
-        it("should return \"no special scopes\" if there isn't any special scopes" , function () {
+        it("should return \"no special scopes\" if there isn't any special scopes", function () {
             expect(parser4.generateSpecialScopes()).toBe("no special scopes");
+        });
+    });
+
+    describe("generateType", () => {
+        it("should generate type documentation with vae and scope", function () {
+            const cases: [string,string][] = [
+                ["update", `## update
+
+Update a package's version
+
+| **V.A.E**       | V.A.E values                                                                        |
+| --------------- | ----------------------------------------------------------------------------------- |
+| verb            | update                                                                              |
+| application     | when this commit is applied, it will _update_ \`<scope> <title>\`                     |
+| example         | update(narwhal): from v0.13.1 to v0.14.0                                            |
+| example applied | when this commit is applied, it will _update_ \`narwhal\` **from v0.13.1 to v0.14.0** |
+
+| Scope   | Description                | Bump    |
+| ------- | -------------------------- | ------- |
+| default | Update a package's version | \`major\` |`],
+                ["remove", `## remove
+
+Removes an existing package
+
+| Scope   | Description                 | Bump    |
+| ------- | --------------------------- | ------- |
+| default | Removes an existing package | \`major\` |`],
+                ["docs", `## docs
+
+Add documentation
+
+| **V.A.E**       | V.A.E values                                                                              |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| verb            | document                                                                                  |
+| application     | when this commit is applied, it will _document_ \`<title>\`                                 |
+| example         | docs(pkg): new features added in narwhal v0.14.0                                          |
+| example applied | when this commit is applied, it will _document_ **new features added in narwhal v0.14.0** |
+
+| Scope   | Description                                                        | Bump  |
+| ------- | ------------------------------------------------------------------ | ----- |
+| default | Adds a generic documentation not related to \`dev\`, \`pkg\` or \`user\` | \`nil\` |
+| \`user\`  | User-side documentation                                            | \`nil\` |
+| \`dev\`   | Documentation for contributing processes                           | \`nil\` |
+| \`pkg\`   | Documentation for packages                                         | \`nil\` |`]
+            ];
+
+            cases.Each(([a,e]) => {
+                const act = parser.generateType(a);
+                expect(act.isOk()).toBe(true);
+                expect(act.unwrap()).toBe(e);
+            });
+        });
+
+        it("should fail if type does not exist", function () {
+            const act = parser.generateType("random");
+            expect(act.isOk()).toBe(false);
+            expect(act.unwrapErr()).toEqual([
+                "cannot find type entry: random",
+                "cannot find type entry: random",
+                "cannot find type entry: random"
+            ]);
         });
     });
 });
