@@ -5,6 +5,7 @@ import {program} from "commander";
 import * as process from "process";
 import {DocController} from "./controllers/doc-controller";
 import {ReleaseController} from "./controllers/release-controller";
+import {GitlintController} from "./controllers/gitlint-controller";
 
 const core: Core = new Kore();
 core.ExtendPrimitives();
@@ -30,5 +31,8 @@ DocController(core, docs);
 
 const release = program.command("release");
 ReleaseController(core, release);
+
+const gitlint = program.command("gitlint");
+GitlintController(core, gitlint);
 
 program.parse(process.argv);
