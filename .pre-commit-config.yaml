@@ -1,0 +1,67 @@
+repos:
+  #  - repo: https://github.com/jorisroovers/gitlint
+  #    rev: v0.15.1
+  #    hooks:
+  #      - id: gitlint
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: mixed-line-ending
+  - repo: https://github.com/jumanjihouse/pre-commit-hooks
+    rev: 2.1.5
+    hooks:
+      - id: shfmt
+      - id: shellcheck
+  - repo: local
+    hooks:
+      - id: eslint
+        name: Fix ES Lint
+        entry: pls lint:fix
+        files: ^.*\.(ts|js)$
+        pass_filenames: false
+        language: system
+
+      - id: coverage
+        name: Test and Coverage
+        entry: pls cover
+        files: ^.*\.(ts|js)$
+        pass_filenames: false
+        language: system
+
+      - id: build
+        name: Build
+        entry: pls build
+        files: ^.*\.(ts|js)$
+        pass_filenames: false
+        language: system
+
+      - id: json-fmt
+        name: Format JSON with prettier
+        entry: pls fmt:json
+        files: ^.*\.json$
+        pass_filenames: false
+        language: system
+
+      - id: yaml-fmt
+        name: Format YAML with prettier
+        entry: pls fmt:yaml
+        files: ^.*\.(yaml|yml)$
+        pass_filenames: false
+        language: system
+
+      - id: md-fmt
+        name: Format Markdown with prettier
+        entry: pls fmt:md
+        files: ^.*\.(MD|md)$
+        pass_filenames: false
+        language: system
+
+      - id: nixpkgs-fmt
+        name: Format NIX files
+        entry: pls fmt:nix
+        files: ^.*\.nix$
+        language: system
+        pass_filenames: false

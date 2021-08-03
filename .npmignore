@@ -7,4 +7,5 @@ obj/
 script.js
 tsconfig.json
 .idea/
-
+target
+tmp

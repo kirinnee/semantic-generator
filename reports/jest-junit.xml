@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="20" failures="0" errors="0" time="4.462">
+  <testsuite name="test/engine/writer.test.ts" errors="0" failures="0" skipped="0" timestamp="2021-07-05T03:04:35" time="3.593" tests="3">
+    <testcase classname="BasicWriter" name="should write File objects" time="0.001">
+    </testcase>
+    <testcase classname="BasicWriter" name="should write FaviconImages" time="0.001">
+    </testcase>
+    <testcase classname="BasicWriter" name="should write FaviconFiles" time="0.01">
+    </testcase>
+  </testsuite>
+  <testsuite name="test/docs/color.test.ts" errors="0" failures="0" skipped="0" timestamp="2021-07-05T03:04:35" time="3.623" tests="1">
+    <testcase classname="Color Theme generator" name="should generate 7 colors from a single color" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="test/util.test.ts" errors="0" failures="0" skipped="0" timestamp="2021-07-05T03:04:35" time="3.676" tests="5">
+    <testcase classname="Wrap" name="should wrap null into None" time="0.015">
+    </testcase>
+    <testcase classname="Wrap" name="should wrap undefined into None" time="0.053">
+    </testcase>
+    <testcase classname="Wrap" name="should wrap existing into Some" time="0.002">
+    </testcase>
+    <testcase classname="ResolveCollection" name="should be successful is all results are successful" time="0.002">
+    </testcase>
+    <testcase classname="ResolveCollection" name="should be fail if one result is unsuccessful" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="test/engine/varResolver.test.ts" errors="0" failures="0" skipped="0" timestamp="2021-07-05T03:04:35" time="3.753" tests="2">
+    <testcase classname="var resolver › resolve meta" name="should replace all variables" time="0.005">
+    </testcase>
+    <testcase classname="var resolver › resolve content" name="should replace all variables" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="test/engine/flagResolver.test.ts" errors="0" failures="0" skipped="0" timestamp="2021-07-05T03:04:35" time="3.793" tests="2">
+    <testcase classname="flag resolver › resolve meta" name="should remove any metadata that contains a false flag" time="0.004">
+    </testcase>
+    <testcase classname="flag resolver › resolve content" name="should remove all flags and remove lines with false flag" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="test/engine/readfile.test.ts" errors="0" failures="0" skipped="0" timestamp="2021-07-05T03:04:35" time="3.861" tests="5">
+    <testcase classname="Read File" name="should fail when file does not exist" time="0.004">
+    </testcase>
+    <testcase classname="Read File" name="should return binary if file is a binary" time="0.001">
+    </testcase>
+    <testcase classname="Read File" name="should return string content if file is string" time="0.001">
+    </testcase>
+    <testcase classname="Read Binary" name="should read binary if it exist" time="0.001">
+    </testcase>
+    <testcase classname="Read Binary" name="should fail when binary does not exist" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="test/engine/fsFactory.test.ts" errors="0" failures="0" skipped="0" timestamp="2021-07-05T03:04:35" time="3.892" tests="2">
+    <testcase classname="Basic File Factory › Scan" name="should glob relative and absolute path from CWD" time="0.006">
+    </testcase>
+    <testcase classname="Basic File Factory › Read" name="should read filesMetaData into VFS" time="0.004">
+    </testcase>
+  </testsuite>
+</testsuites>

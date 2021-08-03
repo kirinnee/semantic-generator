@@ -1,0 +1,139 @@
+version: "3"
+
+env:
+  jest: ./node_modules/.bin/jest
+  tsc: ./node_modules/.bin/tsc
+  eslint: ./node_modules/.bin/eslint
+
+includes:
+  ci: ./scripts/ci/ci.Taskfile.yaml
+
+tasks:
+  setup:
+    desc: install node modules
+    cmds:
+      - pnpm install
+      - pre-commit install --install-hooks
+      - pre-commit install -t commit-msg
+      - sd  '^(\s*)<property name="nodejs_interpreter_path" value=".*" />(\s*)$' "$1<property name=\"nodejs_interpreter_path\" value=\"$(which node)\" />$2" .idea/workspace.xml || true
+
+  isolate:
+    desc: Isolate the code in an emulated ubuntu 20.04 environment (within docker)
+    cmds:
+      - ./scripts/isolate.sh {{.CLI_ARGS}}
+
+  clean:
+    desc: Clean coverage and build, and docs testing generated files
+    cmds:
+      - task: clean:coverage
+      - task: clean:build
+      - task: clean:docs
+
+  clean:coverage:
+    desc: Remove test coverage
+    cmds:
+      - rm -rf coverage
+
+  clean:build:
+    desc: Remove build artifact, dist folder
+    cmds:
+      - rm -rf dist
+  clean:docs:
+    desc: Remove documents generation command's generated folders - `tmp` and `target`
+    cmds:
+      - rm -rf tmp
+      - rm -rf target
+
+  try:docs:build:
+    desc: Try documentation building feature. Runs <cli> docs build -k -t ./tmp sample_docs target
+    cmds:
+      - node ./dist/semantic-generator docs build -k -t ./tmp sample_docs target
+
+  try:docs:host:
+    desc: Try hosting the documentation site
+    cmds:
+      - pnpx -y http-server -p 9090 ./target
+
+  build:
+    deps:
+      - clean:build
+    desc: Builds the project
+    cmds:
+      - $tsc
+      - sd var___INJECT_VERSION___ $(cat package.json | jq .version | sd \" '') dist/semantic-generator.js
+  dev:
+    desc: Watches for changes and constantly rebuild the dist folder
+    cmds:
+      - $tsc --watch
+
+  test:
+    desc: Runs unit tests
+    cmds:
+      - $jest
+
+  test:w:
+    desc: Runs and watches unit tests
+    cmds:
+      - $jest --watch
+
+  cover:
+    deps:
+      - clean:coverage
+    desc: Get test coverage
+    cmds:
+      - $jest --collect-coverage
+
+  run:
+    desc: Runs the CLI
+    cmds:
+      - node ./dist/semantic-generator {{.CLI_ARGS}}
+
+  lint:
+    desc: Lints all Javascript and Typescript files
+    cmds:
+      - $eslint .
+
+  lint:fix:
+    desc: Fix all Typescript and Javascript files
+    cmds:
+      - $eslint --fix .
+
+  fmt:
+    desc: Run all formatting supported.
+    ignore_error: true
+    summary: |
+      Runs all formatting supported.
+      1. Runs fmt:md, which formats all Markdown using prettier
+      2. Runs fmt:yaml, which formats all YAML using prettier
+      3. Runs fmt:json, which formats all JSON using prettier
+      5. Runs fmt:nix, which formats all Nix files with nixpkgs-fmt
+    cmds:
+      - task: fmt:md
+      - task: fmt:yaml
+      - task: fmt:json
+      - task: fmt:nix
+
+  fmt:json:
+    ignore_error: true
+    desc: Format JSON files
+    cmds:
+      - prettier -w "**/*.json"
+
+  fmt:md:
+    ignore_error: true
+    desc: Formats Markdown with prettier
+    cmds:
+      - prettier -w "**/*.MD"
+
+  fmt:yaml:
+    ignore_error: true
+    desc: Formats YAML with prettier
+    cmds:
+      - prettier -w "**/*.yaml"
+      - prettier -w "**/*.yml"
+
+  fmt:nix:
+    ignore_error: true
+    desc: Formats Nix files
+    cmds:
+      - nixpkgs-fmt .

@@ -1,33 +1,49 @@
-# Semantic Generator
+<p align="center">
+    <img src="sample/b/logo.png" width="100px" height="100px" />
+</p>
 
-Semantic Release configuration generator for conventional commits
+<h1 align="center">Semantic Generator</h1>
 
-# Getting Started
+<p align="center">Generate basic documentation, conventional commit configurations and semantic release configurations</p>
 
-Install via NPM 
+<p align="center">
+    <a href="https://github.com/kirinnee/semantic-generator/actions"><img src="https://github.com/kirinnee/semantic-generator/actions/workflows/ci.yaml/badge.svg"/></a>
+    <a href="https://github.com/kirinnee/semantic-generator/blob/master/LICENSE.MDactions"><img src="https://img.shields.io/github/license/kirinnee/semantic-generator"/></a>
+</p>
+
+# Quick Start
+
+Install via NPM
+
 ```bash
-$ npm i @kirinnee/semantic-generator -g
+npm i @kirinnee/semantic-generator -g
 ```
 
 or via Yarn
-```bash
-$ yarn global add @kirinnee/semantic-generator
-```
-
-Execute the help command 
 
 ```bash
-$ semantic-generator --help
+yarn global add @kirinnee/semantic-generator
 ```
 
-## Contributing
-Please read [CONTRIBUTING.md](CONTRIBUTING.MD) for details on our code of conduct, and the process for submitting pull requests to us.
+Execute the help command
 
-## Versioning 
+```bash
+semantic-generator --help
+```
+
+# Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.MD) for details on our code of conduct, and the process for submitting pull
+requests to us.
+
+# Versioning
+
 We use [SemVer](https://semver.org/) for versioning. For the versions available, see the tags on this repository.
 
-## Authors
-* [kirinnee](mailto:kirinnee97@gmail.com) 
+# Authors
 
-## License
+- [kirinnee](mailto:kirinnee97@gmail.com)
+
+# License
+
 This project is licensed under MIT - see the [LICENSE.md](LICENSE.MD) file for details

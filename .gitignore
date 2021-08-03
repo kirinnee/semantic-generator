@@ -2,8 +2,11 @@ node_modules/
 .nyc_output/
 coverage/
 .idea/*
-!.idea/runConfigurations
 !.idea/*.iml
 !.idea/*.xml
 .idea/workspace.xml
-.idea/vsc.xml
+.idea/vcs.xml
+binary_cache
+target
+tmp
+dist

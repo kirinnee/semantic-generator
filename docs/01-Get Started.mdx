@@ -1,0 +1,24 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+    defaultValue="npm"
+    values={[
+        {label: 'NPM', value: 'npm',},
+        {label: 'Yarn', value: 'yarn',},
+        {label: 'Nix', value: 'nix',},
+    ]}>
+
+    <TabItem value="npm">
+        ```bash
+        npm i -g @kirinnee/semantic-generator
+        ```
+    </TabItem>
+
+    <TabItem value="yarn">
+        ```bash
+        yarn global add @kirinnee/semantic-generator
+        ```
+    </TabItem>
+
+</Tabs>

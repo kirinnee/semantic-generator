@@ -1,0 +1,110 @@
+/* stylelint-disable docusaurus/copyright-header */
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+@import url('https://fonts.googleapis.com/css2?family=Raleway&family=Source+Code+Pro&display=swap');
+
+:root {
+    --ifm-color-primary: var___colorPrimary___;
+    --ifm-color-primary-dark: var___colorPrimaryDark___;
+    --ifm-color-primary-darker: var___colorPrimaryDarker___;
+    --ifm-color-primary-darkest: var___colorPrimaryDarkest___;
+    --ifm-color-primary-light: var___colorPrimaryLight___;
+    --ifm-color-primary-lighter: var___colorPrimaryLighter___;
+    --ifm-color-primary-lightest: var___colorPrimaryLightest___;
+    --ifm-code-font-size: 95%;
+    --ifm-font-family-base: 'Raleway', sans-serif;
+    --ifm-font-family-monospace: 'Source Code Pro', monospace;
+
+}
+
+.docusaurus-highlight-code-line {
+    background-color: rgba(0, 0, 0, 0.1);
+    display: block;
+    margin: 0 calc(-1 * var(--ifm-pre-padding));
+    padding: 0 var(--ifm-pre-padding);
+}
+
+
+html[data-theme='dark'] .docusaurus-highlight-code-line {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+
+p.hint.tip,
+p.hint.error,
+p.hint.warn {
+    letter-spacing: 0;
+    box-sizing: border-box;
+    font-size: inherit;
+    line-height: 1.6rem;
+    word-spacing: 0.05rem;
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+    padding: 8px 12px 8px 24px;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+p.hint.error {
+    background-color: #ef4e4e57;
+}
+
+p.hint.warn {
+    background-color: #f0b42957;
+}
+
+p.hint.tip {
+    background-color: #27ab8357;
+}
+
+/* html[data-theme='dark'] p.hint.tip,
+html[data-theme='dark'] p.hint.error,
+html[data-theme='dark'] p.hint.warn {
+  background-color: rgb(40, 42, 54);
+} */
+
+p.hint.tip:before,
+p.hint.error:before,
+p.hint.warn:before {
+    border-radius: 100%;
+    color: #fff;
+    content: '!';
+    font-size: 14px;
+    font-weight: 700;
+    left: -12px;
+    line-height: 20px;
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+    top: calc(50% - 12px);
+}
+
+p.hint.tip {
+    border-left: 4px solid #27ab83;
+}
+
+p.hint.tip:before {
+    background-color: #27ab83;
+}
+
+p.hint.warn {
+    border-left: 4px solid #f0b429;
+}
+
+p.hint.warn:before {
+    background-color: #f0b429;
+}
+
+p.hint.error {
+    border-left: 4px solid #ef4e4e;
+}
+
+p.hint.error:before {
+    background-color: #ef4e4e;
+}

@@ -1,28 +1,38 @@
-import {Core, Kore} from "@kirinnee/core"; 
-import {Shape} from "./classLibrary/Shape";
-import {Rectangle} from "./classLibrary/Rectangle";
-import program from "commander"; 
-import chalk from "chalk";  
+#!/usr/bin/env node
 
-let core:Core = new Kore();
+import {Core, Kore} from "@kirinnee/core";
+import {program} from "commander";
+import * as process from "process";
+import {DocController} from "./controllers/doc-controller";
+import {ReleaseController} from "./controllers/release-controller";
+import {GitlintController} from "./controllers/gitlint-controller";
+
+const core: Core = new Kore();
 core.ExtendPrimitives();
 
+program.on("command:*", function () {
+    console.error(
+        "Invalid command: %s\nSee --help for a list of available commands.",
+        program.args.join(" ")
+    );
+    process.exit(1);
+});
 
 program
-	.version("0.0.1")
-	.description("Semantic Release configuration generator for conventional commits");
+    .name("Semantic Generator")
+    .version("var___INJECT_VERSION___")
+    .description(
+        "Semantic Release configuration generator for conventional commits"
+    );
+
+
+const docs = program.command("docs");
+DocController(core, docs);
+
+const release = program.command("release");
+ReleaseController(core, release);
+
+const gitlint = program.command("gitlint");
+GitlintController(core, gitlint);
 
 program.parse(process.argv);
-
-let rect: Shape = new Rectangle(5,12);
-
-let info:string = rect.area + " : " + rect.parameter();
-print = chalk.cyan(info); 
-console.log(info);
-
-Program().then();
-
-async function Program(){
-	
-	console.log("End of program~");
-}
