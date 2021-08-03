@@ -22,6 +22,7 @@ export function ReleaseController(core: Core, c: Command): void {
         .option("-c, --config <cfg>", "path to configuration. default: atomi_docs.yaml")
         .option("-i, --installer <installer>", "Type of installer to use. default: try all. possible values: npm, yarn, pnpm")
         .action(async function (opts: { [s: string]: string }) {
+            let error = false;
             try {
                 const cwd = path.resolve(".");
                 const configPath = Wrap(opts.config);
@@ -39,13 +40,17 @@ export function ReleaseController(core: Core, c: Command): void {
                 const r = await reader.Read(configPath)
                     .andThenAsync(async c => releaser.Release(c)).promise;
                 r.match({
-                    err: (e) => e.Map(w => console.warn(w)),
+                    err: (e) => {
+                        e.Map(w => console.warn(w));
+                        error = true;
+                    },
                     ok: () => console.log("Successfully released!")
                 });
 
             } catch (err) {
                 console.warn(err);
             }
+            if (error) process.exit(1);
         });
 
 }

@@ -49,7 +49,7 @@ export function DocController(core: Core, c: Command): void {
                     },
                 }
             );
-
+            let error = false;
             const keepTemp = opts.keepTmp;
             try {
                 const configPath = Wrap(opts.config);
@@ -80,13 +80,17 @@ export function DocController(core: Core, c: Command): void {
                     .promise;
 
                 configResult.match({
-                    err: (e) => console.warn(...e),
+                    err: (e) => {
+                        console.warn(...e);
+                        error = true;
+                    },
                     ok: (o) => console.log(o),
                 });
             } catch (err) {
                 console.warn(err);
             } finally {
                 if (!keepTemp) rimraf.sync(tmpPath);
+                if (error) process.exit(1);
             }
 
 
@@ -109,7 +113,7 @@ export function DocController(core: Core, c: Command): void {
                     },
                 }
             );
-
+            let error = false;
             const keepTemp = opts.keepTmp;
             try {
 
@@ -141,13 +145,19 @@ export function DocController(core: Core, c: Command): void {
                     .promise;
 
                 configResult.match({
-                    err: (e) => console.warn(...e),
+                    err: (e) => {
+                        console.warn(...e);
+                        error = true;
+                    },
                     ok: (o) => console.log(o),
                 });
             } catch (err) {
                 console.warn(err);
             } finally {
                 if (!keepTemp) rimraf.sync(tmpPath);
+                if (error) {
+                    process.exit(1);
+                }
             }
         });
 }
