@@ -33,8 +33,8 @@ repos:
 
       - id: build
         name: Build
-        entry: pls build -- 0.1.0
-        files: ^.*$
+        entry: pls build
+        files: ^.*\.(ts|js)$
         pass_filenames: false
         language: system
 

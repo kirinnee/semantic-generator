@@ -22,6 +22,7 @@ let pkgs = {
       bash
       sd
       gnugrep
+      jq
     ]
   );
   "nix Unstable 30th July 2021" = (

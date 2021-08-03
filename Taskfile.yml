@@ -60,8 +60,7 @@ tasks:
     desc: Builds the project
     cmds:
       - $tsc
-      - sd var___INJECT_VERSION___ {{.CLI_ARGS}} dist/semantic-generator.js
-
+      - sd var___INJECT_VERSION___ $(cat package.json | jq .version | sd \" '') dist/semantic-generator.js
   dev:
     desc: Watches for changes and constantly rebuild the dist folder
     cmds:
