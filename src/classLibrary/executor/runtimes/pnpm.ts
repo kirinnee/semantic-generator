@@ -81,7 +81,7 @@ class Pnpm implements Runtime {
         const parent = this;
         return PR(async (): Promise<Result<Runtime, string[]>> => {
             try {
-                const installStream = execa("semantic-release", [], {cwd});
+                const installStream = execa(`${this.GlobalFolder()}/semantic-release`, [], {cwd});
                 installStream.stdout.pipe(process.stdout);
                 await installStream;
                 return Ok(parent);
@@ -91,6 +91,9 @@ class Pnpm implements Runtime {
         });
     }
 
+    GlobalFolder(): string {
+        return execa.sync("pnpm", ["bin", "-g"]).stdout.toString();
+    }
 
 }
 

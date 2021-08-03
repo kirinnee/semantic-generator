@@ -13,7 +13,7 @@ class ReleaseExecutor {
     private readonly docParser: CommitConventionDocumentParser;
     private readonly releaseParser: ReleaseParser;
     private readonly writer: Writer;
-    private readonly exectuor: Executor;
+    private readonly executor: Executor;
     private readonly target: string;
 
     async Release(config: ReleaseConfiguration): Promise<Result<Runtime, string[]>> {
@@ -40,7 +40,7 @@ class ReleaseExecutor {
             IWritable.File(releaseRc),
         ]);
         return await r.match({
-            none: () => this.exectuor.Release(this.target, [
+            none: () => this.executor.Release(this.target, [
                 "semantic-release",
                 "@semantic-release/commit-analyzer",
                 "@semantic-release/release-notes-generator",
@@ -57,7 +57,7 @@ class ReleaseExecutor {
         this.docParser = docParser;
         this.releaseParser = releaseParser;
         this.writer = writer;
-        this.exectuor = exectuor;
+        this.executor = exectuor;
         this.target = target;
     }
 

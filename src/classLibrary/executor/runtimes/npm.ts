@@ -5,6 +5,11 @@ import {Installer, Runtime} from "../executor";
 
 class Npm implements Runtime {
 
+    Key: Installer = "npm";
+
+    GlobalFolder(): string {
+        return execa.sync("npm", ["bin", "-g"]).stdout.toString();
+    }
 
     Install(cwd: string): PromiseResult<Runtime, string[]> {
         const parent = this;
@@ -59,8 +64,6 @@ class Npm implements Runtime {
         });
     }
 
-    Key: Installer = "npm";
-
     GlobalInstall(cwd: string, packages: string[]): PromiseResult<Runtime, string[]> {
         const parent = this;
         return PR(async (): Promise<Result<Runtime, string[]>> => {
@@ -75,11 +78,12 @@ class Npm implements Runtime {
         });
     }
 
+
     Release(cwd: string): PromiseResult<Runtime, string[]> {
         const parent = this;
         return PR(async (): Promise<Result<Runtime, string[]>> => {
             try {
-                const installStream = execa("semantic-release", [], {cwd});
+                const installStream = execa(`${this.GlobalFolder()}/semantic-release`, [], {cwd});
                 installStream.stdout.pipe(process.stdout);
                 await installStream;
                 return Ok(parent);

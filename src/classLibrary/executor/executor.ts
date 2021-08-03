@@ -20,6 +20,8 @@ interface Runtime {
 
     Release(cwd: string): PromiseResult<Runtime, string[]>
 
+    GlobalFolder(): string;
+
     Check(): Promise<boolean>;
 }
 

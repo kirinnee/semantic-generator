@@ -5,6 +5,8 @@ import {Installer, Runtime} from "../executor";
 
 class Yarn implements Runtime {
 
+    Key: Installer = "yarn";
+
     Install(cwd: string): PromiseResult<Runtime, string[]> {
         const parent: Runtime = this;
         return PR(async (): Promise<Result<Runtime, string[]>> => {
@@ -75,7 +77,7 @@ class Yarn implements Runtime {
         const parent = this;
         return PR(async (): Promise<Result<Runtime, string[]>> => {
             try {
-                const installStream = execa("semantic-release", [], {cwd});
+                const installStream = execa(`${this.GlobalFolder()}/semantic-release`, [], {cwd});
                 installStream.stdout.pipe(process.stdout);
                 await installStream;
                 return Ok(parent);
@@ -85,7 +87,10 @@ class Yarn implements Runtime {
         });
     }
 
-    Key: Installer = "yarn";
+
+    GlobalFolder(): string {
+        return execa.sync("yarn", ["global", "bin"]).stdout.toString();
+    }
 }
 
 export {Yarn};
