@@ -41,12 +41,13 @@ class ReleaseExecutor {
         ]);
         return await r.match({
             none: () => this.exectuor.Release(this.target, [
+                "semantic-release",
                 "@semantic-release/commit-analyzer",
                 "@semantic-release/release-notes-generator",
                 ...(config.plugins?.Map(x => x.module) ?? [])
             ]),
             some: (s: string[]): PromiseResult<Runtime, string[]> => new PromiseResult(
-                Promise.resolve<Result<Runtime,string[]>>(Err(s))
+                Promise.resolve<Result<Runtime, string[]>>(Err(s))
             ),
         }).promise;
 
