@@ -310,8 +310,7 @@ var___convention_docs___
         ]
     };
 
-    const parser = new ReleaseParser(configuration, core);
-    const parser2 = new ReleaseParser(configuration2, core);
+    const parser = new ReleaseParser(core);
 
     describe("parseReleaseRules", function () {
         it("should parse types in atomi config into release rules", function () {
@@ -414,7 +413,7 @@ var___convention_docs___
                 }
             ];
 
-            const act = parser.parseReleaseRules();
+            const act = parser.parseReleaseRules(configuration);
 
             expect(act).toEqual(ex);
 
@@ -464,7 +463,7 @@ var___convention_docs___
                 ]
             };
 
-            const act = parser.parsePresetConfig();
+            const act = parser.parsePresetConfig(configuration);
             expect(act).toEqual(ex);
         });
     });
@@ -679,7 +678,7 @@ var___convention_docs___
                 }
             ];
 
-            const act = parser.generateDefaultPlugins();
+            const act = parser.generateDefaultPlugins(configuration);
 
             expect(act).toEqual(ex);
 
@@ -914,7 +913,7 @@ var___convention_docs___
                     "@semantic-release/github"
                 ]
             };
-            const act1 = parser.GenerateReleaseRc();
+            const act1 = parser.GenerateReleaseRc(configuration);
 
             expect(act1).toEqual(ex1);
             const ex2: ReleaseRc = {
@@ -972,7 +971,7 @@ var___convention_docs___
                     ],
                 ]
             };
-            const act2 = parser2.GenerateReleaseRc();
+            const act2 = parser.GenerateReleaseRc(configuration2);
             expect(act2).toEqual(ex2);
         });
 

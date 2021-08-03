@@ -5,30 +5,32 @@ import {Ok, Result} from "@hqoss/monads";
 import {ResultAll, ResultTupleAll, Wrap, WrapAsError} from "../util";
 import conventionalCommitsParser from "conventional-commits-parser";
 import {ToMap} from "./toMap";
+import {Resolver} from "../engine/resolver";
+import {Content} from "../engine/vfs";
 
 class CommitConventionDocumentParser {
 
-    private readonly rc: ReleaseConfiguration;
     private readonly mdt: MarkdownTable;
+    private readonly varResolver: Resolver;
 
-    constructor(rc: ReleaseConfiguration, mdt: MarkdownTable, core: Core) {
-        this.rc = rc;
+    constructor(varResolver: Resolver, mdt: MarkdownTable, core: Core) {
         this.mdt = mdt;
+        this.varResolver = varResolver;
         core.AssertExtend();
     }
 
-    generateToc(): string {
+    generateToc(rc: ReleaseConfiguration): string {
         const table = this.mdt.Render(
             [
                 ["Type", "Description"],
-                ...this.rc.types.Map(x => [`[${x.type}](#${x.type})`, `${x.desc}`]),
+                ...rc.types.Map(x => [`[${x.type}](#${x.type})`, `${x.desc}`]),
             ]
         ).unwrap();
         return `# Types\n\n${table}\n`;
     }
 
-    generateVaeDocs(t: string): Result<string, string> {
-        return WrapAsError(`cannot find type entry: ${t}`, this.rc.types.Find(x => x.type == t))
+    generateVaeDocs(rc: ReleaseConfiguration, t: string): Result<string, string> {
+        return WrapAsError(`cannot find type entry: ${t}`, rc.types.Find(x => x.type == t))
             .andThen(x => Wrap(x.vae).match({
                 none: () => Ok(""),
                 some: (s: Vae) => {
@@ -52,8 +54,8 @@ class CommitConventionDocumentParser {
             }));
     }
 
-    generateScopeDocs(t: string): Result<string, string> {
-        return WrapAsError(`cannot find type entry: ${t}`, this.rc.types.Find(x => x.type == t))
+    generateScopeDocs(rc: ReleaseConfiguration, t: string): Result<string, string> {
+        return WrapAsError(`cannot find type entry: ${t}`, rc.types.Find(x => x.type == t))
             .andThen(x => this.mdt.Render(
                 [
                     ["Scope", "Description", "Bump"],
@@ -66,8 +68,8 @@ class CommitConventionDocumentParser {
             ));
     }
 
-    generateSpecialScopes(): string {
-        return Wrap(this.rc.specialScopes).match({
+    generateSpecialScopes(rc: ReleaseConfiguration): string {
+        return Wrap(rc.specialScopes).match({
             none: () => "no special scopes",
             some: (s) =>
                 this.mdt.Render([
@@ -82,11 +84,11 @@ class CommitConventionDocumentParser {
         });
     }
 
-    generateType(t: string): Result<string, string[]> {
+    generateType(rc: ReleaseConfiguration, t: string): Result<string, string[]> {
         return ResultTupleAll(
-            WrapAsError(`cannot find type entry: ${t}`, this.rc.types.Find(x => x.type == t)),
-            this.generateVaeDocs(t),
-            this.generateScopeDocs(t),
+            WrapAsError(`cannot find type entry: ${t}`, rc.types.Find(x => x.type == t)),
+            this.generateVaeDocs(rc, t),
+            this.generateScopeDocs(rc, t),
         ).map(([type, vae, scope]) => [type, vae === "" ? "" : "\n\n" + vae, "\n\n" + scope] as [typeof type, string, string])
             .map(([type, vae, scope]) =>
                 `## ${type.type}
@@ -109,24 +111,41 @@ body
 This page will document the types and scopes used.`;
     }
 
-    generateFullDocs(): string {
+    generateFullDocs(rc: ReleaseConfiguration): string {
 
-        const types =  ResultAll(this.rc.types.Map(x => this.generateType(x.type)))
+        const types = ResultAll(rc.types.Map(x => this.generateType(rc, x.type)))
             .unwrap().join("\n\n");
 
         return `${this.preamble()}
 
-${this.generateToc()}
+${this.generateToc(rc)}
 ${types}
 
 # Special Scopes
 
-${this.generateSpecialScopes()}
+${this.generateSpecialScopes(rc)}
 `;
     }
 
-    GenerateDocument(): string {
-        return "";
+    GenerateDocument(rc: ReleaseConfiguration): string {
+        const content = this.varResolver.ResolveContent(
+            {
+                variables: {
+                    convention_docs: this.generateFullDocs(rc),
+                },
+                flags: {},
+            },
+            [
+                {
+                    content: Content.String(rc.conventionMarkdown.template),
+                    meta: {
+                        from: "",
+                        original: "",
+                    },
+                }
+            ]
+        )[0].content;
+        return Wrap(Content.if.String(content, (s) => s)).unwrapOr("");
     }
 }
 

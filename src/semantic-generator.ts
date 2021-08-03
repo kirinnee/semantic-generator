@@ -4,6 +4,7 @@ import {Core, Kore} from "@kirinnee/core";
 import {program} from "commander";
 import * as process from "process";
 import {DocController} from "./controllers/doc-controller";
+import {ReleaseController} from "./controllers/release-controller";
 
 const core: Core = new Kore();
 core.ExtendPrimitives();
@@ -26,5 +27,8 @@ program
 
 const docs = program.command("docs");
 DocController(core, docs);
+
+const release = program.command("release");
+ReleaseController(core, release);
 
 program.parse(process.argv);

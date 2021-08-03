@@ -31,15 +31,13 @@ function PluginToSemanticReleasePlugin(p: Plugin): SemanticReleasePlugin {
 
 
 class ReleaseParser {
-    private readonly rc: ReleaseConfiguration;
 
-    constructor(rc: ReleaseConfiguration, core: Core) {
-        this.rc = rc;
+    constructor(core: Core) {
         core.AssertExtend();
     }
 
-    parseReleaseRules(): ReleaseRule[] {
-        const base = this.rc.types.Map(x => ToMap(x.scopes).Map((k, v) => {
+    parseReleaseRules(rc: ReleaseConfiguration): ReleaseRule[] {
+        const base = rc.types.Map(x => ToMap(x.scopes).Map((k, v) => {
             const typing: ReleaseRule = {
                 type: x.type,
                 release: v.release,
@@ -47,7 +45,7 @@ class ReleaseParser {
             if (k !== "default") typing.scope = k;
             return typing;
         })).flat();
-        const additional: ReleaseRule[] = Wrap(this.rc.specialScopes)
+        const additional: ReleaseRule[] = Wrap(rc.specialScopes)
             .map(m => ToMap(m).Map((k, v) => {
                 return {
                     scope: k,
@@ -57,9 +55,9 @@ class ReleaseParser {
         return [...base, ...additional];
     }
 
-    parsePresetConfig(): PresetConfig {
+    parsePresetConfig(rc: ReleaseConfiguration): PresetConfig {
         return {
-            types: this.rc.types.Map(x => {
+            types: rc.types.Map(x => {
                 if (x.section) {
                     return {
                         type: x.type,
@@ -74,34 +72,34 @@ class ReleaseParser {
         };
     }
 
-    generateDefaultPlugins(): Plugin[] {
+    generateDefaultPlugins(rc: ReleaseConfiguration): Plugin[] {
         return [
             {
                 module: "@semantic-release/commit-analyzer",
                 config: {
                     preset: "conventionalcommits",
-                    parserOpts: this.rc.keywords,
-                    releaseRules: this.parseReleaseRules(),
-                    presetConfig: this.parsePresetConfig(),
+                    parserOpts: rc.keywords,
+                    releaseRules: this.parseReleaseRules(rc),
+                    presetConfig: this.parsePresetConfig(rc),
                 }
             },
             {
                 module: "@semantic-release/release-notes-generator",
                 config: {
                     preset: "conventionalcommits",
-                    parserOpts: this.rc.keywords,
+                    parserOpts: rc.keywords,
                     writerOpts: {commitsSort: ["subject", "scope"]},
-                    presetConfig: this.parsePresetConfig(),
+                    presetConfig: this.parsePresetConfig(rc),
                 }
             }
         ];
     }
 
-    GenerateReleaseRc(): ReleaseRc {
-        const plugins = [...this.generateDefaultPlugins(), ...(this.rc.plugins ?? [])]
+    GenerateReleaseRc(rc: ReleaseConfiguration): ReleaseRc {
+        const plugins = [...this.generateDefaultPlugins(rc), ...(rc.plugins ?? [])]
             .Map(PluginToSemanticReleasePlugin);
         return {
-            branches: this.rc.branches,
+            branches: rc.branches,
             plugins,
         };
     }

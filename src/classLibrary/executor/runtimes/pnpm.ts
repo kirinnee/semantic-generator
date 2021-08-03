@@ -63,6 +63,34 @@ class Pnpm implements Runtime {
         });
     }
 
+    GlobalInstall(cwd: string, packages: string[]): PromiseResult<Runtime, string[]> {
+        const parent = this;
+        return PR(async (): Promise<Result<Runtime, string[]>> => {
+            try {
+                const installStream = execa("pnpm", ["add", "-g", ...packages], {cwd});
+                installStream.stdout.pipe(process.stdout);
+                await installStream;
+                return Ok(parent);
+            } catch (e) {
+                return Err([e.toString()]);
+            }
+        });
+    }
+
+    Release(cwd: string): PromiseResult<Runtime, string[]> {
+        const parent = this;
+        return PR(async (): Promise<Result<Runtime, string[]>> => {
+            try {
+                const installStream = execa("semantic-release", [], {cwd});
+                installStream.stdout.pipe(process.stdout);
+                await installStream;
+                return Ok(parent);
+            } catch (e) {
+                return Err([e.toString()]);
+            }
+        });
+    }
+
 
 }
 

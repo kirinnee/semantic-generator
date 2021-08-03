@@ -151,3 +151,6 @@ export function DocController(core: Core, c: Command): void {
             }
         });
 }
+
+
+export {ToInstaller};

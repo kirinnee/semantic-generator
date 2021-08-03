@@ -16,6 +16,10 @@ interface Runtime {
 
     Version(cwd: string, version: string): PromiseResult<Runtime, string[]>
 
+    GlobalInstall(cwd: string, packages: string[]): PromiseResult<Runtime, string[]>
+
+    Release(cwd: string): PromiseResult<Runtime, string[]>
+
     Check(): Promise<boolean>;
 }
 
@@ -65,6 +69,12 @@ class Executor {
             .andThenAsync(r => r.Install(cwd))
             .andThenAsync(r => r.Build(cwd))
             .map(() => new BasicFileFactory(cwd, this.core).Sub("build"));
+    }
+
+    Release(cwd: string, packages: string[]): PromiseResult<Runtime, string[]> {
+        return this.chooseRuntime()
+            .andThenAsync(r => r.GlobalInstall(cwd, packages))
+            .andThenAsync(r => r.Release(cwd));
     }
 
     constructor(executor: Option<Installer>, core: Core, runtimes: Runtime[]) {
