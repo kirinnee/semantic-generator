@@ -642,8 +642,7 @@ Any chores, uncategorized, or small mistakes (like typos)
 
 | Scope        | Description     | Bump  |
 | ------------ | --------------- | ----- |
-| \`no-release\` | Prevent release | \`nil\` |
-`;
+| \`no-release\` | Prevent release | \`nil\` |`;
 
             const act = parser.generateFullDocs(configuration);
             expect(act).toBe(ex);
@@ -801,7 +800,6 @@ Any chores, uncategorized, or small mistakes (like typos)
 | Scope        | Description     | Bump  |
 | ------------ | --------------- | ----- |
 | \`no-release\` | Prevent release | \`nil\` |
-
 `;
             const act = parser.GenerateDocument(configuration);
             expect(act).toBe(ex);

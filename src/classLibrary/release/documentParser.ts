@@ -123,8 +123,7 @@ ${types}
 
 # Special Scopes
 
-${this.generateSpecialScopes(rc)}
-`;
+${this.generateSpecialScopes(rc)}`;
     }
 
     GenerateDocument(rc: ReleaseConfiguration): string {
