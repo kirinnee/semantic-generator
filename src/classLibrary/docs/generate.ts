@@ -57,6 +57,7 @@ class Generator {
             url: config.url,
             title: config.title,
             sourceFolder,
+            historyFolder: config.historyDir,
         };
 
         if (meta.landing.button) meta.landing.button.to = path.join(sourceFolder, meta.landing.button.to);

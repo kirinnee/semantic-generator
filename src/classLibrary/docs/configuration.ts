@@ -133,6 +133,7 @@ interface MetaConfig {
         postLinks: Link[]
     }
     sourceFolder: string
+    historyFolder: string
 }
 
 export {MetaConfig, InputConfig, Feature, HeadNode, InputConfigValid};

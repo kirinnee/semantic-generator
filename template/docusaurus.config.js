@@ -86,7 +86,24 @@ module.exports = {
                     ],
                     routeBasePath: meta.landing.enable ? `/${meta.sourceFolder}` : '/',
                     sidebarPath: require.resolve('./sidebars.js'),
-                    editUrl: `https://github.com/${meta.github.org}/${meta.github.project}/edit/main${meta.landing.enable ? '' : '/' + meta.sourceFolder}`,
+                    showLastUpdateAuthor: true,
+                    showLastUpdateTime: true,
+                    editUrl: function ({
+                        version,
+                        versionDocsDirPath,
+                        docPath,
+                    }) {
+                        const main = `https://github.com/${meta.github.org}/${meta.github.project}/edit/main`;
+                        if (version === "current") {
+                            const p = `${meta.sourceFolder}/${docPath}`;
+                            console.log(`${main}/${p}`);
+                            return `${main}/${p}`;
+                        }else {
+                            const p = `${meta.sourceFolder}/${meta.historyFolder}/${versionDocsDirPath}/${docPath}`;
+                            console.log(`${main}/${p}`);
+                            return `${main}/${p}`;
+                        }
+                    },
                 },
                 blog: false,
                 theme: {
