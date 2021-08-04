@@ -83,7 +83,7 @@ module.exports = {
                     remarkPlugins: [
                         require('remark-hint')
                     ],
-                    routeBasePath: meta.landing.enable ? undefined : '/',
+                    routeBasePath: meta.landing.enable ?  `/${meta.sourceFolder}` : '/',
                     sidebarPath: require.resolve('./sidebars.js'),
                     editUrl: `https://github.com/${meta.github.org}/${meta.github.project}/edit/main${meta.landing.enable ? '' : '/' + meta.sourceFolder}`,
                 },
