@@ -44,7 +44,6 @@
     "yaml": "^1.10.2"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.14.8",
     "@types/color": "^3.0.2",
     "@types/conventional-commits-parser": "^3.0.2",
     "@types/favicons": "^6.2.2",

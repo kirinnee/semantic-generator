@@ -8,10 +8,6 @@ const config: Config.InitialOptions = {
     testMatch: ["**/__tests__/**/*.ts?(x)", "**/?(*.)+(spec|test).ts?(x)"],
     coverageDirectory: "./coverage",
     coverageReporters: ["json", "lcov", "text", "clover"],
-    transform: {
-        "^.+\\.tsx?$": "ts-jest",
-        "^.+\\.jsx?$": "babel-jest",
-    },
     coverageThreshold: {
         global: {
             "branches": 95,
@@ -20,8 +16,5 @@ const config: Config.InitialOptions = {
             "statements": -10
         }
     },
-    transformIgnorePatterns: [
-        "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
-    ]
 };
 export default config;
