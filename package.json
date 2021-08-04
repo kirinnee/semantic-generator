@@ -1,6 +1,6 @@
 {
   "name": "@atomi-user-first/semantic-generator",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Semantic Release configuration generator for conventional commits",
   "main": "dist/semantic-generator.js",
   "license": "MIT",

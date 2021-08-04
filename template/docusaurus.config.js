@@ -35,6 +35,7 @@ module.exports = {
     customFields: {
         button: meta.landing.button,
     },
+    trailingSlash: false,
     title: meta.title,
     tagline: meta.description,
     url: meta.url,
@@ -83,7 +84,7 @@ module.exports = {
                     remarkPlugins: [
                         require('remark-hint')
                     ],
-                    routeBasePath: meta.landing.enable ?  `/${meta.sourceFolder}` : '/',
+                    routeBasePath: meta.landing.enable ? `/${meta.sourceFolder}` : '/',
                     sidebarPath: require.resolve('./sidebars.js'),
                     editUrl: `https://github.com/${meta.github.org}/${meta.github.project}/edit/main${meta.landing.enable ? '' : '/' + meta.sourceFolder}`,
                 },
