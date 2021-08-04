@@ -36,7 +36,7 @@ class Generator {
         );
     }
 
-    resolveMeta(config: InputConfig, pwaHead: HeadNode[], targetFolder: string): IWritable {
+    resolveMeta(config: InputConfig, pwaHead: HeadNode[], sourceFolder: string): IWritable {
         const meta: MetaConfig = {
             pwaHead: pwaHead,
             description: config.description,
@@ -56,10 +56,10 @@ class Generator {
             organization: config.organization,
             url: config.url,
             title: config.title,
-            targetFolder,
+            sourceFolder,
         };
 
-        if (meta.landing.button) meta.landing.button.to = path.join(targetFolder, meta.landing.button.to);
+        if (meta.landing.button) meta.landing.button.to = path.join(sourceFolder, meta.landing.button.to);
 
         return IWritable.File({
             meta: {

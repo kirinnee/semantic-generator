@@ -132,7 +132,7 @@ interface MetaConfig {
         tabs: Tab[]
         postLinks: Link[]
     }
-    targetFolder: string
+    sourceFolder: string
 }
 
 export {MetaConfig, InputConfig, Feature, HeadNode, InputConfigValid};

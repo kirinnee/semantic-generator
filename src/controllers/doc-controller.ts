@@ -73,7 +73,7 @@ export function DocController(core: Core, c: Command): void {
                 const exe = new Executor(installer, core, runtimes);
                 // Read configuration
                 const configResult = await cfgReader.Read(configPath)
-                    .andThenAsync((config) => generator.generateTemp(config, target))
+                    .andThenAsync((config) => generator.generateTemp(config, src))
                     .run((dir) => console.log(`Generated folder at ${dir}`))
                     .andThenAsync(dir => exe.Build(dir))
                     .andThenAsync(ff => artifactManager.Copy(ff))
@@ -97,12 +97,12 @@ export function DocController(core: Core, c: Command): void {
         });
 
 
-    c.command("version <src> <target> <version>")
+    c.command("version <src> <version>")
         .option("-c, --config <cfg>", "path to configuration. default: atomi_docs.yaml")
         .option("-t, --tmp <tmp>", "path to tmp folder. default: random generated folder in /tmp")
         .option("-i, --installer <installer>", "Type of installer to use. default: try all. possible values: npm, yarn, pnpm")
         .option("-k, --keep-tmp", "Keep tmp file")
-        .action(async function (src: string, target: string, version: string, opts: { [s: string]: string }) {
+        .action(async function (src: string, version: string, opts: { [s: string]: string }) {
 
             const tmpPath = await Wrap(opts["tmp"]).match(
                 {
@@ -138,7 +138,7 @@ export function DocController(core: Core, c: Command): void {
                 const versioner = new Versioner(srcWriter);
                 // Read configuration
                 const configResult = await cfgReader.Read(configPath)
-                    .andThenAsync((config) => generator.generateTemp(config, target).map(v => [v, config] as [string, InputConfig]))
+                    .andThenAsync((config) => generator.generateTemp(config, src).map(v => [v, config] as [string, InputConfig]))
                     .run(([dir,]) => console.log(`Generated folder at ${dir}`))
                     .andThenAsync(([dir, config]) => exe.Version(dir, version).map(v => [v, config] as [IFileFactory, InputConfig]))
                     .andThenAsync(([ff, config]) => versioner.Copy(ff, config))
