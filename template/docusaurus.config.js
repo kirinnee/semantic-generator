@@ -85,7 +85,7 @@ module.exports = {
                     ],
                     routeBasePath: meta.landing.enable ? undefined : '/',
                     sidebarPath: require.resolve('./sidebars.js'),
-                    editUrl: `https://github.com/${meta.github.org}/${meta.github.project}/edit/main/docs/`,
+                    editUrl: `https://github.com/${meta.github.org}/${meta.github.project}/edit/main${meta.landing.enable ? '' : '/' + meta.targetFolder}`,
                 },
                 blog: false,
                 theme: {
@@ -99,7 +99,7 @@ module.exports = {
             require.resolve('@easyops-cn/docusaurus-search-local'),
             {
                 hashed: true,
-                docsRouteBasePath: meta.landing.enable ? '/docs' : '/',
+                docsRouteBasePath: meta.landing.enable ? `/${meta.targetFolder}` : '/',
             },
         ],
         [

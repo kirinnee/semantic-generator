@@ -132,6 +132,7 @@ interface MetaConfig {
         tabs: Tab[]
         postLinks: Link[]
     }
+    targetFolder: string
 }
 
 export {MetaConfig, InputConfig, Feature, HeadNode, InputConfigValid};

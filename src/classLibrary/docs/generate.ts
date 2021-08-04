@@ -21,7 +21,6 @@ class Generator {
     private readonly resolvers: Resolver[];
 
 
-
     resolveStatic(config: InputConfig): PromiseResult<IWritable[], string[]> {
         const subFact = this.sourceFileFactory.Sub(config.staticDir);
         const meta = subFact.Scan("**/*").Each(x => x.original = path.join("static", x.original));
@@ -37,7 +36,7 @@ class Generator {
         );
     }
 
-    resolveMeta(config: InputConfig, pwaHead: HeadNode[]): IWritable {
+    resolveMeta(config: InputConfig, pwaHead: HeadNode[], targetFolder: string): IWritable {
         const meta: MetaConfig = {
             pwaHead: pwaHead,
             description: config.description,
@@ -57,7 +56,10 @@ class Generator {
             organization: config.organization,
             url: config.url,
             title: config.title,
+            targetFolder,
         };
+
+        if (meta.landing.button) meta.landing.button.to = path.join(targetFolder, meta.landing.button.to);
 
         return IWritable.File({
             meta: {
@@ -205,7 +207,7 @@ class Generator {
             });
     }
 
-    generateTemp(config: InputConfig): PromiseResult<string, string[]> {
+    generateTemp(config: InputConfig, targetFolder: string): PromiseResult<string, string[]> {
 
         console.log("resolving sidebar and theme...");
         const sidebar = this.resolveSideBar(config);
@@ -228,7 +230,7 @@ class Generator {
                 [[...docs, ...faviconFiles, ...featureFile, ...statics, ...versions], header, featureCode] as [files: IWritable[], elements: string[], code: string]
             )
             .map(([files, elements, code]) =>
-                [[this.resolveMeta(config, this.headToHeaderNode(elements)), ...files], code] as [files: IWritable[], code: string]
+                [[this.resolveMeta(config, this.headToHeaderNode(elements), targetFolder), ...files], code] as [files: IWritable[], code: string]
             )
             .andThenAsync(([files, code]) =>
                 this.resolveTemplates(theme, config.landing?.enable ?? false, sidebar, code).map(w => [...w, ...files])
@@ -244,8 +246,7 @@ class Generator {
     }
 
 
-
-    constructor(templateFileFactory: IFileFactory, sourceFileFactory: IFileFactory,  tmpWriter: Writer, resolvers: Resolver[]) {
+    constructor(templateFileFactory: IFileFactory, sourceFileFactory: IFileFactory, tmpWriter: Writer, resolvers: Resolver[]) {
         this.templateFileFactory = templateFileFactory;
         this.sourceFileFactory = sourceFileFactory;
 
