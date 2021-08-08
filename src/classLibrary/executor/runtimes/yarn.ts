@@ -63,7 +63,7 @@ class Yarn implements Runtime {
         const parent = this;
         return PR(async (): Promise<Result<Runtime, string[]>> => {
             try {
-                const installStream = execa("yarn", ["global", "add", ...packages], {cwd});
+                const installStream = execa("yarn", ["add", "-D", ...packages], {cwd});
                 installStream.stdout.pipe(process.stdout);
                 await installStream;
                 return Ok(parent);
@@ -77,7 +77,7 @@ class Yarn implements Runtime {
         const parent = this;
         return PR(async (): Promise<Result<Runtime, string[]>> => {
             try {
-                const installStream = execa(`${this.GlobalFolder()}/semantic-release`, [], {cwd});
+                const installStream = execa("yarn", ["exec", "semantic-release"],  {cwd});
                 installStream.stdout.pipe(process.stdout);
                 await installStream;
                 return Ok(parent);

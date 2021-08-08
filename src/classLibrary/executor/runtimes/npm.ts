@@ -68,7 +68,7 @@ class Npm implements Runtime {
         const parent = this;
         return PR(async (): Promise<Result<Runtime, string[]>> => {
             try {
-                const installStream = execa("npm", ["i", "-g", ...packages], {cwd});
+                const installStream = execa("npm", ["i", "-D", ...packages], {cwd});
                 installStream.stdout.pipe(process.stdout);
                 await installStream;
                 return Ok(parent);
@@ -83,7 +83,7 @@ class Npm implements Runtime {
         const parent = this;
         return PR(async (): Promise<Result<Runtime, string[]>> => {
             try {
-                const installStream = execa(`${this.GlobalFolder()}/semantic-release`, [], {cwd});
+                const installStream = execa("npm", ["exec", "semantic-release"], {cwd});
                 installStream.stdout.pipe(process.stdout);
                 await installStream;
                 return Ok(parent);

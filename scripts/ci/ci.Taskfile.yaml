@@ -2,29 +2,21 @@ version: "3"
 
 tasks:
   build:
-    deps:
-      - cfg:scripts
     desc: CI building
     cmds:
       - $tsc
 
   cover:
-    deps:
-      - cfg:scripts
     desc: CI test and coverage
     cmds:
       - $jest --ci --collect-coverage --reporters=default --reporters=jest-junit
 
   run:
-    deps:
-      - cfg:scripts
     desc: Run scripts in scripts folder
     cmds:
       - ./scripts/ci/{{.CLI_ARGS}}.sh
 
   emulate:
-    deps:
-      - cfg:scripts
     desc: Enter an emuated CI environment
     env:
       NIX_CACHE_PATH: /cache/nix
@@ -32,15 +24,8 @@ tasks:
       - ./scripts/emulate-ci.sh
 
   exec:
-    deps:
-      - cfg:scripts
     env:
       NIX_CACHE_PATH: /cache/nix
     desc: Run CI scripts (in scripts/ci folder) in Alpine NixOS. Usage - run:ci -- <script-name>
     cmds:
       - ./scripts/emulate-ci.sh {{.CLI_ARGS}}
-
-  cfg:scripts:
-    desc: Make scripts executable
-    cmds:
-      - chmod -R +x ./scripts
