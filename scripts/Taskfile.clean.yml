@@ -1,0 +1,25 @@
+version: "3"
+
+tasks:
+  default:
+    desc: Clean coverage and build, and docs testing generated files
+    cmds:
+      - task: coverage
+      - task: build
+      - task: docs
+
+  coverage:
+    desc: Remove test coverage
+    cmds:
+      - rm -rf coverage
+
+  build:
+    desc: Remove build artifact, dist folder
+    cmds:
+      - rm -rf dist
+
+  docs:
+    desc: Remove documents generation command's generated folders - `tmp` and `target`
+    cmds:
+      - rm -rf tmp
+      - rm -rf target

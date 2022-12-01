@@ -4,12 +4,12 @@ tasks:
   build:
     desc: CI building
     cmds:
-      - $tsc
+      - tsc
 
   cover:
     desc: CI test and coverage
     cmds:
-      - $jest --ci --collect-coverage --reporters=default --reporters=jest-junit
+      - jest --ci --collect-coverage --reporters=default --reporters=jest-junit
 
   run:
     desc: Run scripts in scripts folder

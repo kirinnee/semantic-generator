@@ -1,0 +1,19 @@
+version: "3"
+
+tasks:
+  status:
+    desc: Gets IDE status
+    cmds:
+      - webstorm-remote status .
+  start:
+    desc: Starts WebStorm Gateway IDE
+    cmds:
+      - tmux new -s "webstorm@$(pwd)" -d 'while true; do webstorm-remote run .; done'
+  enter:
+    desc: Access tmux session
+    cmds:
+      - tmux at -t "webstorm@$(pwd)"
+  stop:
+    desc: Stop WebStorm Gateway IDE
+    cmds:
+      - tmux kill-session -t "webstorm@$(pwd)"

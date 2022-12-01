@@ -1,0 +1,42 @@
+version: "3"
+
+tasks:
+  default:
+    desc: Run all formatting supported.
+    ignore_error: true
+    cmds:
+      - task: md
+      - task: yaml
+      - task: json
+      - task: nix
+      - task: sh
+
+  sh:
+    desc: Formats shell scripts with shfmt
+    cmds:
+      - shfmt -w .
+
+  json:
+    ignore_error: true
+    desc: Format JSON files
+    cmds:
+      - prettier -w "**/*.json"
+
+  md:
+    ignore_error: true
+    desc: Formats Markdown with prettier
+    cmds:
+      - prettier -w "**/*.MD"
+
+  yaml:
+    ignore_error: true
+    desc: Formats YAML with prettier
+    cmds:
+      - prettier -w "**/*.yaml"
+      - prettier -w "**/*.yml"
+
+  nix:
+    ignore_error: true
+    desc: Formats Nix files
+    cmds:
+      - nixpkgs-fmt .

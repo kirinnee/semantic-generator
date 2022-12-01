@@ -10,3 +10,5 @@ binary_cache
 target
 tmp
 dist
+
+.direnv

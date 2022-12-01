@@ -1,9 +1,9 @@
 { nixpkgs ? import <nixpkgs> { } }:
 let pkgs = {
   atomi = (
-    with import (fetchTarball "https://github.com/kirinnee/test-nix-repo/archive/refs/tags/v7.0.0.tar.gz");
+    with import (fetchTarball "https://github.com/kirinnee/test-nix-repo/archive/refs/tags/v13.0.0.tar.gz");
     {
-      inherit gitlint pls sg;
+      inherit pls sg webstorm;
     }
   );
   "nix 21.05 30th July 2021" = (

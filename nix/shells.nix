@@ -2,7 +2,7 @@
 let env = import ./env.nix { inherit nixpkgs; }; in
 {
   dev = nixpkgs.mkShell {
-    buildInputs = env.minimal ++ env.lint ++ [ ];
+    buildInputs = env.minimal ++ env.dev ++ env.lint ++ [ ];
   };
   lint-ci = nixpkgs.mkShell {
     buildInputs = env.minimal ++ env.lint ++ [ ];

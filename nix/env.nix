@@ -11,9 +11,13 @@ with pkgs;
     jq
     sd
   ];
+
+  dev = [
+    webstorm
+  ];
+
   lint = [
     bash
-    gitlint
     pre-commit
     nixpkgs-fmt
     prettier
@@ -29,9 +33,11 @@ with pkgs;
     node
     pls
   ];
+
   releaser = [
     pnpm
     sg
     prettier
   ];
+
 }
