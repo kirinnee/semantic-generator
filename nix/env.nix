@@ -8,8 +8,6 @@ with pkgs;
     coreutils
     nodejs
     pnpm
-    jq
-    sd
   ];
 
   dev = [

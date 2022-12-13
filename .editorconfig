@@ -1,0 +1,4 @@
+root = true
+
+[node_modules/**]
+ignore = true

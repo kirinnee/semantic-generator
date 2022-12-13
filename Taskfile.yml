@@ -19,8 +19,8 @@ tasks:
   setup:
     desc: install node modules
     cmds:
-      - pre-commit install --install-hooks
-      - pre-commit install -t commit-msg
+      - pre-commit install -c ./config/.pre-commit-config.yaml --install-hooks
+      - pre-commit install -c ./config/.pre-commit-config.yaml -t commit-msg
       - pnpm install
 
   isolate:
@@ -58,7 +58,7 @@ tasks:
   test:w:
     desc: Runs and watches unit tests
     cmds:
-      - jest --watch
+      - jest --watchAll
 
   cover:
     deps:

@@ -1,8 +1,7 @@
-"use strict";
-
 module.exports = {
-  extension: ["ts"],
   require: "ts-node/register",
-  recursive: true,
-  spec: "./test/**/*.spec.ts",
+  parallel: false,
+  watch: false,
+  "watch-files": ["src/**/*.ts", "tests/**/*.ts"],
+  spec: ["tests/**/*.spec.ts"],
 };

@@ -1,8 +1,7 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.0.1
+    rev: v4.3.0
     hooks:
-      - id: check-yaml
       - id: end-of-file-fixer
       - id: trailing-whitespace
       - id: mixed-line-ending
@@ -13,54 +12,54 @@ repos:
       - id: shellcheck
   - repo: local
     hooks:
-      - id: lint
-        name: Automatically fix linter issues
-        entry: pls fix:lint
-        files: ^.*\.(ts|js)$
+      - id: ts-lint
+        name: Lint TypeScript and JavaScript files
+        entry: eslint -c ./config/.eslintrc.js --fix
+        files: ^(src|tests)/.*\.(js|ts|json|jsx|tsx)$
+        pass_filenames: true
+        language: system
+
+      - id: tsc-lint
+        name: Lint TypeScript
+        entry: tsc --noEmit
+        files: ^(src|tests)/.*\.(js|ts|json|jsx|tsx)$
         pass_filenames: false
         language: system
 
-      - id: coverage
-        name: Test and Coverage
-        entry: pls cover
-        files: ^.*\.(ts|js)$
-        pass_filenames: false
+      - id: docker-lint
+        name: Lint Docker files
+        entry: hadolint
+        files: ^.*Dockerfile$
+        pass_filenames: true
         language: system
 
-      - id: build
-        name: Build
-        entry: pls build
-        files: ^.*\.(ts|js)$
-        pass_filenames: false
-        language: system
-
-      - id: json-fmt
-        name: Format JSON with prettier
-        entry: pls fmt:json
-        files: ^.*\.json$
+      - id: cfg-scripts
+        name: Configure Scripts
+        entry: pls cfg:scripts
+        files: ^.*\.sh$
         pass_filenames: false
         language: system
 
       - id: yaml-fmt
         name: Format YAML with prettier
-        entry: pls fmt:yaml
+        entry: prettier -w
         files: ^.*\.(yaml|yml)$
-        pass_filenames: false
+        pass_filenames: true
         language: system
 
       - id: md-fmt
         name: Format Markdown with prettier
-        entry: pls fmt:md
+        entry: prettier -w
         files: ^.*\.(MD|md)$
-        pass_filenames: false
+        pass_filenames: true
         language: system
 
       - id: nixpkgs-fmt
         name: Format NIX files
-        entry: pls fmt:nix
+        entry: nixpkgs-fmt
         files: ^.*\.nix$
         language: system
-        pass_filenames: false
+        pass_filenames: true
 
       - id: gitlint-linter
         name: Lints Gitlint to conform to atomi_release.yaml
