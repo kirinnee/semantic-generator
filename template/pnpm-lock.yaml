@@ -694,8 +694,8 @@ packages:
       "@babel/plugin-proposal-optional-chaining": 7.14.5
     dev: false
 
-  ? /@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining/7.14.5_@babel+core@7.14.8
-  : resolution:
+  /@babel/plugin-bugfix-v8-spread-parameters-in-optional-chaining/7.14.5_@babel+core@7.14.8:
+    resolution:
       {
         integrity: sha512-ZoJS2XCKPBfTmL122iP6NM9dOg+d4lc9fFk3zxc8iDjvt8Pk4+TlsHSKhIPf6X+L5ORCdBzqMZDjL/WHj7WknQ==,
       }
@@ -900,8 +900,8 @@ packages:
       "@babel/plugin-syntax-logical-assignment-operators": 7.10.4
     dev: false
 
-  ? /@babel/plugin-proposal-logical-assignment-operators/7.14.5_@babel+core@7.14.8
-  : resolution:
+  /@babel/plugin-proposal-logical-assignment-operators/7.14.5_@babel+core@7.14.8:
+    resolution:
       {
         integrity: sha512-YGn2AvZAo9TwyhlLvCCWxD90Xq8xJ4aSgaX3G5D/8DW94L8aaT+dS5cSP+Z06+rCJERGSr9GxMBZ601xoc2taw==,
       }
@@ -2070,8 +2070,8 @@ packages:
       "@babel/helper-create-regexp-features-plugin": 7.14.5
     dev: false
 
-  ? /@babel/plugin-transform-named-capturing-groups-regex/7.14.9_@babel+core@7.14.8
-  : resolution:
+  /@babel/plugin-transform-named-capturing-groups-regex/7.14.9_@babel+core@7.14.8:
+    resolution:
       {
         integrity: sha512-l666wCVYO75mlAtGFfyFwnWmIXQm3kSH0C3IRnJqWcZbWkoihyAdDhFm2ZWaxWTqvBvhVFfJjMRQ0ez4oN1yYA==,
       }
@@ -3154,8 +3154,8 @@ packages:
       - webpack-cli
     dev: false
 
-  ? /@docusaurus/plugin-google-analytics/2.0.0-beta.4_react-dom@17.0.2+react@17.0.2
-  : resolution:
+  /@docusaurus/plugin-google-analytics/2.0.0-beta.4_react-dom@17.0.2+react@17.0.2:
+    resolution:
       {
         integrity: sha512-mqMEnfMKIoR1UfIX+jiAcUolwYntqSNaW8Gg2tg8dlGvC3payT1gpNJaew6TWyrtE29vuZz6a830bIXBYm4uAA==,
       }
@@ -3389,8 +3389,8 @@ packages:
       - webpack-cli
     dev: false
 
-  ? /@docusaurus/theme-search-algolia/2.0.0-beta.4_cf03b7458ee8070c9e09362c20b6f0a1
-  : resolution:
+  /@docusaurus/theme-search-algolia/2.0.0-beta.4_cf03b7458ee8070c9e09362c20b6f0a1:
+    resolution:
       {
         integrity: sha512-W/DfGhlAe1Vl+IJiL9rCw8yswdUrX0lTyCMNRAFi749YN4vCWo2RoxylbUuWoV6lUKoIYfj3EGyotRT2OLqtZw==,
       }

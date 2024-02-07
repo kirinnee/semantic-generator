@@ -10,33 +10,61 @@ tasks:
       - task: json
       - task: nix
       - task: sh
+      - task: eof
+      - task: whitespace
+      - task: crlf
+  pre-commit:
+    desc: Pre-commit function (Taskfile)
+    cmds:
+      - pre-commit run -c ./config/.pre-commit-config.yaml {{.PC_ID}} --all-files
 
+  eof:
+    desc: Fix end of file lines
+    cmds:
+      - task: pre-commit
+        vars:
+          PC_ID: end-of-file-fixer
+  whitespace:
+    desc: Fix trailing white spaces
+    cmds:
+      - task: pre-commit
+        vars:
+          PC_ID: trailing-whitespace
+  crlf:
+    desc: Fix trailing white spaces
+    cmds:
+      - task: pre-commit
+        vars:
+          PC_ID: mixed-line-ending
   sh:
-    desc: Formats shell scripts with shfmt
+    desc: Format Shell Scripts
     cmds:
-      - shfmt -w .
-
+      - task: pre-commit
+        vars:
+          PC_ID: shfmt
   json:
-    ignore_error: true
-    desc: Format JSON files
+    desc: Format JSON
     cmds:
-      - prettier -w "**/*.json"
-
+      - task: pre-commit
+        vars:
+          PC_ID: json-fmt
   md:
-    ignore_error: true
-    desc: Formats Markdown with prettier
+    desc: Formats Markdown
     cmds:
-      - prettier -w "**/*.MD"
+      - task: pre-commit
+        vars:
+          PC_ID: md-fmt
 
   yaml:
-    ignore_error: true
-    desc: Formats YAML with prettier
+    desc: Formats YAML
     cmds:
-      - prettier -w "**/*.yaml"
-      - prettier -w "**/*.yml"
+      - task: pre-commit
+        vars:
+          PC_ID: yaml-fmt
 
   nix:
-    ignore_error: true
     desc: Formats Nix files
     cmds:
-      - nixpkgs-fmt .
+      - task: pre-commit
+        vars:
+          PC_ID: nixpkgs-fmt

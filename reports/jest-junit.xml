@@ -12,7 +12,7 @@
     <testcase classname="Color Theme generator" name="should generate 7 colors from a single color" time="0.007">
     </testcase>
   </testsuite>
-  <testsuite name="test/util.test.ts" errors="0" failures="0" skipped="0" timestamp="2021-07-05T03:04:35" time="3.676" tests="5">
+  <testsuite name="test/util.spec.ts" errors="0" failures="0" skipped="0" timestamp="2021-07-05T03:04:35" time="3.676" tests="5">
     <testcase classname="Wrap" name="should wrap null into None" time="0.015">
     </testcase>
     <testcase classname="Wrap" name="should wrap undefined into None" time="0.053">

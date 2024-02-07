@@ -7,7 +7,7 @@ tasks:
       - tsc
 
   cover:
-    desc: CI test and coverage
+    desc: CI tests and coverage
     cmds:
       - jest --ci --collect-coverage --reporters=default --reporters=jest-junit
 

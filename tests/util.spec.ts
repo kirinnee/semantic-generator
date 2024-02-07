@@ -9,6 +9,9 @@ import {
 import {Err, None, Ok, Result, Some} from "@hqoss/monads";
 import {PromiseResult} from "../src/classLibrary/resultUtil";
 import {Kore} from "@kirinnee/core";
+import { should } from "chai";
+
+should();
 
 const core = new Kore();
 core.ExtendPrimitives();
@@ -25,7 +28,7 @@ describe("PadRight", () => {
         ];
 
         cases.Each(([a1, a2, e]: [string, number, string]) => {
-            expect(PadRight(a1, a2)).toBe(e);
+            PadRight(a1, a2).should.be.eq(e);
         });
     });
 
@@ -40,7 +43,7 @@ describe("PadRight", () => {
         ];
 
         cases.Each(([a1, a2, e]: [string, number, string]) => {
-            expect(PadRight(a1, a2, "$")).toBe(e);
+            PadRight(a1, a2, "$").should.be.eq(e);
         });
     });
 });
@@ -52,23 +55,23 @@ describe("WrapAsError", () => {
     it("should wrap null into None", () => {
         const a: string | null = null;
         const act = WrapAsError("this is an error", a);
-        expect(act.isOk()).toBe(false);
-        expect(act.unwrapErr()).toBe("this is an error");
+        act.isOk().should.equal(false);
+        act.unwrapErr().should.equal("this is an error");
     });
 
     it("should wrap undefined into None", () => {
 
         const act = WrapAsError(new Error("some error"), a["hello"]);
 
-        expect(act.isOk()).toBe(false);
-        expect(act.unwrapErr()).toEqual(new Error("some error"));
+        act.isOk().should.equal(false);
+        act.unwrapErr().should.deep.equal(new Error("some error"));
     });
 
     it("should wrap existing into Some", () => {
         const act = WrapAsError({a:false, b: [1,2,3], c: {error: "this is an error"}}, a["goodbye"]);
 
-        expect(act.isOk()).toBe(true);
-        expect(act.unwrap()).toBe("hello");
+        act.isOk().should.equal(true);
+        act.unwrap().should.equal("hello");
     });
 });
 
@@ -79,17 +82,17 @@ describe("Wrap", () => {
     };
     it("should wrap null into None", () => {
         const a: string | null = null;
-        expect(Wrap(a)).toBe(None);
+        Wrap(a).should.equal(None);
     });
 
     it("should wrap undefined into None", () => {
 
 
-        expect(Wrap(a["hello"])).toBe(None);
+        Wrap(a["hello"]).should.equal(None);
     });
 
     it("should wrap existing into Some", () => {
-        expect(Wrap(a["goodbye"]).unwrap()).toStrictEqual(Some("hello").unwrap());
+        Wrap(a["goodbye"]).unwrap().should.deep.equal(Some("hello").unwrap());
     });
 });
 
@@ -97,7 +100,7 @@ describe("ResolveOptionCollection", () => {
     it("should return none if all collection is none", function () {
         const r = [None, None, None, None];
         const act = OptionAllNone(r);
-        expect(act.isSome()).toBe(false);
+        act.isSome().should.equal(false);
     });
 
     it("should return some if some of the collect is non-none", function () {
@@ -115,17 +118,17 @@ describe("ResolveOptionCollection", () => {
         const a3 = OptionAllNone(s3);
         const a4 = OptionAllNone(s4);
 
-        expect(a1.isSome()).toBe(true);
-        expect(a1.unwrap()).toStrictEqual(e1);
+        a1.isSome().should.equal(true);
+        a1.unwrap().should.deep.equal(e1);
 
-        expect(a2.isSome()).toBe(true);
-        expect(a2.unwrap()).toStrictEqual(e2);
+        a2.isSome().should.equal(true);
+        a2.unwrap().should.deep.equal(e2);
 
-        expect(a3.isSome()).toBe(true);
-        expect(a3.unwrap()).toStrictEqual(e3);
+        a3.isSome().should.equal(true);
+        a3.unwrap().should.deep.equal(e3);
 
-        expect(a4.isSome()).toBe(true);
-        expect(a4.unwrap()).toStrictEqual(e4);
+        a4.isSome().should.equal(true);
+        a4.unwrap().should.deep.equal(e4);
     });
 });
 
@@ -133,15 +136,15 @@ describe("ResolveCollection", () => {
     it("should be successful is all results are successful", function () {
         const r = [Ok("a"), Ok("b"), Ok("c")];
         const act = ResultAll(r);
-        expect(act.isOk()).toBe(true);
-        expect(act.unwrap()).toStrictEqual(["a", "b", "c"]);
+        act.isOk().should.equal(true);
+        act.unwrap().should.deep.equal(["a", "b", "c"]);
     });
 
     it("should be fail if one result is unsuccessful", function () {
         const r = [Ok("a"), Ok("b"), Err("c")];
         const act = ResultAll(r);
-        expect(act.isOk()).toBe(false);
-        expect(act.unwrapErr()).toStrictEqual(["c"]);
+        act.isOk().should.equal(false);
+        act.unwrapErr().should.deep.equal(["c"]);
     });
 });
 describe("PromiseResultTupleAll", () => {
@@ -156,7 +159,7 @@ describe("PromiseResultTupleAll", () => {
         const ex = ["a", false, ["a", "b", "c"], {color: "red", name: "John"}, 5, 7];
         const actResult = await PromiseResultTupleAll(...subj).promise;
         const act = actResult.unwrap();
-        expect(act).toStrictEqual(ex);
+        act.should.deep.equal(ex);
     });
 
     it("should return all errors if even 1 result is unsuccessful", async function () {
@@ -167,7 +170,7 @@ describe("PromiseResultTupleAll", () => {
         const e1 = ["err1"];
         const a1Result = await PromiseResultTupleAll(...s1).promise;
         const a1 = a1Result.unwrapErr();
-        expect(a1).toStrictEqual(e1);
+        a1.should.deep.equal(e1);
 
         const s2 = [R("a"), new PromiseResult(Err("err1")), R(["a", "b", "c"]), R({
             color: "red",
@@ -176,7 +179,7 @@ describe("PromiseResultTupleAll", () => {
         const e2 = ["err1", "err3", "err2"];
         const a2Result = await PromiseResultTupleAll(...s2).promise;
         const a2 = a2Result.unwrapErr();
-        expect(a2).toStrictEqual(e2);
+        a2.should.deep.equal(e2);
     });
 });
 describe("ResultTupleAll", () => {
@@ -189,14 +192,14 @@ describe("ResultTupleAll", () => {
         const subj = [R("a"), R(false), R(["a", "b", "c"]), R({color: "red", name: "John"}), R(5), R(7)];
         const ex = ["a", false, ["a", "b", "c"], {color: "red", name: "John"}, 5, 7];
         const act = ResultTupleAll(...subj).unwrap();
-        expect(act).toStrictEqual(ex);
+        act.should.deep.equal(ex);
     });
 
     it("should return all errors if even 1 result is unsuccessful", function () {
         const s1 = [R("a"), Err("err1"), R(["a", "b", "c"]), R({color: "red", name: "John"}), R(5), R(7)];
         const e1 = ["err1"];
         const a1 = ResultTupleAll(...s1).unwrapErr();
-        expect(a1).toStrictEqual(e1);
+        a1.should.deep.equal(e1);
 
         const s2 = [R("a"), Err("err1"), R(["a", "b", "c"]), R({
             color: "red",
@@ -204,6 +207,6 @@ describe("ResultTupleAll", () => {
         }), Err("err3"), R(7), Err("err2"),];
         const e2 = ["err1", "err3", "err2"];
         const a2 = ResultTupleAll(...s2).unwrapErr();
-        expect(a2).toStrictEqual(e2);
+        a2.should.deep.equal(e2);
     });
 });

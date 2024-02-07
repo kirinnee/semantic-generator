@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es6",
+    "target": "ESNext",
     "sourceMap": true,
     "removeComments": false,
     "moduleResolution": "node",
@@ -20,5 +20,5 @@
     "outDir": "dist"
     //    "rootDir": "src",
   },
-  "exclude": ["node_modules", "jest.config.ts", "config", "test"]
+  "exclude": ["node_modules", "jest.config.ts", "config", "tests"]
 }

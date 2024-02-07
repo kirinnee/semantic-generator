@@ -12,6 +12,7 @@ repos:
       - id: shellcheck
   - repo: local
     hooks:
+      # Lints
       - id: ts-lint
         name: Lint TypeScript and JavaScript files
         entry: eslint -c ./config/.eslintrc.js --fix
@@ -33,11 +34,27 @@ repos:
         pass_filenames: true
         language: system
 
+      - id: gitlint-linter
+        name: Lints Gitlint to conform to atomi_release.yaml
+        entry: sg gitlint
+        files: (atomi_release.yaml|.gitlint)
+        language: system
+        pass_filenames: false
+
+      # generation
       - id: cfg-scripts
         name: Configure Scripts
         entry: pls cfg:scripts
         files: ^.*\.sh$
         pass_filenames: false
+        language: system
+
+      # Formatting
+      - id: json-fmt
+        name: Format JSON with prettier
+        entry: prettier -w
+        files: ^.*\.(json)$
+        pass_filenames: true
         language: system
 
       - id: yaml-fmt
@@ -60,17 +77,3 @@ repos:
         files: ^.*\.nix$
         language: system
         pass_filenames: true
-
-      - id: gitlint-linter
-        name: Lints Gitlint to conform to atomi_release.yaml
-        entry: sg gitlint
-        files: (atomi_release.yaml|.gitlint)
-        language: system
-        pass_filenames: false
-
-      - id: cfg-scripts
-        name: Configure Scripts
-        entry: pls cfg:scripts
-        files: ^.*\.sh$
-        pass_filenames: false
-        language: system

@@ -1,0 +1,15 @@
+version: "3"
+
+tasks:
+  default:
+    desc: Run all tests
+    cmds:
+      - mocha --config ./config/.mocharc.js
+  watch:
+    desc: Run all tests with auto-reload
+    cmds:
+      - mocha --config ./config/.mocharc.js --watch
+  cover:
+    desc: Run all tests and generate coverage
+    cmds:
+      - npm run tests:coverage

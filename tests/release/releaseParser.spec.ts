@@ -8,6 +8,9 @@ import {
 import {ReleaseConfiguration, Plugin} from "../../src/classLibrary/release/configuration";
 import {Kore} from "@kirinnee/core";
 import {ToMap} from "../../src/classLibrary/release/toMap";
+import {should} from "chai";
+
+should();
 
 const core = new Kore();
 core.ExtendPrimitives();
@@ -61,9 +64,9 @@ describe("ToMap", function () {
         const act2 = ToMap(subj2);
         const act3 = ToMap(subj3);
 
-        expect(ex1).toEqual(act1);
-        expect(ex2).toEqual(act2);
-        expect(ex3).toEqual(act3);
+        ex1.should.deep.equal(act1);
+        ex2.should.deep.equal(act2);
+        ex3.should.deep.equal(act3);
 
     });
 });
@@ -85,7 +88,7 @@ describe("PluginToSemanticReleasePlugin", function () {
             }
         ];
         const act = PluginToSemanticReleasePlugin(subj);
-        expect(act).toEqual(ex);
+        act.should.deep.equal(ex);
     });
 
     it("should convert plugins without config to Semantic Release Plugin (single)", function () {
@@ -95,7 +98,7 @@ describe("PluginToSemanticReleasePlugin", function () {
         const ex: SemanticReleasePlugin = "@semantic-release/github";
 
         const act = PluginToSemanticReleasePlugin(subj);
-        expect(act).toEqual(ex);
+        act.should.deep.equal(ex);
     });
 });
 
@@ -415,7 +418,7 @@ var___convention_docs___
 
             const act = parser.parseReleaseRules(configuration);
 
-            expect(act).toEqual(ex);
+            act.should.deep.equal(ex);
 
         });
     });
@@ -464,7 +467,7 @@ var___convention_docs___
             };
 
             const act = parser.parsePresetConfig(configuration);
-            expect(act).toEqual(ex);
+            act.should.deep.equal(ex);
         });
     });
 
@@ -680,7 +683,7 @@ var___convention_docs___
 
             const act = parser.generateDefaultPlugins(configuration);
 
-            expect(act).toEqual(ex);
+            act.should.deep.equal(ex);
 
         });
     });
@@ -915,7 +918,7 @@ var___convention_docs___
             };
             const act1 = parser.GenerateReleaseRc(configuration);
 
-            expect(act1).toEqual(ex1);
+            act1.should.deep.equal(ex1);
             const ex2: ReleaseRc = {
                 branches: [
                     "main"
@@ -972,7 +975,7 @@ var___convention_docs___
                 ]
             };
             const act2 = parser.GenerateReleaseRc(configuration2);
-            expect(act2).toEqual(ex2);
+            act2.should.deep.equal(ex2);
         });
 
     });

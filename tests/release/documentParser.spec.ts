@@ -4,6 +4,9 @@ import {Kore} from "@kirinnee/core";
 import {MarkdownTable} from "../../src/markdown-table";
 import {Resolver, VarResolver} from "../../src/classLibrary/engine/resolver";
 
+import {should} from "chai";
+
+should();
 const core = new Kore();
 core.ExtendPrimitives();
 
@@ -306,7 +309,7 @@ var___convention_docs___
 | [chore](#chore)     | Any chores, uncategorized, or small mistakes (like typos)                  |
 `;
             const act = parser.generateToc(configuration);
-            expect(act).toBe(ex);
+            act.should.equal(ex);
         });
     });
 
@@ -328,16 +331,16 @@ var___convention_docs___
             ];
             cases.Each(([c, a, e]) => {
                 const act = parser.generateVaeDocs(c, a);
-                expect(act.isOk()).toBe(true);
-                expect(act.unwrap()).toBe(e);
+                act.isOk().should.equal(true);
+                act.unwrap().should.equal(e);
             });
         });
 
 
         it("should return error result if vae does not exist", function () {
             const act = parser.generateVaeDocs(configuration,"random");
-            expect(act.isOk()).toBe(false);
-            expect(act.unwrapErr()).toBe("cannot find type entry: random");
+            act.isOk().should.equal(false);
+            act.unwrapErr().should.equal("cannot find type entry: random");
         });
 
 
@@ -349,8 +352,8 @@ var___convention_docs___
 
             cases.Each(([c, a, e]) => {
                 const act = parser.generateVaeDocs(c, a);
-                expect(act.isOk()).toBe(true);
-                expect(act.unwrap()).toBe(e);
+                act.isOk().should.equal(true);
+                act.unwrap().should.equal(e);
             });
 
         });
@@ -377,15 +380,15 @@ var___convention_docs___
 
             cases.Each(([c, a, e]) => {
                 const act = parser.generateScopeDocs(c,a);
-                expect(act.isOk()).toBe(true);
-                expect(act.unwrap()).toBe(e);
+                act.isOk().should.equal(true);
+                act.unwrap().should.equal(e);
             });
         });
 
         it("should return error if scope does not exist", function () {
             const act = parser.generateScopeDocs(configuration, "random");
-            expect(act.isOk()).toBe(false);
-            expect(act.unwrapErr()).toBe("cannot find type entry: random");
+            act.isOk().should.equal(false);
+            act.unwrapErr().should.equal("cannot find type entry: random");
         });
     });
 
@@ -404,7 +407,7 @@ body
 
 This page will document the types and scopes used.`;
             const act = parser.preamble();
-            expect(act).toBe(ex);
+            act.should.equal(ex);
         });
     });
 
@@ -427,13 +430,13 @@ This page will document the types and scopes used.`;
             ];
 
             cases.Each(([a, s]) => {
-                expect(parser.generateSpecialScopes(a)).toBe(s);
+                parser.generateSpecialScopes(a).should.equal(s);
             });
 
         });
 
         it("should return \"no special scopes\" if there isn't any special scopes", function () {
-            expect(parser.generateSpecialScopes(configuration4)).toBe("no special scopes");
+            parser.generateSpecialScopes(configuration4).should.equal("no special scopes");
         });
     });
 
@@ -482,15 +485,15 @@ Add documentation
 
             cases.Each(([c, a, e]) => {
                 const act = parser.generateType(c, a);
-                expect(act.isOk()).toBe(true);
-                expect(act.unwrap()).toBe(e);
+                act.isOk().should.equal(true);
+                act.unwrap().should.equal(e);
             });
         });
 
         it("should fail if type does not exist", function () {
             const act = parser.generateType(configuration, "random");
-            expect(act.isOk()).toBe(false);
-            expect(act.unwrapErr()).toEqual([
+            act.isOk().should.equal(false);
+            act.unwrapErr().should.deep.equal([
                 "cannot find type entry: random",
                 "cannot find type entry: random",
                 "cannot find type entry: random"
@@ -645,7 +648,7 @@ Any chores, uncategorized, or small mistakes (like typos)
 | \`no-release\` | Prevent release | \`nil\` |`;
 
             const act = parser.generateFullDocs(configuration);
-            expect(act).toBe(ex);
+            act.should.equal(ex);
 
         });
     });
@@ -802,7 +805,7 @@ Any chores, uncategorized, or small mistakes (like typos)
 | \`no-release\` | Prevent release | \`nil\` |
 `;
             const act = parser.GenerateDocument(configuration);
-            expect(act).toBe(ex);
+            act.should.equal(ex);
         });
     });
 });

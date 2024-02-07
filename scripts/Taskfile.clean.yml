@@ -9,7 +9,7 @@ tasks:
       - task: docs
 
   coverage:
-    desc: Remove test coverage
+    desc: Remove tests coverage
     cmds:
       - rm -rf coverage
 

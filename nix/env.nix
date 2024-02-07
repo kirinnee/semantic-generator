@@ -11,7 +11,6 @@ with pkgs;
   ];
 
   dev = [
-    webstorm
   ];
 
   lint = [

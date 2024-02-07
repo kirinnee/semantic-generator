@@ -4,20 +4,44 @@ tasks:
   default:
     desc: Lints all important files
     cmds:
-      - task: node
       - task: sh
+      - task: docker
+      - task: gitlint
+      - task: tsc
+      - task: eslint
 
+  pre-commit:
+    desc: Pre-commit function (Taskfile)
+    cmds:
+      - pre-commit run -c ./config/.pre-commit-config.yaml {{.PC_ID}} --all-files
   sh:
     desc: Lints shell scripts
     cmds:
-      - shellcheck **/*.sh
-
-  node:
-    desc: Lints Javascript and Typescript files
+      - task: pre-commit
+        vars:
+          PC_ID: shellcheck
+  eslint:
+    desc: Lints Javascript and Typescript files with eslint
     cmds:
-      - eslint .
-
-  lint:
-    desc: Fix all Typescript and Javascript files
+      - task: pre-commit
+        vars:
+          PC_ID: ts-lint
+  tsc:
+    desc: Lints Javascript and Typescript files with tsc
     cmds:
-      - eslint --fix .
+      - task: pre-commit
+        vars:
+          PC_ID: tsc-lint
+
+  docker:
+    desc: Lint Docker files with Hadolint
+    cmds:
+      - task: pre-commit
+        vars:
+          PC_ID: docker-lint
+  gitlint:
+    desc: Ensure git message linter is properly synchronized with atomi_releaser
+    cmds:
+      - task: pre-commit
+        vars:
+          PC_ID: docker-lint

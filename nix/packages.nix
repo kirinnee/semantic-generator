@@ -4,7 +4,7 @@ let
     atomi = (
       with import (fetchTarball "https://github.com/kirinnee/test-nix-repo/archive/refs/tags/v15.1.0.tar.gz");
       {
-        inherit pls sg webstorm;
+        inherit pls sg;
       }
     );
     "nix Unstable 11th December 2022" = (

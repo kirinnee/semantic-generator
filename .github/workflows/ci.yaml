@@ -30,18 +30,18 @@ jobs:
 
       # begin
       - name: Run and Generate Tests
-        run: ./scripts/ci/test.sh
+        run: ./scripts/ci/tests.sh
 
       - name: Upload Test Report
         uses: actions/upload-artifact@v2
         with:
-          name: test-report-${{ github.sha }}
+          name: tests-report-${{ github.sha }}
           path: reports
 
       - name: Upload Test Coverage
         uses: actions/upload-artifact@v2
         with:
-          name: test-coverage-${{ github.sha }}
+          name: tests-coverage-${{ github.sha }}
           path: coverage
 
   Pre-Commit-Validation:
@@ -85,10 +85,10 @@ jobs:
       - name: Download Test Artifacts
         uses: actions/download-artifact@v2
         with:
-          name: test-report-${{ github.sha }}
+          name: tests-report-${{ github.sha }}
           path: reports
       - name: Test Report
-        uses: dorny/test-reporter@v1
+        uses: dorny/tests-reporter@v1
         with:
           name: Jest Tests
           path: "reports/*.xml"

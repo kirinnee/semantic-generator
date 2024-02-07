@@ -14,13 +14,13 @@ class MarkdownTable {
         if (s.length < 2) return Err("Need at least 2 rows");
         // Check if its complete matrix
         const width = s[0].length;
-        if (s.Any(x => x.length != width)) return Err("Not a complete matrix");
+        if (s.some(x => x.length != width)) return Err("Not a complete matrix");
 
         const maxWidths: number[] = [];
 
 
         for (let i = 0; i < width; i++) {
-            const col = s.Map(x => x[i]);
+            const col = s.map(x => x[i]);
             maxWidths.push(col.Max(x => x.length).length);
         }
 

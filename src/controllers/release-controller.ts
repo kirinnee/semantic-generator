@@ -41,7 +41,7 @@ export function ReleaseController(core: Core, c: Command): void {
                     .andThenAsync(async c => releaser.Release(c)).promise;
                 r.match({
                     err: (e) => {
-                        e.Map(w => console.warn(w));
+                        e.map(w => console.warn(w));
                         error = true;
                     },
                     ok: () => console.log("Successfully released!")

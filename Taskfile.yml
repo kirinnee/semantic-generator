@@ -4,6 +4,7 @@ env:
   PATH: "{{.PWD}}/node_modules/bin:{{.PATH}}"
 
 includes:
+  test: ./scripts/Taskfile.test.yml
   ci: ./scripts/Taskfile.ci.yml
   lint: ./scripts/Taskfile.lint.yml
   fmt: ./scripts/Taskfile.fmt.yml
@@ -53,19 +54,12 @@ tasks:
   test:
     desc: Runs unit tests
     cmds:
-      - jest
-
-  test:w:
-    desc: Runs and watches unit tests
-    cmds:
-      - jest --watchAll
+      - task: test:default
 
   cover:
-    deps:
-      - clean:coverage
-    desc: Get test coverage
+    desc: Get tests coverage
     cmds:
-      - jest --collect-coverage
+      - task: test:cover
 
   run:
     desc: Runs the CLI

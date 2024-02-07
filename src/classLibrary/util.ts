@@ -47,8 +47,7 @@ function PadRight(s: string, length: number, padding = " "): string {
 
 type PromiseResultErr<T extends unknown[]> = T extends Array<PromiseResult<unknown, infer E>> ? E : never
 type PromiseResultOk<T extends unknown[]> = { [K in keyof T]: T[K] extends PromiseResult<infer U, unknown> ? U : never }
-type ResultErr<T extends unknown[]> = T extends Array<Result<unknown, infer E>> ? E : never
-type ResultOk<T extends unknown[]> = { [K in keyof T]: T[K] extends Result<infer U, unknown> ? U : never }
+
 
 function PromiseResultTupleAll<T extends PromiseResult<unknown, unknown>[]>(...i: [...T]): PromiseResult<PromiseResultOk<T>, PromiseResultErr<T>[]> {
     const closure = async (): Promise<Result<PromiseResultOk<T>, PromiseResultErr<T>[]>> => {
@@ -57,6 +56,9 @@ function PromiseResultTupleAll<T extends PromiseResult<unknown, unknown>[]>(...i
     };
     return new PromiseResult<PromiseResultOk<T>, PromiseResultErr<T>[]>(closure());
 }
+
+type ResultErr<T extends unknown[]> = T extends Array<Result<unknown, infer E>> ? E : never
+type ResultOk<T extends unknown[]> = { [K in keyof T]: T[K] extends Result<infer U, unknown> ? U : never }
 
 function ResultTupleAll<T extends Result<unknown, unknown>[]>(...i: [...T]): Result<ResultOk<T>, ResultErr<T>[]> {
     const ok: ResultOk<T> = [] as unknown as ResultOk<T>;
