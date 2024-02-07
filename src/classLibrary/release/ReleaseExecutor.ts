@@ -41,7 +41,7 @@ class ReleaseExecutor {
         ]);
         return await r.match({
             none: () => this.executor.Release(this.target, [
-                "semantic-release",
+                "semantic-release@23.0.1",
                 "conventional-changelog-conventionalcommits",
                 "@semantic-release/commit-analyzer",
                 "@semantic-release/release-notes-generator",
