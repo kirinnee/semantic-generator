@@ -1,5 +1,5 @@
 {
-  "name": "@atomi-user-first/semantic-generator",
+  "name": "gotrade/semantic-generator",
   "version": "0.6.0",
   "description": "Semantic Release configuration generator for conventional commits",
   "main": "dist/semantic-generator.js",
@@ -51,6 +51,7 @@
     "@types/conventional-commits-parser": "^3.0.2",
     "@types/favicons": "^6.2.2",
     "@types/glob": "^7.2.0",
+    "@types/graceful-fs": "^4.1.9",
     "@types/jest": "^26.0.24",
     "@types/mkdirp": "^1.0.2",
     "@types/mocha": "^10.0.1",
