@@ -20,6 +20,7 @@ with pkgs;
     prettier
     sg # for linting gitlint file
     shfmt
+    sd
     shellcheck
   ];
   ci = [
