@@ -1,41 +1,39 @@
-{ nixpkgs ? import <nixpkgs> { } }:
-let pkgs = import ./packages.nix { inherit nixpkgs; }; in
-with pkgs;
+{ pkgs, packages }:
+with packages;
 {
-  minimal = [
-    pls
-    git
+  system = [
     coreutils
-    nodejs
-    pnpm
+    sd
+    bash
+    xcbuild
   ];
 
   dev = [
   ];
 
-  lint = [
-    bash
-    pre-commit
-    nixpkgs-fmt
-    prettier
-    sg # for linting gitlint file
-    shfmt
-    sd
-    shellcheck
+  infra = [
   ];
-  ci = [
-    jq
-    sd
-    coreutils
-    pnpm
-    node
+
+  main = [
     pls
+    node
+    pnpm
+    infisical
+  ];
+
+  lint = [
+    # core
+    treefmt
+    gitlint
+    shellcheck
+    sg
+  ];
+
+  ci = [
+
   ];
 
   releaser = [
-    pnpm
-    sg
-    prettier
   ];
 
 }

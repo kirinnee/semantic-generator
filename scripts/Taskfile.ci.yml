@@ -19,13 +19,13 @@ tasks:
   emulate:
     desc: Enter an emuated CI environment
     env:
-      NIX_CACHE_PATH: /cache/nix
+      NIX_CACHE_PATH: /cache/old-nix
     cmds:
       - ./scripts/emulate-ci.sh
 
   exec:
     env:
-      NIX_CACHE_PATH: /cache/nix
+      NIX_CACHE_PATH: /cache/old-nix
     desc: Run CI scripts (in scripts/ci folder) in Alpine NixOS. Usage - run:ci -- <script-name>
     cmds:
       - ./scripts/emulate-ci.sh {{.CLI_ARGS}}

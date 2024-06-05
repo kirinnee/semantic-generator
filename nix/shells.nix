@@ -1,16 +1,17 @@
-{ nixpkgs ? import <nixpkgs> { } }:
-let env = import ./env.nix { inherit nixpkgs; }; in
+{ pkgs, packages, env, shellHook }:
+
+with env;
 {
-  dev = nixpkgs.mkShell {
-    buildInputs = env.minimal ++ env.dev ++ env.lint ++ [ ];
+  default = pkgs.mkShell {
+    buildInputs = system ++ main ++ dev ++ infra ++ lint;
+    inherit shellHook;
   };
-  lint-ci = nixpkgs.mkShell {
-    buildInputs = env.minimal ++ env.lint ++ [ ];
+  ci = pkgs.mkShell {
+    buildInputs = system ++ main ++ lint ++ ci;
+    inherit shellHook;
   };
-  ci = nixpkgs.mkShell {
-    buildInputs = env.ci;
-  };
-  releaser = nixpkgs.mkShell {
-    buildInputs = env.releaser;
+  releaser = pkgs.mkShell {
+    buildInputs = system ++ main ++ lint ++ releaser;
+    inherit shellHook;
   };
 }

@@ -3,7 +3,7 @@ on: pull_request
 jobs:
   Test:
     runs-on: ubuntu-20.04
-    container: nixos/nix
+    container: nixos/old-nix
     steps:
       - name: Install git and tar
         run: apk add git tar
@@ -11,14 +11,14 @@ jobs:
       - name: Cache Whole of NIX
         uses: actions/cache@v2
         with:
-          path: /nix
-          key: ${{ runner.os }}-alpine-nix
+          path: /old-nix
+          key: ${{ runner.os }}-alpine-old-nix
 
       - name: Checkout Git
         uses: actions/checkout@v2.3.4
 
       - name: Install Environment
-        run: nix-env -i -f ./ci-env.nix
+        run: old-nix-env -i -f ./ci-env.old-nix
 
       - name: Cache pnpm modules
         uses: actions/cache@v2
@@ -46,7 +46,7 @@ jobs:
 
   Pre-Commit-Validation:
     runs-on: ubuntu-20.04
-    container: nixos/nix
+    container: nixos/old-nix
     steps:
       - name: Install git and tar
         run: apk add git tar
@@ -54,14 +54,14 @@ jobs:
       - name: Cache Whole of NIX
         uses: actions/cache@v2
         with:
-          path: /nix
-          key: ${{ runner.os }}-alpine-nix
+          path: /old-nix
+          key: ${{ runner.os }}-alpine-old-nix
 
       - name: Checkout Git
         uses: actions/checkout@v2.3.4
 
       - name: Install Environment
-        run: nix-env -i -f ./ci-env.nix
+        run: old-nix-env -i -f ./ci-env.old-nix
 
       - name: Cache pnpm modules
         uses: actions/cache@v2

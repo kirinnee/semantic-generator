@@ -12,18 +12,6 @@ includes:
   ide: ./scripts/Taskfile.ide.yml
 
 tasks:
-  cfg:scripts:
-    desc: Make scripts executable
-    cmds:
-      - chmod -R +x ./scripts
-
-  setup:
-    desc: install node modules
-    cmds:
-      - pre-commit install -c ./config/.pre-commit-config.yaml --install-hooks
-      - pre-commit install -c ./config/.pre-commit-config.yaml -t commit-msg
-      - pnpm install
-
   isolate:
     desc: Isolate the code in an emulated ubuntu 20.04 environment (within docker)
     cmds:

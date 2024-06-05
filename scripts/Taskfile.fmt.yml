@@ -8,7 +8,7 @@ tasks:
       - task: md
       - task: yaml
       - task: json
-      - task: nix
+      - task: old-nix
       - task: sh
       - task: eof
       - task: whitespace

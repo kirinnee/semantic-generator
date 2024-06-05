@@ -1,3 +1,3 @@
 module.exports = {
-    var___sidebar___
+  var___sidebar___,
 };

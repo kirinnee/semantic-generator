@@ -52,7 +52,7 @@ types:
         desc: Generic fixes not under `drv` or `patch`
         release: patch
       drv:
-        desc: Fixes in nix derivations in the repository
+        desc: Fixes in old-nix derivations in the repository
         release: patch
       config:
         desc: Fixes in configuration
@@ -133,7 +133,7 @@ types:
         desc: Add, update or change buyild pipelines and generators
         release: false
       nix:
-        desc: Add, update or change nix shell
+        desc: Add, update or change old-nix shell
         release: false
       env:
         desc: Add, update or change environment

@@ -74,6 +74,6 @@ repos:
       - id: nixpkgs-fmt
         name: Format NIX files
         entry: nixpkgs-fmt
-        files: ^.*\.nix$
+        files: ^.*\.old-nix$
         language: system
         pass_filenames: true

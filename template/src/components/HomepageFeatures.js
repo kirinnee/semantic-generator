@@ -1,11 +1,11 @@
-import React from 'react';
-import { features } from './features';
-import styles from './HomepageFeatures.module.css';
-import clsx from 'clsx';
+import React from "react";
+import { features } from "./features";
+import styles from "./HomepageFeatures.module.css";
+import clsx from "clsx";
 
 function Feature({ Svg, title, desc }) {
   return (
-    <div className={clsx('col col--4')}>
+    <div className={clsx("col col--4")}>
       <div className="text--center">
         <Svg className={styles.featureSvg} alt={title} />
       </div>
@@ -17,13 +17,11 @@ function Feature({ Svg, title, desc }) {
   );
 }
 
-
 export default function HomepageFeatures() {
-
   return (
     <section className={styles.features}>
       <div className="container">
-        <div className={`row ${styles.jcenter}`} >
+        <div className={`row ${styles.jcenter}`}>
           {features.map((props, idx) => (
             <Feature key={idx} {...props} />
           ))}

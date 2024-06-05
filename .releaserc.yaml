@@ -50,7 +50,7 @@ plugins:
           scope: build
         - type: config
           release: false
-          scope: nix
+          scope: old-nix
         - type: config
           release: false
           scope: env

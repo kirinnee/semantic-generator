@@ -1,300 +1,302 @@
-import {ReleaseConfiguration, ReleaseConfigurationValid} from "../../src/classLibrary/release/configuration";
-import {CommitConventionDocumentParser} from "../../src/classLibrary/release/documentParser";
-import {Kore} from "@kirinnee/core";
-import {MarkdownTable} from "../../src/markdown-table";
-import {Resolver, VarResolver} from "../../src/classLibrary/engine/resolver";
+import {
+  ReleaseConfiguration,
+  ReleaseConfigurationValid,
+} from "../../src/classLibrary/release/configuration";
+import { CommitConventionDocumentParser } from "../../src/classLibrary/release/documentParser";
+import { Kore } from "@kirinnee/core";
+import { MarkdownTable } from "../../src/markdown-table";
+import { Resolver, VarResolver } from "../../src/classLibrary/engine/resolver";
 
-import {should} from "chai";
+import { should } from "chai";
 
 should();
 const core = new Kore();
 core.ExtendPrimitives();
 
-
 describe("CommitConventionDocumentParser", function () {
-
-    const configuration: ReleaseConfiguration = {
-        gitlint: ".gitlint",
-        conventionMarkdown: {
-            path: "docs/developer/03-Commit Conventions.md",
-            template: `---
+  const configuration: ReleaseConfiguration = {
+    gitlint: ".gitlint",
+    conventionMarkdown: {
+      path: "docs/developer/03-Commit Conventions.md",
+      template: `---
 id: commit-conventions
 title: Commit Conventions
 ---
 
 var___convention_docs___
-`
+`,
+    },
+    keywords: ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"],
+    branches: ["main"],
+    specialScopes: {
+      "no-release": {
+        desc: "Prevent release",
+        release: false,
+      },
+    },
+    plugins: [
+      {
+        module: "@semantic-release/changelog",
+        config: {
+          changelogFile: "CHANGELOG.md",
         },
-        keywords: ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"],
-        branches: ["main"],
-        specialScopes: {
-            "no-release": {
-                desc: "Prevent release",
-                release: false,
-            }
+      },
+      {
+        module: "@semantic-release/git",
+        config: {
+          message:
+            "release: ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
         },
-        plugins: [
-            {
-                module: "@semantic-release/changelog",
-                config: {
-                    changelogFile: "CHANGELOG.md",
-                }
-            },
-            {
-                module: "@semantic-release/git",
-                config: {
-                    message: "release: ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-                }
-            },
-            {
-                module: "@semantic-release/github"
-            },
-        ],
-        types: [
-            {
-                type: "fix",
-                section: "Bug Fixes",
-                desc: "Fixed a bug within the repository",
-                vae: {
-                    verb: "fix",
-                    application: "<title>",
-                    example: "fix: dropdown flickering bug",
-                },
-                scopes: {
-                    default: {
-                        desc: "Generic fixes not under `drv` or `patch`",
-                        release: "patch",
-                    },
-                    drv: {
-                        desc: "Fixes a bug in Nix derivations in the repository",
-                        release: "patch",
-                    },
-                    config: {
-                        desc: "Fixes a bug in repository configurations, such as scripts, rc files or ci files",
-                        release: false,
-                    },
-                },
-            },
-            {
-                type: "new",
-                section: "New Packages",
-                desc: "Releases a new package in the repository",
-                vae: {
-                    verb: "add",
-                    application: "<scope> - <title>",
-                    example: "new(narwhal): a swiss army knife for docker"
-                },
-                scopes: {
-                    default: {
-                        desc: "Release a new package",
-                        release: "minor",
-                    }
-                }
-            },
-            {
-                type: "update",
-                section: "Packages Updated",
-                desc: "Update a package's version",
-                vae: {
-                    verb: "update",
-                    application: "<scope> <title>",
-                    example: "update(narwhal): from v0.13.1 to v0.14.0",
-                },
-                scopes: {
-                    default: {
-                        desc: "Update a package's version",
-                        release: "major",
-                    },
-                }
-            },
-            {
-                type: "remove",
-                section: "Removed Packages",
-                desc: "Removes an existing package",
-                scopes: {
-                    default: {
-                        desc: "Removes an existing package",
-                        release: "major",
-                    },
-                }
-            },
-            {
-                type: "docs",
-                desc: "Add documentation",
-                section: "Documentation Updates",
-                vae: {
-                    verb: "document",
-                    application: "<title>",
-                    example: "docs(pkg): new features added in narwhal v0.14.0",
-                },
-                scopes: {
-                    default: {
-                        desc: "Adds a generic documentation not related to `dev`, `pkg` or `user`",
-                        release: false
-                    },
-                    user: {
-                        desc: "User-side documentation",
-                        release: false
-                    },
-                    dev: {
-                        desc: "Documentation for contributing processes",
-                        release: false
-                    },
-                    pkg: {
-                        desc: "Documentation for packages",
-                        release: false
-                    }
-                }
-            },
-            {
-                type: "ci",
-                desc: "Changed the CI pipeline",
-                scopes: {
-                    default: {
-                        desc: "Update CI configuration",
-                        release: false
-                    }
-                }
-            },
-            {
-                type: "release",
-                desc: "Initiate a release (machine initiated)",
-                scopes: {
-                    default: {
-                        desc: "Machine initiated release",
-                        release: false
-                    }
-                }
-            },
-            {
-                type: "config",
-                desc: "Configuration changes, such as build scripts, rc files or Taskfile.dev etc",
-                scopes: {
-                    default: {
-                        desc: "Updates the configuration of the repository, not related to the other scopes",
-                        release: false
-                    },
-                    lint: {
-                        desc: "Add, update or remove linters",
-                        release: false
-                    },
-                    fmt: {
-                        desc: "Add, update or remove formatters",
-                        release: false
-                    },
-                    build: {
-                        desc: "Add, update or change build pipelines and generators",
-                        release: false
-                    }, nix: {
-                        desc: "Add, update or change nix shell",
-                        release: false
-                    },
-                    env: {
-                        desc: "Add, update or change environment",
-                        release: false
-                    },
-                    ignore: {
-                        desc: "Add, update or change ignore configurations",
-                        release: false
-                    }
-                }
-            },
-            {
-                type: "chore",
-                desc: "Any chores, uncategorized, or small mistakes (like typos)",
-                scopes: {
-                    default: {
-                        desc: "chores",
-                        release: false
-                    }
-                }
-            },
-        ]
-    };
-    const configuration2 = ReleaseConfigurationValid({
-        branches: ["main"],
-        specialScopes: {
-            big: {
-                desc: "Makes it a major bump",
-                release: "major",
-            },
-            medium: {
-                desc: "Makes it a minor bump",
-                release: "minor",
-            },
-            small: {
-                desc: "Makes it a patch bump",
-                release: "patch",
-            },
-            no: {
-                desc: "Prevents version bumping",
-                release: false,
-            }
+      },
+      {
+        module: "@semantic-release/github",
+      },
+    ],
+    types: [
+      {
+        type: "fix",
+        section: "Bug Fixes",
+        desc: "Fixed a bug within the repository",
+        vae: {
+          verb: "fix",
+          application: "<title>",
+          example: "fix: dropdown flickering bug",
         },
-        types: [
-            {
-                type: "ci",
-                desc: "Changed the CI pipeline",
-                scopes: {
-                    default: {
-                        desc: "Update CI configuration",
-                        release: false
-                    }
-                }
-            },
-        ]
-    }).unwrap();
-    const configuration3 = ReleaseConfigurationValid({
-        branches: ["main"],
-        specialScopes: {
-            major: {
-                desc: "Makes it a major bump",
-                release: "major"
-            },
-            minor: {
-                desc: "Makes it a minor bump",
-                release: "minor"
-            }
+        scopes: {
+          default: {
+            desc: "Generic fixes not under `drv` or `patch`",
+            release: "patch",
+          },
+          drv: {
+            desc: "Fixes a bug in Nix derivations in the repository",
+            release: "patch",
+          },
+          config: {
+            desc: "Fixes a bug in repository configurations, such as scripts, rc files or ci files",
+            release: false,
+          },
         },
-        types: [
-            {
-                type: "ci",
-                desc: "Changed the CI pipeline",
-                scopes: {
-                    default: {
-                        desc: "Update CI configuration",
-                        release: false
-                    }
-                }
-            },
-        ]
-    }).unwrap();
-    const configuration4 = ReleaseConfigurationValid({
-        branches: ["main"],
-        types: [
-            {
-                type: "ci",
-                desc: "Changed the CI pipeline",
-                scopes: {
-                    default: {
-                        desc: "Update CI configuration",
-                        release: false
-                    }
-                }
-            },
-        ]
-    }).unwrap();
+      },
+      {
+        type: "new",
+        section: "New Packages",
+        desc: "Releases a new package in the repository",
+        vae: {
+          verb: "add",
+          application: "<scope> - <title>",
+          example: "new(narwhal): a swiss army knife for docker",
+        },
+        scopes: {
+          default: {
+            desc: "Release a new package",
+            release: "minor",
+          },
+        },
+      },
+      {
+        type: "update",
+        section: "Packages Updated",
+        desc: "Update a package's version",
+        vae: {
+          verb: "update",
+          application: "<scope> <title>",
+          example: "update(narwhal): from v0.13.1 to v0.14.0",
+        },
+        scopes: {
+          default: {
+            desc: "Update a package's version",
+            release: "major",
+          },
+        },
+      },
+      {
+        type: "remove",
+        section: "Removed Packages",
+        desc: "Removes an existing package",
+        scopes: {
+          default: {
+            desc: "Removes an existing package",
+            release: "major",
+          },
+        },
+      },
+      {
+        type: "docs",
+        desc: "Add documentation",
+        section: "Documentation Updates",
+        vae: {
+          verb: "document",
+          application: "<title>",
+          example: "docs(pkg): new features added in narwhal v0.14.0",
+        },
+        scopes: {
+          default: {
+            desc: "Adds a generic documentation not related to `dev`, `pkg` or `user`",
+            release: false,
+          },
+          user: {
+            desc: "User-side documentation",
+            release: false,
+          },
+          dev: {
+            desc: "Documentation for contributing processes",
+            release: false,
+          },
+          pkg: {
+            desc: "Documentation for packages",
+            release: false,
+          },
+        },
+      },
+      {
+        type: "ci",
+        desc: "Changed the CI pipeline",
+        scopes: {
+          default: {
+            desc: "Update CI configuration",
+            release: false,
+          },
+        },
+      },
+      {
+        type: "release",
+        desc: "Initiate a release (machine initiated)",
+        scopes: {
+          default: {
+            desc: "Machine initiated release",
+            release: false,
+          },
+        },
+      },
+      {
+        type: "config",
+        desc: "Configuration changes, such as build scripts, rc files or Taskfile.dev etc",
+        scopes: {
+          default: {
+            desc: "Updates the configuration of the repository, not related to the other scopes",
+            release: false,
+          },
+          lint: {
+            desc: "Add, update or remove linters",
+            release: false,
+          },
+          fmt: {
+            desc: "Add, update or remove formatters",
+            release: false,
+          },
+          build: {
+            desc: "Add, update or change build pipelines and generators",
+            release: false,
+          },
+          nix: {
+            desc: "Add, update or change old-nix shell",
+            release: false,
+          },
+          env: {
+            desc: "Add, update or change environment",
+            release: false,
+          },
+          ignore: {
+            desc: "Add, update or change ignore configurations",
+            release: false,
+          },
+        },
+      },
+      {
+        type: "chore",
+        desc: "Any chores, uncategorized, or small mistakes (like typos)",
+        scopes: {
+          default: {
+            desc: "chores",
+            release: false,
+          },
+        },
+      },
+    ],
+  };
+  const configuration2 = ReleaseConfigurationValid({
+    branches: ["main"],
+    specialScopes: {
+      big: {
+        desc: "Makes it a major bump",
+        release: "major",
+      },
+      medium: {
+        desc: "Makes it a minor bump",
+        release: "minor",
+      },
+      small: {
+        desc: "Makes it a patch bump",
+        release: "patch",
+      },
+      no: {
+        desc: "Prevents version bumping",
+        release: false,
+      },
+    },
+    types: [
+      {
+        type: "ci",
+        desc: "Changed the CI pipeline",
+        scopes: {
+          default: {
+            desc: "Update CI configuration",
+            release: false,
+          },
+        },
+      },
+    ],
+  }).unwrap();
+  const configuration3 = ReleaseConfigurationValid({
+    branches: ["main"],
+    specialScopes: {
+      major: {
+        desc: "Makes it a major bump",
+        release: "major",
+      },
+      minor: {
+        desc: "Makes it a minor bump",
+        release: "minor",
+      },
+    },
+    types: [
+      {
+        type: "ci",
+        desc: "Changed the CI pipeline",
+        scopes: {
+          default: {
+            desc: "Update CI configuration",
+            release: false,
+          },
+        },
+      },
+    ],
+  }).unwrap();
+  const configuration4 = ReleaseConfigurationValid({
+    branches: ["main"],
+    types: [
+      {
+        type: "ci",
+        desc: "Changed the CI pipeline",
+        scopes: {
+          default: {
+            desc: "Update CI configuration",
+            release: false,
+          },
+        },
+      },
+    ],
+  }).unwrap();
 
-    const mdt = new MarkdownTable(core);
+  const mdt = new MarkdownTable(core);
 
-    const variable: Resolver = new VarResolver(core);
+  const variable: Resolver = new VarResolver(core);
 
-    const parser = new CommitConventionDocumentParser(variable, mdt, core);
+  const parser = new CommitConventionDocumentParser(variable, mdt, core);
 
-    describe("generateToc", () => {
-        it("should generate markdown table as the table of content of all types with their respective descriptions", function () {
-            const ex =
-                `# Types
+  describe("generateToc", () => {
+    it("should generate markdown table as the table of content of all types with their respective descriptions", function () {
+      const ex = `# Types
 
 | Type                | Description                                                                |
 | ------------------- | -------------------------------------------------------------------------- |
@@ -308,93 +310,110 @@ var___convention_docs___
 | [config](#config)   | Configuration changes, such as build scripts, rc files or Taskfile.dev etc |
 | [chore](#chore)     | Any chores, uncategorized, or small mistakes (like typos)                  |
 `;
-            const act = parser.generateToc(configuration);
-            act.should.equal(ex);
-        });
+      const act = parser.generateToc(configuration);
+      act.should.equal(ex);
     });
+  });
 
-    describe("generateVaeDocs", () => {
-        it("should generate vae with example substituted inside", function () {
-            const cases: [ReleaseConfiguration, string, string][] = [
-                [configuration, "fix", `| **V.A.E**       | V.A.E values                                                           |
+  describe("generateVaeDocs", () => {
+    it("should generate vae with example substituted inside", function () {
+      const cases: [ReleaseConfiguration, string, string][] = [
+        [
+          configuration,
+          "fix",
+          `| **V.A.E**       | V.A.E values                                                           |
 | --------------- | ---------------------------------------------------------------------- |
 | verb            | fix                                                                    |
 | application     | when this commit is applied, it will _fix_ \`<title>\`                   |
 | example         | fix: dropdown flickering bug                                           |
-| example applied | when this commit is applied, it will _fix_ **dropdown flickering bug** |`],
-                [configuration, "new", `| **V.A.E**       | V.A.E values                                                                             |
+| example applied | when this commit is applied, it will _fix_ **dropdown flickering bug** |`,
+        ],
+        [
+          configuration,
+          "new",
+          `| **V.A.E**       | V.A.E values                                                                             |
 | --------------- | ---------------------------------------------------------------------------------------- |
 | verb            | add                                                                                      |
 | application     | when this commit is applied, it will _add_ \`<scope> - <title>\`                           |
 | example         | new(narwhal): a swiss army knife for docker                                              |
-| example applied | when this commit is applied, it will _add_ \`narwhal\` - **a swiss army knife for docker** |`],
-            ];
-            cases.Each(([c, a, e]) => {
-                const act = parser.generateVaeDocs(c, a);
-                act.isOk().should.equal(true);
-                act.unwrap().should.equal(e);
-            });
-        });
-
-
-        it("should return error result if vae does not exist", function () {
-            const act = parser.generateVaeDocs(configuration,"random");
-            act.isOk().should.equal(false);
-            act.unwrapErr().should.equal("cannot find type entry: random");
-        });
-
-
-        it("return empty string if no vae is specified", function () {
-            const cases: [ReleaseConfiguration, string, string][] = [
-                [configuration,"ci", ""],
-                [configuration, "release", ""],
-            ];
-
-            cases.Each(([c, a, e]) => {
-                const act = parser.generateVaeDocs(c, a);
-                act.isOk().should.equal(true);
-                act.unwrap().should.equal(e);
-            });
-
-        });
+| example applied | when this commit is applied, it will _add_ \`narwhal\` - **a swiss army knife for docker** |`,
+        ],
+      ];
+      cases.Each(([c, a, e]) => {
+        const act = parser.generateVaeDocs(c, a);
+        act.isOk().should.equal(true);
+        act.unwrap().should.equal(e);
+      });
     });
 
-    describe("generateScopeDocs", () => {
-        it("should generate scope documents", function () {
-            const cases: [ReleaseConfiguration, string, string][] = [
-                [configuration, "fix", `| Scope    | Description                                                                     | Bump    |
+    it("should return error result if vae does not exist", function () {
+      const act = parser.generateVaeDocs(configuration, "random");
+      act.isOk().should.equal(false);
+      act.unwrapErr().should.equal("cannot find type entry: random");
+    });
+
+    it("return empty string if no vae is specified", function () {
+      const cases: [ReleaseConfiguration, string, string][] = [
+        [configuration, "ci", ""],
+        [configuration, "release", ""],
+      ];
+
+      cases.Each(([c, a, e]) => {
+        const act = parser.generateVaeDocs(c, a);
+        act.isOk().should.equal(true);
+        act.unwrap().should.equal(e);
+      });
+    });
+  });
+
+  describe("generateScopeDocs", () => {
+    it("should generate scope documents", function () {
+      const cases: [ReleaseConfiguration, string, string][] = [
+        [
+          configuration,
+          "fix",
+          `| Scope    | Description                                                                     | Bump    |
 | -------- | ------------------------------------------------------------------------------- | ------- |
 | default  | Generic fixes not under \`drv\` or \`patch\`                                        | \`patch\` |
 | \`drv\`    | Fixes a bug in Nix derivations in the repository                                | \`patch\` |
-| \`config\` | Fixes a bug in repository configurations, such as scripts, rc files or ci files | \`nil\`   |`],
-                [configuration, "update", `| Scope   | Description                | Bump    |
+| \`config\` | Fixes a bug in repository configurations, such as scripts, rc files or ci files | \`nil\`   |`,
+        ],
+        [
+          configuration,
+          "update",
+          `| Scope   | Description                | Bump    |
 | ------- | -------------------------- | ------- |
-| default | Update a package's version | \`major\` |`],
-                [configuration, "docs", `| Scope   | Description                                                        | Bump  |
+| default | Update a package's version | \`major\` |`,
+        ],
+        [
+          configuration,
+          "docs",
+          `| Scope   | Description                                                        | Bump  |
 | ------- | ------------------------------------------------------------------ | ----- |
 | default | Adds a generic documentation not related to \`dev\`, \`pkg\` or \`user\` | \`nil\` |
 | \`user\`  | User-side documentation                                            | \`nil\` |
 | \`dev\`   | Documentation for contributing processes                           | \`nil\` |
-| \`pkg\`   | Documentation for packages                                         | \`nil\` |`],
-            ];
+| \`pkg\`   | Documentation for packages                                         | \`nil\` |`,
+        ],
+      ];
 
-            cases.Each(([c, a, e]) => {
-                const act = parser.generateScopeDocs(c,a);
-                act.isOk().should.equal(true);
-                act.unwrap().should.equal(e);
-            });
-        });
-
-        it("should return error if scope does not exist", function () {
-            const act = parser.generateScopeDocs(configuration, "random");
-            act.isOk().should.equal(false);
-            act.unwrapErr().should.equal("cannot find type entry: random");
-        });
+      cases.Each(([c, a, e]) => {
+        const act = parser.generateScopeDocs(c, a);
+        act.isOk().should.equal(true);
+        act.unwrap().should.equal(e);
+      });
     });
 
-    describe("preamble", () => {
-        it("should return the preamble", function () {
-            const ex = `This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) loosely as the specification
+    it("should return error if scope does not exist", function () {
+      const act = parser.generateScopeDocs(configuration, "random");
+      act.isOk().should.equal(false);
+      act.unwrapErr().should.equal("cannot find type entry: random");
+    });
+  });
+
+  describe("preamble", () => {
+    it("should return the preamble", function () {
+      const ex = `This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) loosely as the specification
 for our commits.
 
 Commit message will be in the format:
@@ -406,44 +425,57 @@ body
 \`\`\`
 
 This page will document the types and scopes used.`;
-            const act = parser.preamble();
-            act.should.equal(ex);
-        });
+      const act = parser.preamble();
+      act.should.equal(ex);
     });
+  });
 
-    describe("generateSpecialScopes", () => {
-        it("should generate special scope table indicating the description and bump", function () {
-            const cases: [ReleaseConfiguration, string][] = [
-                [configuration, `| Scope        | Description     | Bump  |
+  describe("generateSpecialScopes", () => {
+    it("should generate special scope table indicating the description and bump", function () {
+      const cases: [ReleaseConfiguration, string][] = [
+        [
+          configuration,
+          `| Scope        | Description     | Bump  |
 | ------------ | --------------- | ----- |
-| \`no-release\` | Prevent release | \`nil\` |`],
-                [configuration2, `| Scope    | Description              | Bump    |
+| \`no-release\` | Prevent release | \`nil\` |`,
+        ],
+        [
+          configuration2,
+          `| Scope    | Description              | Bump    |
 | -------- | ------------------------ | ------- |
 | \`big\`    | Makes it a major bump    | \`major\` |
 | \`medium\` | Makes it a minor bump    | \`minor\` |
 | \`small\`  | Makes it a patch bump    | \`patch\` |
-| \`no\`     | Prevents version bumping | \`nil\`   |`],
-                [configuration3, `| Scope   | Description           | Bump    |
+| \`no\`     | Prevents version bumping | \`nil\`   |`,
+        ],
+        [
+          configuration3,
+          `| Scope   | Description           | Bump    |
 | ------- | --------------------- | ------- |
 | \`major\` | Makes it a major bump | \`major\` |
-| \`minor\` | Makes it a minor bump | \`minor\` |`],
-            ];
+| \`minor\` | Makes it a minor bump | \`minor\` |`,
+        ],
+      ];
 
-            cases.Each(([a, s]) => {
-                parser.generateSpecialScopes(a).should.equal(s);
-            });
-
-        });
-
-        it("should return \"no special scopes\" if there isn't any special scopes", function () {
-            parser.generateSpecialScopes(configuration4).should.equal("no special scopes");
-        });
+      cases.Each(([a, s]) => {
+        parser.generateSpecialScopes(a).should.equal(s);
+      });
     });
 
-    describe("generateType", () => {
-        it("should generate type documentation with vae and scope", function () {
-            const cases: [ReleaseConfiguration, string, string][] = [
-                [configuration,"update", `## update
+    it('should return "no special scopes" if there isn\'t any special scopes', function () {
+      parser
+        .generateSpecialScopes(configuration4)
+        .should.equal("no special scopes");
+    });
+  });
+
+  describe("generateType", () => {
+    it("should generate type documentation with vae and scope", function () {
+      const cases: [ReleaseConfiguration, string, string][] = [
+        [
+          configuration,
+          "update",
+          `## update
 
 Update a package's version
 
@@ -456,15 +488,23 @@ Update a package's version
 
 | Scope   | Description                | Bump    |
 | ------- | -------------------------- | ------- |
-| default | Update a package's version | \`major\` |`],
-                [configuration,"remove", `## remove
+| default | Update a package's version | \`major\` |`,
+        ],
+        [
+          configuration,
+          "remove",
+          `## remove
 
 Removes an existing package
 
 | Scope   | Description                 | Bump    |
 | ------- | --------------------------- | ------- |
-| default | Removes an existing package | \`major\` |`],
-                [configuration,"docs", `## docs
+| default | Removes an existing package | \`major\` |`,
+        ],
+        [
+          configuration,
+          "docs",
+          `## docs
 
 Add documentation
 
@@ -480,30 +520,33 @@ Add documentation
 | default | Adds a generic documentation not related to \`dev\`, \`pkg\` or \`user\` | \`nil\` |
 | \`user\`  | User-side documentation                                            | \`nil\` |
 | \`dev\`   | Documentation for contributing processes                           | \`nil\` |
-| \`pkg\`   | Documentation for packages                                         | \`nil\` |`]
-            ];
+| \`pkg\`   | Documentation for packages                                         | \`nil\` |`,
+        ],
+      ];
 
-            cases.Each(([c, a, e]) => {
-                const act = parser.generateType(c, a);
-                act.isOk().should.equal(true);
-                act.unwrap().should.equal(e);
-            });
-        });
-
-        it("should fail if type does not exist", function () {
-            const act = parser.generateType(configuration, "random");
-            act.isOk().should.equal(false);
-            act.unwrapErr().should.deep.equal([
-                "cannot find type entry: random",
-                "cannot find type entry: random",
-                "cannot find type entry: random"
-            ]);
-        });
+      cases.Each(([c, a, e]) => {
+        const act = parser.generateType(c, a);
+        act.isOk().should.equal(true);
+        act.unwrap().should.equal(e);
+      });
     });
 
-    describe("generateFullDocs", () => {
-        it("should generate full documentation", () => {
-            const ex = `This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) loosely as the specification
+    it("should fail if type does not exist", function () {
+      const act = parser.generateType(configuration, "random");
+      act.isOk().should.equal(false);
+      act
+        .unwrapErr()
+        .should.deep.equal([
+          "cannot find type entry: random",
+          "cannot find type entry: random",
+          "cannot find type entry: random",
+        ]);
+    });
+  });
+
+  describe("generateFullDocs", () => {
+    it("should generate full documentation", () => {
+      const ex = `This project uses [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) loosely as the specification
 for our commits.
 
 Commit message will be in the format:
@@ -647,15 +690,14 @@ Any chores, uncategorized, or small mistakes (like typos)
 | ------------ | --------------- | ----- |
 | \`no-release\` | Prevent release | \`nil\` |`;
 
-            const act = parser.generateFullDocs(configuration);
-            act.should.equal(ex);
-
-        });
+      const act = parser.generateFullDocs(configuration);
+      act.should.equal(ex);
     });
+  });
 
-    describe("GenerateDocument", () => {
-        it("should generate the full document from releaserc", function () {
-            const ex = `---
+  describe("GenerateDocument", () => {
+    it("should generate the full document from releaserc", function () {
+      const ex = `---
 id: commit-conventions
 title: Commit Conventions
 ---
@@ -804,8 +846,8 @@ Any chores, uncategorized, or small mistakes (like typos)
 | ------------ | --------------- | ----- |
 | \`no-release\` | Prevent release | \`nil\` |
 `;
-            const act = parser.GenerateDocument(configuration);
-            act.should.equal(ex);
-        });
+      const act = parser.GenerateDocument(configuration);
+      act.should.equal(ex);
     });
+  });
 });

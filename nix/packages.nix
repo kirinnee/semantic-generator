@@ -1,23 +1,43 @@
-{ nixpkgs ? import <nixpkgs> { } }:
+{ pkgs, atomi, pkgs-2305, pkgs-may-05-24 }:
 let
-  pkgs = {
-    atomi = (
-      with import (fetchTarball "https://github.com/kirinnee/test-nix-repo/archive/refs/tags/v15.1.0.tar.gz");
+  all = {
+    atomipkgs = (
+      with atomi;
       {
-        inherit pls sg;
+        inherit
+          infisical
+          sg
+          pls;
       }
     );
-    "nix Unstable 11th December 2022" = (
-      with import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/f82f0ec1b70b2879c3f3d9a1015a05c73a90a17c.tar.gz") { };
+    nix-2305 = (
+      with pkgs-2305;
+      { }
+    );
+    may-05-24 = (
+      with pkgs-may-05-24;
       {
-        inherit pre-commit git shfmt shellcheck nixpkgs-fmt bash sd gnugrep jq coreutils;
-        prettier = nodePackages.prettier;
+        inherit
+          xcbuild
+          coreutils
+          findutils
+          sd
+          bash
+          git
+          jq
+          yq-go
+
+          # lint
+          treefmt
+          gitlint
+          shellcheck;
+        node = nodejs_22;
         pnpm = nodePackages.pnpm;
-        nodejs = nodejs;
       }
     );
   };
 in
-with pkgs;
-atomi //
-pkgs."nix Unstable 11th December 2022"
+with all;
+nix-2305 //
+may-05-24 //
+atomipkgs

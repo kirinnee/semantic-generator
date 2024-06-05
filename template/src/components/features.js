@@ -1,5 +1,4 @@
-export const features =
-    var___features___;
+export const features = var___features___;
 
 //     [
 //       {
