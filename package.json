@@ -1,6 +1,6 @@
 {
   "name": "@kirinnee/semantic-generator",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "description": "Semantic Release configuration generator for conventional commits",
   "main": "dist/semantic-generator.js",
   "license": "MIT",
