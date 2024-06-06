@@ -31,7 +31,7 @@ let
           treefmt
           gitlint
           shellcheck;
-        node = nodejs_22;
+        node = nodejs_20;
         pnpm = nodePackages.pnpm;
       }
     );
