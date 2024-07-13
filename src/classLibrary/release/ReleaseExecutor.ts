@@ -7,6 +7,7 @@ import { Content, VFile } from "../engine/vfs";
 import { Err, Result } from "@hqoss/monads";
 import { Executor, Runtime } from "../executor/executor";
 import { PromiseResult } from "../resultUtil";
+import { VersionManager } from "./verison-manager";
 
 class ReleaseExecutor {
   private readonly docParser: CommitConventionDocumentParser;
@@ -14,6 +15,7 @@ class ReleaseExecutor {
   private readonly writer: Writer;
   private readonly executor: Executor;
   private readonly target: string;
+  private readonly versionManager: VersionManager;
 
   async Release(
     config: ReleaseConfiguration,
@@ -45,10 +47,7 @@ class ReleaseExecutor {
     return await r.match({
       none: () =>
         this.executor.Release(this.target, [
-          "semantic-release@23.0.1",
-          "conventional-changelog-conventionalcommits@7.0.2",
-          "@semantic-release/commit-analyzer@12.0.0",
-          "@semantic-release/release-notes-generator@12.0.0",
+          ...this.versionManager.defaultPackages,
           ...(config.plugins?.Map((x) => x.module) ?? []),
         ]),
       some: (s: string[]): PromiseResult<Runtime, string[]> =>
@@ -61,12 +60,14 @@ class ReleaseExecutor {
     releaseParser: ReleaseParser,
     writer: Writer,
     exectuor: Executor,
+    versionManager: VersionManager,
     target: string,
   ) {
     this.docParser = docParser;
     this.releaseParser = releaseParser;
     this.writer = writer;
     this.executor = exectuor;
+    this.versionManager = versionManager;
     this.target = target;
   }
 }

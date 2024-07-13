@@ -14,6 +14,10 @@ import { Executor } from "../classLibrary/executor/executor";
 import { ReleaseExecutor } from "../classLibrary/release/ReleaseExecutor";
 import { BasicWriter } from "../classLibrary/engine/writer";
 import * as path from "path";
+import {
+  defaultVersions,
+  VersionManager,
+} from "../classLibrary/release/verison-manager";
 
 export function ReleaseController(core: Core, c: Command): void {
   c.option(
@@ -24,11 +28,32 @@ export function ReleaseController(core: Core, c: Command): void {
       "-i, --installer <installer>",
       "Type of installer to use. default: try all. possible values: npm, yarn, pnpm",
     )
+    .option(
+      "--sr <version>",
+      `Version of semantic-release to use. default: ${defaultVersions.semanticRelease}`,
+    )
+    .option(
+      "--cccc <version>",
+      `Version of conventional-changelog-conventionalcommits to use. default: ${defaultVersions.conventionalChangelogConventionalCommits}`,
+    )
+    .option(
+      "--ca <version>",
+      `Version of @semantic-release/commit-analyzer to use. default: ${defaultVersions.commitAnalyzer}`,
+    )
+    .option(
+      "--rng <version>",
+      "Version of @semantic-release/release-notes-generator to use. default: ${defaultVersions.releaseNoteGenerator}",
+    )
+
     .action(async function (opts: { [s: string]: string }) {
       let error = false;
       try {
         const cwd = path.resolve(".");
         const configPath = Wrap(opts.config);
+        const semanticRelease = Wrap(opts.sr);
+        const conventionalChangelogConventionalCommits = Wrap(opts.cccc);
+        const commitAnalyzer = Wrap(opts.ca);
+        const releaseNoteGenerator = Wrap(opts.rng);
         const installer = ToInstaller(opts.installer);
         const vResolver = new VarResolver(core);
         const runtimes = [new Pnpm(), new Yarn(), new Npm()];
@@ -41,15 +66,22 @@ export function ReleaseController(core: Core, c: Command): void {
           mdt,
           core,
         );
+        const versionManager = new VersionManager(
+          semanticRelease,
+          conventionalChangelogConventionalCommits,
+          commitAnalyzer,
+          releaseNoteGenerator,
+        );
         const releaseParser = new ReleaseParser(core);
         const releaser = new ReleaseExecutor(
           docParser,
           releaseParser,
           writer,
           executor,
+          versionManager,
           cwd,
         );
-
+        console.log("Default packages: ", versionManager.defaultPackages);
         const r = await reader
           .Read(configPath)
           .andThenAsync(async (c) => releaser.Release(c)).promise;
