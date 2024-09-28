@@ -24,6 +24,7 @@ type ConventionFile = Infer<typeof ConventionFileSchema>;
 
 const PluginSchema = object({
   module: string(),
+  version: optional(string()),
   config: optional(any()),
 });
 

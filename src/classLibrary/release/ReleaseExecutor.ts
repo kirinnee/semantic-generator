@@ -48,7 +48,9 @@ class ReleaseExecutor {
       none: () =>
         this.executor.Release(this.target, [
           ...this.versionManager.defaultPackages,
-          ...(config.plugins?.Map((x) => x.module) ?? []),
+          ...(config.plugins?.Map(
+            (x) => `${x.module}@${x.version ?? "latest"}`,
+          ) ?? []),
         ]),
       some: (s: string[]): PromiseResult<Runtime, string[]> =>
         new PromiseResult(Promise.resolve<Result<Runtime, string[]>>(Err(s))),
