@@ -27,10 +27,10 @@ COMMIT_SOURCE=$2
 
 if [ "$COMMIT_SOURCE" = '' ]; then
     # without message
-    exec < /dev/tty && pls run -- committer generate "" "$COMMIT_MSG_FILE"
+    exec < /dev/tty && sg committer generate "" "$COMMIT_MSG_FILE"
 else
     # with message
-    exec < /dev/tty && pls run -- committer generate "$(cat $COMMIT_MSG_FILE)" "$COMMIT_MSG_FILE"
+    exec < /dev/tty && sg committer generate "$(cat $COMMIT_MSG_FILE)" "$COMMIT_MSG_FILE"
     exec < /dev/tty && \${EDITOR:-vi} "$COMMIT_MSG_FILE"
 fi`;
 
