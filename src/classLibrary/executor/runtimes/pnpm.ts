@@ -10,7 +10,7 @@ class Pnpm implements Runtime {
     return PR(async (): Promise<Result<Runtime, string[]>> => {
       try {
         const buildStream = execa("pnpm", ["run", "build"], { cwd });
-        buildStream.stdout.pipe(process.stdout);
+        buildStream.stdout?.pipe(process.stdout);
         await buildStream;
 
         return Ok(parent);
@@ -26,7 +26,7 @@ class Pnpm implements Runtime {
     return PR(async (): Promise<Result<Runtime, string[]>> => {
       try {
         const installStream = execa("pnpm", ["i"], { cwd });
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -56,7 +56,7 @@ class Pnpm implements Runtime {
           ["run", "docusaurus", "docs:version", version],
           { cwd },
         );
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -75,7 +75,7 @@ class Pnpm implements Runtime {
         const installStream = execa("pnpm", ["add", "-D", ...packages], {
           cwd,
         });
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -93,7 +93,7 @@ class Pnpm implements Runtime {
           ["exec", "semantic-release@23.0.1"],
           { cwd },
         );
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {

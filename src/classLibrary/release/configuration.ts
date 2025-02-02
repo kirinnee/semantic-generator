@@ -3,6 +3,7 @@ import {
   array,
   defaulted,
   Infer,
+  integer,
   literal,
   object,
   optional,
@@ -21,6 +22,21 @@ const ConventionFileSchema = object({
 });
 
 type ConventionFile = Infer<typeof ConventionFileSchema>;
+
+const envCheck = (key: string, def: string) => {
+  const ev = process.env[key];
+  if (ev) return ev;
+  return def;
+};
+
+const CommitterSchema = object({
+  model: defaulted(string(), envCheck("SG_COMMITTER_MODEL", "gpt-4o-mini")),
+  provider: defaulted(string(), envCheck("SG_COMMITTER_PROVIDER", "openai")),
+  variations: defaulted(integer(), 3),
+  maxDiff: defaulted(integer(), 1000),
+});
+
+type CommitterConfig = Infer<typeof CommitterSchema>;
 
 const PluginSchema = object({
   module: string(),
@@ -76,6 +92,7 @@ type SpecialScope = Infer<typeof SpecialScopeSchema>;
 
 const ReleaseConfigurationSchema = object({
   gitlint: defaulted(string(), ".gitlint"),
+  committer: defaulted(CommitterSchema, {}),
   conventionMarkdown: defaulted(ConventionFileSchema, {}),
   keywords: defaulted(array(string()), ["BREAKING"]),
   branches: array(string()),
@@ -88,6 +105,7 @@ type ReleaseConfigurationValidated = Infer<typeof ReleaseConfigurationSchema>;
 
 interface ReleaseConfiguration {
   gitlint: string;
+  committer: CommitterConfig;
   conventionMarkdown: ConventionFile;
   keywords: string[];
   branches: string[];
@@ -124,6 +142,7 @@ function ReleaseConfigurationValid(
 export {
   ReleaseConfigurationValid,
   SpecialScope,
+  CommitterConfig,
   ReleaseConfiguration,
   ConventionFile,
   ReleaseConfigurationValidated,

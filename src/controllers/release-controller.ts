@@ -1,7 +1,6 @@
 import { Command } from "commander";
 import { Core } from "@kirinnee/core";
 import { Wrap } from "../classLibrary/util";
-import { ToInstaller } from "./doc-controller";
 import { ReleaseParser } from "../classLibrary/release/releaseParser";
 import { ConfigReader } from "../classLibrary/release/config-reader";
 import { Npm } from "../classLibrary/executor/runtimes/npm";
@@ -10,7 +9,7 @@ import { Pnpm } from "../classLibrary/executor/runtimes/pnpm";
 import { CommitConventionDocumentParser } from "../classLibrary/release/documentParser";
 import { MarkdownTable } from "../markdown-table";
 import { VarResolver } from "../classLibrary/engine/resolver";
-import { Executor } from "../classLibrary/executor/executor";
+import { Executor, Installer } from "../classLibrary/executor/executor";
 import { ReleaseExecutor } from "../classLibrary/release/ReleaseExecutor";
 import { BasicWriter } from "../classLibrary/engine/writer";
 import * as path from "path";
@@ -18,6 +17,20 @@ import {
   defaultVersions,
   VersionManager,
 } from "../classLibrary/release/verison-manager";
+import { None, Option, Some } from "@hqoss/monads";
+
+export function ToInstaller(s?: string): Option<Installer> {
+  return Wrap(s).andThen((x) => {
+    switch (x) {
+      case "npm":
+      case "pnpm":
+      case "yarn":
+        return Some(x as Installer);
+      default:
+        return None;
+    }
+  });
+}
 
 export function ReleaseController(core: Core, c: Command): void {
   c.option(

@@ -142,7 +142,7 @@ body
 This page will document the types and scopes used.`;
   }
 
-  generateFullDocs(rc: ReleaseConfiguration): string {
+  GenerateFullDocs(rc: ReleaseConfiguration): string {
     const types = ResultAll(rc.types.Map((x) => this.generateType(rc, x.type)))
       .unwrap()
       .join("\n\n");
@@ -161,7 +161,7 @@ ${this.generateSpecialScopes(rc)}`;
     const content = this.varResolver.ResolveContent(
       {
         variables: {
-          convention_docs: this.generateFullDocs(rc),
+          convention_docs: this.GenerateFullDocs(rc),
         },
         flags: {},
       },

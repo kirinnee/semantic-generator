@@ -15,7 +15,7 @@ class Npm implements Runtime {
     return PR(async (): Promise<Result<Runtime, string[]>> => {
       try {
         const installStream = execa("npm", ["i"], { cwd });
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -30,7 +30,7 @@ class Npm implements Runtime {
     return PR(async (): Promise<Result<Runtime, string[]>> => {
       try {
         const buildStream = execa("npm", ["run", "build"], { cwd });
-        buildStream.stdout.pipe(process.stdout);
+        buildStream.stdout?.pipe(process.stdout);
         await buildStream;
         return Ok(parent);
       } catch (e) {
@@ -58,7 +58,7 @@ class Npm implements Runtime {
           ["run", "docusaurus", "docs:version", version],
           { cwd },
         );
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -75,7 +75,7 @@ class Npm implements Runtime {
     return PR(async (): Promise<Result<Runtime, string[]>> => {
       try {
         const installStream = execa("npm", ["i", "-D", ...packages], { cwd });
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -93,7 +93,7 @@ class Npm implements Runtime {
           ["exec", "semantic-release@23.0.1"],
           { cwd },
         );
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {

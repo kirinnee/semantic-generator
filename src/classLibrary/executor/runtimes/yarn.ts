@@ -13,7 +13,7 @@ class Yarn implements Runtime {
         const installStream = execa("yarn", ["install", "--prefer-offline"], {
           cwd,
         });
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -27,7 +27,7 @@ class Yarn implements Runtime {
     return PR(async (): Promise<Result<Runtime, string[]>> => {
       try {
         const installStream = execa("yarn", ["run", "build"], { cwd });
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -45,7 +45,7 @@ class Yarn implements Runtime {
           ["run", "docusaurus", "docs:version", version],
           { cwd },
         );
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -73,7 +73,7 @@ class Yarn implements Runtime {
         const installStream = execa("yarn", ["add", "-D", ...packages], {
           cwd,
         });
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
@@ -91,7 +91,7 @@ class Yarn implements Runtime {
           ["exec", "semantic-release@23.0.1"],
           { cwd },
         );
-        installStream.stdout.pipe(process.stdout);
+        installStream.stdout?.pipe(process.stdout);
         await installStream;
         return Ok(parent);
       } catch (e) {
