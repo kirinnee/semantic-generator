@@ -26,7 +26,6 @@ with packages;
     treefmt
     gitlint
     shellcheck
-    sg
   ];
 
   ci = [

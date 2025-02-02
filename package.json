@@ -68,6 +68,7 @@
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@kirinnee/semantic-generator": "^0.11.0",
     "@types/chai": "^4.3.20",
     "@types/chai-as-promised": "^7.1.8",
     "@types/color": "^3.0.6",

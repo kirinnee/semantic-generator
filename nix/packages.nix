@@ -6,7 +6,6 @@ let
       {
         inherit
           infisical
-          sg
           pls;
       }
     );
