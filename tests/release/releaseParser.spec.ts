@@ -123,6 +123,12 @@ describe("PluginToSemanticReleasePlugin", function () {
 describe("ReleaseParser", function () {
   const configuration: ReleaseConfiguration = {
     gitlint: ".gitlint",
+    committer: {
+      model: "",
+      variations: 10,
+      provider: "openai",
+      maxDiff: 1000,
+    },
     conventionMarkdown: {
       path: "docs/developer/03-Commit Conventions.md",
       template: `---
@@ -313,6 +319,12 @@ var___convention_docs___
   };
   const configuration2: ReleaseConfiguration = {
     gitlint: ".gitlint",
+    committer: {
+      model: "",
+      variations: 10,
+      provider: "openai",
+      maxDiff: 1000,
+    },
     conventionMarkdown: {
       path: "docs/developer/03-Commit Conventions.md",
       template: "var___convention_docs___",

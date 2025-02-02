@@ -51,6 +51,7 @@ tasks:
 
   run:
     desc: Runs the CLI
+    interactive: true
     cmds:
       - node ./dist/semantic-generator {{.CLI_ARGS}}
 

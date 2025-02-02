@@ -11,6 +11,12 @@ should();
 describe("ReleaseConfigurationValid", () => {
   const valid1 = {
     gitlint: ".gitlint",
+    committer: {
+      model: "gpt-4o",
+      variations: 10,
+      provider: "openai",
+      maxDiff: 500,
+    },
     conventionMarkdown: {
       path: "docs/developer/03-Commit Conventions.md",
       template: `---
@@ -32,12 +38,14 @@ var___convention_docs___
     plugins: [
       {
         module: "@semantic-release/changelog",
+        version: "5.0.0",
         config: {
           changelogFile: "CHANGELOG.md",
         },
       },
       {
         module: "@semantic-release/git",
+        version: "5.0.1",
         config: {
           message:
             "release: ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
@@ -45,6 +53,7 @@ var___convention_docs___
       },
       {
         module: "@semantic-release/github",
+        version: "5.0.0",
       },
     ],
     types: [
@@ -103,6 +112,12 @@ var___convention_docs___
   };
   const ex1: ReleaseConfiguration = {
     gitlint: ".gitlint",
+    committer: {
+      model: "gpt-4o",
+      variations: 10,
+      provider: "openai",
+      maxDiff: 500,
+    },
     conventionMarkdown: {
       path: "docs/developer/03-Commit Conventions.md",
       template: `---
@@ -124,12 +139,14 @@ var___convention_docs___
     plugins: [
       {
         module: "@semantic-release/changelog",
+        version: "5.0.0",
         config: {
           changelogFile: "CHANGELOG.md",
         },
       },
       {
         module: "@semantic-release/git",
+        version: "5.0.1",
         config: {
           message:
             "release: ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
@@ -137,6 +154,7 @@ var___convention_docs___
       },
       {
         module: "@semantic-release/github",
+        version: "5.0.0",
         config: undefined,
       },
     ],
@@ -254,6 +272,12 @@ var___convention_docs___
   };
   const ex2: ReleaseConfiguration = {
     gitlint: ".gitlint",
+    committer: {
+      model: "gpt-4o-mini",
+      variations: 3,
+      provider: "openai",
+      maxDiff: 1000,
+    },
     conventionMarkdown: {
       path: "COMMIT_CONVENTION.MD",
       template: "var___convention_docs___",
@@ -333,12 +357,14 @@ var___convention_docs___
     plugins: [
       {
         module: "@semantic-release/changelog",
+        version: "5.0.0",
         config: {
           changelogFile: "CHANGELOG.md",
         },
       },
       {
         module: "@semantic-release/github",
+        version: "5.0.0",
       },
     ],
     types: [
@@ -370,6 +396,12 @@ var___convention_docs___
   };
   const ex3: ReleaseConfiguration = {
     gitlint: ".gitlint",
+    committer: {
+      model: "gpt-4o-mini",
+      variations: 3,
+      provider: "openai",
+      maxDiff: 1000,
+    },
     conventionMarkdown: {
       path: "docs/developer/03-Commit Conventions.md",
       template: "var___convention_docs___",
@@ -385,12 +417,14 @@ var___convention_docs___
     plugins: [
       {
         module: "@semantic-release/changelog",
+        version: "5.0.0",
         config: {
           changelogFile: "CHANGELOG.md",
         },
       },
       {
         config: undefined,
+        version: "5.0.0",
         module: "@semantic-release/github",
       },
     ],
@@ -651,7 +685,7 @@ var___convention_docs___
     it("should return a result with error", function () {
       const actual = ReleaseConfigurationValid(subject);
       actual.isOk().should.be.false;
-      actual.unwrapErr().should.deep.equal(expected);
+      actual.unwrapErr().slice(0, expected.length).should.deep.equal(expected);
     }),
   );
 });

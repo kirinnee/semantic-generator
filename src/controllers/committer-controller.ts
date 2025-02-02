@@ -16,7 +16,7 @@ import { BasicWriter } from "../classLibrary/engine/writer";
 import { CommitHookInstaller } from "../classLibrary/committer/install";
 
 export function CommitterController(core: Core, c: Command): void {
-  c.command("generate <commt_msg> <commit_path> <src>")
+  c.command("generate <commt_msg> <commit_path>")
     .option(
       "-c, --config <cfg>",
       "path to configuration. default: atomi_docs.yaml",
@@ -24,7 +24,6 @@ export function CommitterController(core: Core, c: Command): void {
     .action(async function (
       commit_msg: string,
       commit_path: string,
-      src: string,
       opts: { [s: string]: string },
     ) {
       let error = false;
@@ -54,19 +53,14 @@ export function CommitterController(core: Core, c: Command): void {
         const r: Result<string, string[]> = await reader
           .Read(configPath)
           .andThenAsync((c) =>
-            committer.Commit(
-              cwd,
-              c,
-              src === "message" ? commit_msg : "",
-              commit_path,
-            ),
+            committer.Commit(cwd, c, commit_msg, commit_path),
           ).promise;
         r.match({
           err: (e) => {
             e.map((w) => console.warn(w));
             error = true;
           },
-          ok: (s) => console.log(s),
+          ok: (s) => console.log(""),
         });
       } catch (err) {
         console.warn(err);

@@ -16,6 +16,12 @@ core.ExtendPrimitives();
 describe("CommitConventionDocumentParser", function () {
   const configuration: ReleaseConfiguration = {
     gitlint: ".gitlint",
+    committer: {
+      model: "gpt-4o-mini",
+      variations: 10,
+      provider: "openai",
+      maxDiff: 1000,
+    },
     conventionMarkdown: {
       path: "docs/developer/03-Commit Conventions.md",
       template: `---
@@ -189,7 +195,7 @@ var___convention_docs___
             release: false,
           },
           nix: {
-            desc: "Add, update or change old-nix shell",
+            desc: "Add, update or change nix shell",
             release: false,
           },
           env: {
@@ -690,7 +696,7 @@ Any chores, uncategorized, or small mistakes (like typos)
 | ------------ | --------------- | ----- |
 | \`no-release\` | Prevent release | \`nil\` |`;
 
-      const act = parser.generateFullDocs(configuration);
+      const act = parser.GenerateFullDocs(configuration);
       act.should.equal(ex);
     });
   });

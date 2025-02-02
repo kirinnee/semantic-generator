@@ -4,7 +4,6 @@ import { azure } from "@ai-sdk/azure";
 import { anthropic } from "@ai-sdk/anthropic";
 import { bedrock } from "@ai-sdk/amazon-bedrock";
 import { google } from "@ai-sdk/google";
-import { vertex } from "@ai-sdk/google-vertex";
 import { mistral } from "@ai-sdk/mistral";
 import { xai } from "@ai-sdk/xai";
 import { togetherai } from "@ai-sdk/togetherai";
@@ -34,8 +33,6 @@ class AILoader {
         return bedrock(config.model);
       case "google":
         return google(config.model);
-      case "google-vertex":
-        return vertex(config.model);
       case "mistral":
         return mistral(config.model);
       case "xai":
