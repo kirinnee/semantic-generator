@@ -6,6 +6,7 @@ import * as process from "process";
 import { ReleaseController } from "./controllers/release-controller";
 import { GitlintController } from "./controllers/gitlint-controller";
 import { CommitterController } from "./controllers/committer-controller";
+import { ConventionsController } from "./controllers/conventions-controller";
 
 const core: Core = new Kore();
 core.ExtendPrimitives();
@@ -36,5 +37,8 @@ GitlintController(core, gitlint);
 
 const committer = program.command("committer");
 CommitterController(core, committer);
+
+const conventions = program.command("conventions");
+ConventionsController(core, conventions);
 
 program.parse(process.argv);
