@@ -18,6 +18,7 @@ import {
   VersionManager,
 } from "../classLibrary/release/verison-manager";
 import { None, Option, Some } from "@hqoss/monads";
+import { GitTagReader, TagGuard } from "../classLibrary/release/tag-guard";
 
 export function ToInstaller(s?: string): Option<Installer> {
   return Wrap(s).andThen((x) => {
@@ -94,6 +95,20 @@ export function ReleaseController(core: Core, c: Command): void {
           versionManager,
           cwd,
         );
+        // Tag-collision preflight, before anything is computed or written.
+        // It runs unconditionally and has no bypass flag: releasing onto a
+        // version an existing tag occupies lands the release commit and
+        // changelog and only then fails to tag, leaving a committed release
+        // with no tag on the branch about to be pushed.
+        const guard = await new TagGuard(
+          new GitTagReader(cwd),
+        ).CheckVisibility().promise;
+        if (guard.isErr()) {
+          guard.unwrapErr().forEach((w) => console.error(`tag-guard: ${w}`));
+          process.exit(1);
+        }
+        console.log(`tag-guard OK: ${guard.unwrap()}`);
+
         console.log("Default packages: ", versionManager.defaultPackages);
         const r = await reader
           .Read(configPath)

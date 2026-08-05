@@ -6,6 +6,7 @@ import * as process from "process";
 import { ReleaseController } from "./controllers/release-controller";
 import { GitlintController } from "./controllers/gitlint-controller";
 import { CommitterController } from "./controllers/committer-controller";
+import { TagGuardController } from "./controllers/tag-guard-controller";
 
 const core: Core = new Kore();
 core.ExtendPrimitives();
@@ -30,6 +31,9 @@ program
 
 const release = program.command("release");
 ReleaseController(core, release);
+
+const tagGuard = program.command("tag-guard");
+TagGuardController(tagGuard);
 
 const gitlint = program.command("gitlint");
 GitlintController(core, gitlint);
