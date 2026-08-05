@@ -41,11 +41,11 @@ Fixed a bug within the repository
 | example         | fix: dropdown flickering                                           |
 | example applied | when this commit is applied, it will _fix_ **dropdown flickering** |
 
-| Scope    | Description                                | Bump    |
-| -------- | ------------------------------------------ | ------- |
-| default  | Generic fixes not under `drv` or `patch`   | `patch` |
-| `drv`    | Fixes in nix derivations in the repository | `patch` |
-| `config` | Fixes in configuration                     | `nil`   |
+| Scope    | Description                                    | Bump    |
+| -------- | ---------------------------------------------- | ------- |
+| default  | Generic fixes not under `drv` or `patch`       | `patch` |
+| `drv`    | Fixes in old-nix derivations in the repository | `patch` |
+| `config` | Fixes in configuration                         | `nil`   |
 
 ## new
 
@@ -115,7 +115,7 @@ Update configuration of the repository
 | `lint`   | Add, update or remove linters                                                | `nil` |
 | `fmt`    | Add, updatge or remove formatters                                            | `nil` |
 | `build`  | Add, update or change buyild pipelines and generators                        | `nil` |
-| `nix`    | Add, update or change nix shell                                              | `nil` |
+| `nix`    | Add, update or change old-nix shell                                          | `nil` |
 | `env`    | Add, update or change environment                                            | `nil` |
 | `ignore` | Add, update or change ignore configurations                                  | `nil` |
 
