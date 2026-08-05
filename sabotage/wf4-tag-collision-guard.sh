@@ -385,6 +385,64 @@ else
 fi
 echo
 
+# ===========================================================================
+echo "-- ARM 15: the guard is WIRED INTO 'sg release', not merely available"
+# ===========================================================================
+# Everything above tests `sg tag-guard`, the standalone command. That is not the
+# path that protects a release. This arm exercises the PRODUCTION path: the
+# preflight inside `sg release`, which is what actually stands between a repo and
+# a committed-release-with-no-tag.
+#
+# A guard that is shipped, correct, tested and NOT WIRED IN is an inert check.
+R15="$(new_repo release-preflight)"
+(
+  cd "$R15" || exit 1
+  git checkout -q -b side
+  echo s >s.txt
+  git add s.txt
+  git commit -q -m "chore: s"
+  git tag v1.0.0
+  git checkout -q main
+)
+assert_subject "tags reachable from HEAD" \
+  "$(cd "$R15" && git tag --merged HEAD | tr -d '[:space:]')" ""
+
+# stderr merged; `sg release` writes the refusal to stderr.
+REL_OUT="$(cd "$R15" && node "$CLI" release 2>&1)"
+REL_RC=$?
+if [ "$REL_RC" -eq 0 ]; then
+  bad "ARM15 'sg release' did NOT refuse (exit 0) — the guard is not wired into the release path"
+else
+  case "$REL_OUT" in
+    *tag-not-visible*) ok "ARM15 'sg release' refused at preflight (exit $REL_RC) with 'tag-not-visible'" ;;
+    *) bad "ARM15 'sg release' exited $REL_RC but NOT via the tag guard. output: $REL_OUT" ;;
+  esac
+fi
+
+# MUST-DIFFER CONTROL. Merge the tag into HEAD and the preflight must let the
+# release THROUGH — it then fails on the next thing (a missing config), which is
+# a DIFFERENT failure. Without this arm, a `sg release` that was simply broken
+# for any unrelated reason would satisfy the arm above.
+(cd "$R15" && git merge -q --no-edit side)
+assert_subject "tag reachable after merge" \
+  "$(cd "$R15" && git tag --merged HEAD | tr -d '[:space:]')" "v1.0.0"
+
+REL_OUT2="$(cd "$R15" && node "$CLI" release 2>&1)"
+case "$REL_OUT2" in
+  *"tag-guard OK"*)
+    case "$REL_OUT2" in
+      *atomi_release.yaml*)
+        ok "ARM15 CONTROL preflight PASSED and release proceeded to a different failure (missing config), proving the refusal above was the guard and not a broken command"
+        ;;
+      *)
+        ok "ARM15 CONTROL preflight passed (guard cleared) once every tag was reachable"
+        ;;
+    esac
+    ;;
+  *) bad "ARM15 CONTROL preflight did not clear even with every tag reachable. output: $REL_OUT2" ;;
+esac
+echo
+
 echo "== RESULT =="
 echo "arms passed : $PASS"
 echo "arms failed : $FAIL"

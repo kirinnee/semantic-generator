@@ -6,7 +6,7 @@ CLI under test : /home/kirin/Workspace/wt-sg-wf4-tagguard/dist/semantic-generato
 CLI bytes sha  : 6553921cf677e3d7885d61b5c609a09bc8b3739b04ef07ead56d23a50c7f8643
 git version    : git version 2.54.0
 shell          : bash 5.2.26(1)-release
-scratch root   : /tmp/tmp.Y85dxMBdrO
+scratch root   : /tmp/tmp.4dPSyxXd0I
 
 -- ARM 1/2: a version an existing tag occupies is refused; a free one is not
   PASS  SUBJECT tag v1.0.0 exists in the repo == 'v1.0.0'
@@ -60,7 +60,13 @@ scratch root   : /tmp/tmp.Y85dxMBdrO
   PASS  ARM14 shipped tree (40 .js files under /home/kirin/Workspace/wt-sg-wf4-tagguard/dist) contains none of the 11 tag-identity tokens (taggername taggeremail taggerdate tagger committername committeremail committerdate creator creatordate authorname authoremail)
   PASS  ARM14 CONTROL the same grep over the same tree DOES find 'for-each-ref' (instrument is live)
 
+-- ARM 15: the guard is WIRED INTO 'sg release', not merely available
+  PASS  SUBJECT tags reachable from HEAD == ''
+  PASS  ARM15 'sg release' refused at preflight (exit 1) with 'tag-not-visible'
+  PASS  SUBJECT tag reachable after merge == 'v1.0.0'
+  PASS  ARM15 CONTROL preflight PASSED and release proceeded to a different failure (missing config), proving the refusal above was the guard and not a broken command
+
 == RESULT ==
-arms passed : 28
+arms passed : 32
 arms failed : 0
 VERDICT: ALL PASS
