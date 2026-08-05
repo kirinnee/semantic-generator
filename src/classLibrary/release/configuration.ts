@@ -141,6 +141,7 @@ function ReleaseConfigurationValid(
 
 export {
   ReleaseConfigurationValid,
+  ReleaseConfigurationSchema,
   SpecialScope,
   CommitterConfig,
   ReleaseConfiguration,
