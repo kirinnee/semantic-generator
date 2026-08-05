@@ -8,6 +8,7 @@ import {
   object,
   optional,
   record,
+  refine,
   string,
   StructError,
   union,
@@ -15,6 +16,11 @@ import {
 } from "superstruct";
 import { Err, Ok, Result } from "@hqoss/monads";
 import chalk from "chalk";
+import {
+  BumpTypeName,
+  BumpTypeNameSchema,
+  RequiresExplicitFile,
+} from "./bump/bump-types";
 
 const ConventionFileSchema = object({
   path: defaulted(string(), "COMMIT_CONVENTION.MD"),
@@ -90,6 +96,55 @@ const SpecialScopeSchema = record(
 
 type SpecialScope = Infer<typeof SpecialScopeSchema>;
 
+/**
+ * A bump entry names a runtime. Most types carry a built-in default path, so the
+ * name is all the entry needs.
+ *
+ * Two rules are enforced here rather than left to review:
+ *
+ *  * `file` overrides the default path, and an override MUST carry a non-empty
+ *    `reason`. If a preset's default is wrong for a repository, the configuration
+ *    has to say why out loud, where the next reader will see it.
+ *
+ *  * A type with NO built-in default MUST name a `file`. `dotnet-version` is such
+ *    a type: measured across four authoritative dotnet trees, the version lives in
+ *    `App/App.csproj`, in `Version.props`, and twice nowhere at all, so no default
+ *    could be right. Requiring the path here turns what would have been a
+ *    plausible-looking write to the wrong file into a configuration error.
+ */
+const BumpSchema = refine(
+  object({
+    type: BumpTypeNameSchema,
+    file: optional(string()),
+    reason: optional(string()),
+  }),
+  "bump",
+  (b) => {
+    if (b.file === undefined) {
+      if (RequiresExplicitFile(b.type))
+        return (
+          `is a \`${b.type}\` entry, which has no built-in default path and so ` +
+          "must name a `file` (with a `reason`). Measured across the " +
+          "authoritative dotnet trees, the version field lives in a different " +
+          "file in each one, so any default this preset shipped would be wrong " +
+          "somewhere and would write to the wrong file rather than complain"
+        );
+      return b.reason === undefined || b.reason.trim().length > 0
+        ? true
+        : "has an empty `reason`. Drop it, or state a real one";
+    }
+    if (b.reason === undefined || b.reason.trim().length === 0)
+      return (
+        `names \`file: ${b.file}\` but states no \`reason\`. A file is allowed ` +
+        "only with a stated reason, so that pointing a bump at a path can never " +
+        "be silent"
+      );
+    return true;
+  },
+);
+
+type Bump = Infer<typeof BumpSchema>;
+
 const ReleaseConfigurationSchema = object({
   gitlint: defaulted(string(), ".gitlint"),
   committer: defaulted(CommitterSchema, {}),
@@ -99,6 +154,7 @@ const ReleaseConfigurationSchema = object({
   plugins: optional(array(PluginSchema)),
   types: array(TypeSchema),
   specialScopes: optional(SpecialScopeSchema),
+  bumps: optional(array(BumpSchema)),
 });
 
 type ReleaseConfigurationValidated = Infer<typeof ReleaseConfigurationSchema>;
@@ -111,6 +167,7 @@ interface ReleaseConfiguration {
   branches: string[];
   plugins?: Plugin[];
   specialScopes?: { [s: string]: { desc: string; release: Release } };
+  bumps?: Bump[];
   types: {
     type: string;
     section?: string;
@@ -150,4 +207,8 @@ export {
   Release,
   Vae,
   Plugin,
+  Bump,
+  BumpTypeName,
+  BumpSchema,
+  BumpTypeNameSchema,
 };

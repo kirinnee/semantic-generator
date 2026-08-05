@@ -48,6 +48,11 @@ class ReleaseExecutor {
       none: () =>
         this.executor.Release(this.target, [
           ...this.versionManager.defaultPackages,
+          // The exec plugin is what runs the bump as a release prepare step, so
+          // it is only needed when something is actually configured to bump.
+          ...((config.bumps?.length ?? 0) > 0
+            ? this.versionManager.bumpPackages
+            : []),
           ...(config.plugins?.Map(
             (x) => `${x.module}@${x.version ?? "latest"}`,
           ) ?? []),

@@ -111,6 +111,7 @@ var___convention_docs___
     ],
   };
   const ex1: ReleaseConfiguration = {
+    bumps: undefined,
     gitlint: ".gitlint",
     committer: {
       model: "gpt-4o",
@@ -271,6 +272,7 @@ var___convention_docs___
     ],
   };
   const ex2: ReleaseConfiguration = {
+    bumps: undefined,
     gitlint: ".gitlint",
     committer: {
       model: "gpt-4o-mini",
@@ -395,6 +397,7 @@ var___convention_docs___
     ],
   };
   const ex3: ReleaseConfiguration = {
+    bumps: undefined,
     gitlint: ".gitlint",
     committer: {
       model: "gpt-4o-mini",
@@ -688,4 +691,153 @@ var___convention_docs___
       actual.unwrapErr().slice(0, expected.length).should.deep.equal(expected);
     }),
   );
+
+  /**
+   * The `bumps` list. SUBJECT of every case below is the `bumps` key of an
+   * otherwise-valid configuration, so any failure reported is attributable to the
+   * bump entry and nothing else.
+   */
+  describe("bumps", () => {
+    const base = {
+      branches: ["main"],
+      types: [
+        {
+          type: "fix",
+          section: "Bug Fixes",
+          scopes: { default: { desc: "a fix", release: "patch" } },
+        },
+      ],
+    };
+
+    const withBumps = (bumps: unknown) => ({ ...base, bumps });
+
+    it("accepts the two defaulted types with no file", function () {
+      // dotnet-version is absent here on purpose: it has no default and is
+      // covered by its own cases below.
+      const actual = ReleaseConfigurationValid(
+        withBumps([{ type: "node-version" }, { type: "dart-version" }]),
+      );
+      actual.isOk().should.be.true;
+      actual.unwrap().bumps?.should.deep.equal([
+        { type: "node-version", file: undefined, reason: undefined },
+        { type: "dart-version", file: undefined, reason: undefined },
+      ]);
+    });
+
+    it("accepts a file that states a reason", function () {
+      const actual = ReleaseConfigurationValid(
+        withBumps([
+          {
+            type: "dotnet-version",
+            file: "Version.props",
+            reason: "this repo keeps its version in Version.props",
+          },
+        ]),
+      );
+      actual.isOk().should.be.true;
+      actual.unwrap().bumps?.[0].file?.should.equal("Version.props");
+    });
+
+    it("REJECTS dotnet-version with NO file, because it has no default", function () {
+      // Measured across four authoritative dotnet trees, the version field lives
+      // in App/App.csproj, in Version.props, and twice nowhere. No default could
+      // be right, so the entry must name the path rather than have one guessed.
+      const actual = ReleaseConfigurationValid(
+        withBumps([{ type: "dotnet-version" }]),
+      );
+      actual.isOk().should.be.false;
+      const err = actual.unwrapErr().join("\n");
+      err.should.contain("bumps.0");
+      err.should.contain("no built-in default path");
+      err.should.contain("must name a");
+    });
+
+    it("CONTROL: the SAME type passes once a file and reason are given", function () {
+      // SUBJECT: the identical `dotnet-version` type from the test above, with
+      // only file+reason added. Proves the rejection is about the missing path
+      // and not about the type being unsupported.
+      const actual = ReleaseConfigurationValid(
+        withBumps([
+          {
+            type: "dotnet-version",
+            file: "App/App.csproj",
+            reason: "this repo keeps its version in the App project",
+          },
+        ]),
+      );
+      actual.isOk().should.be.true;
+    });
+
+    it("REJECTS a file with no reason", function () {
+      // This is the rule that keeps a path from being silent.
+      const actual = ReleaseConfigurationValid(
+        withBumps([
+          { type: "node-version", file: "packages/api/package.json" },
+        ]),
+      );
+      actual.isOk().should.be.false;
+      const err = actual.unwrapErr().join("\n");
+      err.should.contain("bumps.0");
+      err.should.contain("states no");
+      err.should.contain("only with a stated reason");
+    });
+
+    it("REJECTS a file whose reason is only whitespace", function () {
+      // A blank string would satisfy `optional(string())`, so the refinement has
+      // to trim. Otherwise `reason: " "` becomes the silent override.
+      const actual = ReleaseConfigurationValid(
+        withBumps([
+          {
+            type: "node-version",
+            file: "packages/api/package.json",
+            reason: "   ",
+          },
+        ]),
+      );
+      actual.isOk().should.be.false;
+      actual.unwrapErr().join("\n").should.contain("states no");
+    });
+
+    it("CONTROL: the identical entry PASSES once a reason is added", function () {
+      // SUBJECT: the exact entry rejected two tests above, with only `reason`
+      // added. Proves those rejections are caused by the missing reason and not
+      // by the file path or the type.
+      const actual = ReleaseConfigurationValid(
+        withBumps([
+          {
+            type: "node-version",
+            file: "packages/api/package.json",
+            reason: "stated",
+          },
+        ]),
+      );
+      actual.isOk().should.be.true;
+    });
+
+    it("REJECTS an unknown runtime type", function () {
+      const actual = ReleaseConfigurationValid(
+        withBumps([{ type: "python-version" }]),
+      );
+      actual.isOk().should.be.false;
+      actual.unwrapErr().join("\n").should.contain("bumps.0.type");
+    });
+
+    it("REJECTS an empty reason with no override", function () {
+      // An empty `reason` on a default-path entry is dead weight that reads like
+      // a justification, so it is refused too.
+      const actual = ReleaseConfigurationValid(
+        withBumps([{ type: "node-version", reason: "  " }]),
+      );
+      actual.isOk().should.be.false;
+      actual.unwrapErr().join("\n").should.contain("empty `reason`");
+    });
+
+    it("treats an absent bumps key as absent, not as an empty list", function () {
+      // Distinguishing the two matters: the bump step refuses an empty list
+      // rather than reporting a success, so `bumps` must not be defaulted to [].
+      const actual = ReleaseConfigurationValid(base);
+      actual.isOk().should.be.true;
+      (actual.unwrap().bumps === undefined).should.be.true;
+    });
+  });
 });

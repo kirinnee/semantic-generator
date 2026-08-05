@@ -18,6 +18,7 @@ import {
   VersionManager,
 } from "../classLibrary/release/verison-manager";
 import { None, Option, Some } from "@hqoss/monads";
+import { BumpCommand } from "../classLibrary/release/bump/self-command";
 
 export function ToInstaller(s?: string): Option<Installer> {
   return Wrap(s).andThen((x) => {
@@ -85,7 +86,7 @@ export function ReleaseController(core: Core, c: Command): void {
           commitAnalyzer,
           releaseNoteGenerator,
         );
-        const releaseParser = new ReleaseParser(core);
+        const releaseParser = new ReleaseParser(core, BumpCommand(configPath));
         const releaser = new ReleaseExecutor(
           docParser,
           releaseParser,

@@ -345,7 +345,10 @@ var___convention_docs___
     ],
   };
 
-  const parser = new ReleaseParser(core);
+  // A fixed, obviously-fake bump command so the generated prepareCmd is exactly
+  // assertable. The real one is built by BumpCommand() from process.execPath.
+  const BUMP_CMD = "'/node' '/dist/semantic-generator.js' bump";
+  const parser = new ReleaseParser(core, BUMP_CMD);
 
   describe("parseReleaseRules", function () {
     it("should parse types in atomi config into release rules", function () {
@@ -970,6 +973,215 @@ var___convention_docs___
       };
       const act2 = parser.GenerateReleaseRc(configuration2);
       act2.should.deep.equal(ex2);
+    });
+  });
+
+  /**
+   * Wiring the bump into the generated .releaserc.yaml. This is what makes the
+   * releaser the owner of the version number rather than a template script.
+   *
+   * SUBJECT throughout: the `plugins` array of the generated ReleaseRc. Each case
+   * uses a minimal configuration so the plugin list is short enough to assert
+   * whole, rather than probed for a substring.
+   */
+  describe("bump wiring", () => {
+    const minimal: ReleaseConfiguration = {
+      gitlint: ".gitlint",
+      committer: {
+        model: "gpt-4o-mini",
+        provider: "openai",
+        variations: 3,
+        maxDiff: 1000,
+      },
+      conventionMarkdown: {
+        path: "C.MD",
+        template: "var___convention_docs___",
+      },
+      keywords: ["BREAKING"],
+      branches: ["main"],
+      types: [{ type: "fix", section: "Bug Fixes", scopes: {} }],
+    };
+
+    /** Just the plugin names, in order. */
+    const names = (rc: ReleaseConfiguration): string[] =>
+      parser
+        .GenerateReleaseRc(rc)
+        .plugins.map((p) => (Array.isArray(p) ? p[0] : p));
+
+    const configOf = (rc: ReleaseConfiguration, module: string): unknown => {
+      const found = parser
+        .GenerateReleaseRc(rc)
+        .plugins.find((p) => Array.isArray(p) && p[0] === module);
+      return Array.isArray(found) ? found[1] : undefined;
+    };
+
+    it("adds NO exec plugin when there are no bumps", function () {
+      // The control that gives the next test its meaning: absent bumps must not
+      // grow a prepare step.
+      names(minimal).should.deep.equal([
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+      ]);
+    });
+
+    it("adds NO exec plugin when bumps is an empty list", function () {
+      // SUBJECT: `bumps: []`. An empty list is not a reason to wire a bump.
+      names({ ...minimal, bumps: [] }).should.deep.equal([
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+      ]);
+    });
+
+    it("adds the exec plugin with a prepareCmd when bumps exist", function () {
+      const rc = { ...minimal, bumps: [{ type: "node-version" as const }] };
+      names(rc).should.deep.equal([
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        "@semantic-release/exec",
+      ]);
+      configOf(rc, "@semantic-release/exec")?.should.deep.equal({
+        // The literal ${nextRelease.version} must survive into the yaml for
+        // semantic-release to template at release time.
+        prepareCmd: `${BUMP_CMD} \${nextRelease.version}`,
+      });
+    });
+
+    it("puts exec BEFORE the git plugin, never after", function () {
+      // SUBJECT: plugin ORDER. semantic-release runs prepare steps in order, so
+      // exec after git would commit pre-bump bytes — the bump would be real on
+      // disk and absent from the release.
+      const rc: ReleaseConfiguration = {
+        ...minimal,
+        bumps: [{ type: "node-version" as const }],
+        plugins: [
+          { module: "@semantic-release/changelog" },
+          { module: "@semantic-release/git", config: { assets: ["docs/**"] } },
+          { module: "@semantic-release/github" },
+        ],
+      };
+      const order = names(rc);
+      order.should.deep.equal([
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        "@semantic-release/changelog",
+        "@semantic-release/exec",
+        "@semantic-release/git",
+        "@semantic-release/github",
+      ]);
+      order
+        .indexOf("@semantic-release/exec")
+        .should.be.lessThan(order.indexOf("@semantic-release/git"));
+    });
+
+    it("appends the bumped paths to the git plugin assets", function () {
+      // SUBJECT: the `assets` array of @semantic-release/git. A bumped file that
+      // is not an asset is written and then discarded by the release commit.
+      const rc: ReleaseConfiguration = {
+        ...minimal,
+        bumps: [
+          { type: "node-version" as const },
+          {
+            type: "dotnet-version" as const,
+            file: "App/App.csproj",
+            reason: "this repo packs App",
+          },
+        ],
+        plugins: [
+          { module: "@semantic-release/git", config: { assets: ["docs/**"] } },
+        ],
+      };
+      configOf(rc, "@semantic-release/git")?.should.deep.equal({
+        assets: ["docs/**", "package.json", "App/App.csproj"],
+      });
+    });
+
+    it("uses the OVERRIDE path as the asset, not the preset default", function () {
+      // SUBJECT: the asset list when the entry overrides the default path. The
+      // default must not leak in, or the release would try to commit a file it
+      // never bumped.
+      const rc: ReleaseConfiguration = {
+        ...minimal,
+        bumps: [
+          {
+            type: "dotnet-version" as const,
+            file: "App/App.csproj",
+            reason: "this repo packs App",
+          },
+        ],
+        plugins: [{ module: "@semantic-release/git" }],
+      };
+      configOf(rc, "@semantic-release/git")?.should.deep.equal({
+        assets: ["App/App.csproj"],
+      });
+    });
+
+    it("does not duplicate a path already listed as an asset", function () {
+      const rc: ReleaseConfiguration = {
+        ...minimal,
+        bumps: [{ type: "node-version" as const }],
+        plugins: [
+          {
+            module: "@semantic-release/git",
+            config: { assets: ["package.json", "docs/**"] },
+          },
+        ],
+      };
+      configOf(rc, "@semantic-release/git")?.should.deep.equal({
+        assets: ["package.json", "docs/**"],
+      });
+    });
+
+    it("preserves other git plugin config keys", function () {
+      const rc: ReleaseConfiguration = {
+        ...minimal,
+        bumps: [{ type: "node-version" as const }],
+        plugins: [
+          {
+            module: "@semantic-release/git",
+            config: { message: "release: ${nextRelease.version}" },
+          },
+        ],
+      };
+      configOf(rc, "@semantic-release/git")?.should.deep.equal({
+        message: "release: ${nextRelease.version}",
+        assets: ["package.json"],
+      });
+    });
+
+    it("appends exec at the end when there is no git plugin", function () {
+      // SUBJECT: a config with no @semantic-release/git at all. The bump still
+      // runs; nothing claims it gets committed.
+      const rc: ReleaseConfiguration = {
+        ...minimal,
+        bumps: [{ type: "node-version" as const }],
+        plugins: [{ module: "@semantic-release/github" }],
+      };
+      names(rc).should.deep.equal([
+        "@semantic-release/commit-analyzer",
+        "@semantic-release/release-notes-generator",
+        "@semantic-release/github",
+        "@semantic-release/exec",
+      ]);
+    });
+
+    it("does not mutate the caller's configuration object", function () {
+      // SUBJECT: the `plugins` array the caller passed in. The asset rewrite must
+      // be a copy, or generating twice would append twice.
+      const original = {
+        module: "@semantic-release/git",
+        config: { assets: [] as string[] },
+      };
+      const rc: ReleaseConfiguration = {
+        ...minimal,
+        bumps: [{ type: "node-version" as const }],
+        plugins: [original],
+      };
+      parser.GenerateReleaseRc(rc);
+      parser.GenerateReleaseRc(rc);
+      original.config.assets.should.deep.equal([]);
+      configOf(rc, "@semantic-release/git")?.should.deep.equal({
+        assets: ["package.json"],
+      });
     });
   });
 });

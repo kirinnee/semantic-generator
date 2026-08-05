@@ -6,6 +6,7 @@ import * as process from "process";
 import { ReleaseController } from "./controllers/release-controller";
 import { GitlintController } from "./controllers/gitlint-controller";
 import { CommitterController } from "./controllers/committer-controller";
+import { BumpController } from "./controllers/bump-controller";
 
 const core: Core = new Kore();
 core.ExtendPrimitives();
@@ -33,6 +34,9 @@ ReleaseController(core, release);
 
 const gitlint = program.command("gitlint");
 GitlintController(core, gitlint);
+
+const bump = program.command("bump");
+BumpController(bump);
 
 const committer = program.command("committer");
 CommitterController(core, committer);
