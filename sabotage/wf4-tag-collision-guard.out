@@ -1,0 +1,66 @@
+[0mdirenv: loading ~/Workspace/wt-sg-wf4-tagguard/.envrc
+[0mdirenv: using flake
+[0mdirenv: nix-direnv: Using cached dev shell
+== WF4 tag-collision guard — end-to-end proof ==
+CLI under test : /home/kirin/Workspace/wt-sg-wf4-tagguard/dist/semantic-generator.js
+CLI bytes sha  : 6553921cf677e3d7885d61b5c609a09bc8b3739b04ef07ead56d23a50c7f8643
+git version    : git version 2.54.0
+shell          : bash 5.2.26(1)-release
+scratch root   : /tmp/tmp.Y85dxMBdrO
+
+-- ARM 1/2: a version an existing tag occupies is refused; a free one is not
+  PASS  SUBJECT tag v1.0.0 exists in the repo == 'v1.0.0'
+  PASS  ARM1 occupied version 1.0.0 — refused (exit 1) with code 'tag-collision'
+  PASS  ARM2 CONTROL free version 2.0.0 — cleared (exit 0) saying 'is free'
+
+-- ARM 3: an OWNER-MINTED annotated tag is refused (the fleet's live case)
+  PASS  SUBJECT tagger of v1.0.1 == 'kirinnee'
+  PASS  SUBJECT v1.0.1 is an ANNOTATED tag object == 'tag'
+  PASS  ARM3 owner-minted (kirinnee) tag v1.0.1 — refused (exit 1) with code 'tag-collision'
+
+-- ARM 4: a MACHINE-minted annotated tag is refused IDENTICALLY
+  PASS  SUBJECT tagger of v1.0.1 == 'atomi-bot'
+  PASS  ARM4 machine-minted (atomi-bot) tag v1.0.1 — refused (exit 1) with code 'tag-collision'
+
+-- ARM 5: a LIGHTWEIGHT tag (no tagger at all) is refused too
+  PASS  SUBJECT v1.0.2 is NOT an annotated tag object == 'commit'
+  PASS  SUBJECT v1.0.2 has an empty taggername == ''
+  PASS  ARM5 lightweight tag v1.0.2 — refused (exit 1) with code 'tag-collision'
+
+-- ARM 6/7: the MEASURED INCIDENT — a tag HEAD cannot reach
+  PASS  SUBJECT tags reachable from HEAD (the set the releaser computed from) == ''
+  PASS  SUBJECT v1.0.0 nonetheless exists in the repository == 'v1.0.0'
+  PASS  ARM6 visibility arm, 1 tag unreachable — refused (exit 1) with code 'tag-not-visible'
+  PASS  ARM7 unreachable tag still blocks version 1.0.0 — refused (exit 1) with code 'tag-collision'
+
+-- ARM 8: CONTROL — every version tag reachable, so the guard clears
+  PASS  SUBJECT both tags reachable from HEAD == 'v1.0.0,v1.1.0'
+  PASS  ARM8 CONTROL all tags reachable — cleared (exit 0) saying 'reachable from HEAD'
+
+-- ARM 9: CONTROL — floating major/minor tags must NOT trip the guard
+  PASS  SUBJECT v3 and v3.1 are unreachable from HEAD == 'v1.0.0'
+  PASS  ARM9 CONTROL floating v3/v3.1 ignored — cleared (exit 0) saying 'reachable from HEAD'
+
+-- ARM 10: a shallow clone REFUSES rather than reporting a clear result
+  PASS  SUBJECT clone reports itself shallow == 'true'
+  PASS  ARM10 shallow clone — refused (exit 1) with code 'shallow-clone'
+
+-- ARM 11: 'I could not look' is not 'it is clear'
+  PASS  SUBJECT directory is not a git repository == 'NOT_A_REPO'
+  PASS  ARM11 not a git repository — refused (exit 1) with code 'not-a-git-repo'
+
+-- ARM 12: the v-prefix is not a way past the guard
+  PASS  ARM12 bare '2.5.0' against tag 'v2.5.0' — refused (exit 1) with code 'tag-collision'
+  PASS  ARM12b 'v2.6.0' against bare tag '2.6.0' — refused (exit 1) with code 'tag-collision'
+
+-- ARM 13: a malformed version is refused, not guessed at
+  PASS  ARM13 '1.2' is not a full version — refused (exit 1) with code 'invalid-version'
+
+-- ARM 14: the SHIPPED BUNDLE cannot read a tag's identity at all
+  PASS  ARM14 shipped tree (40 .js files under /home/kirin/Workspace/wt-sg-wf4-tagguard/dist) contains none of the 11 tag-identity tokens (taggername taggeremail taggerdate tagger committername committeremail committerdate creator creatordate authorname authoremail)
+  PASS  ARM14 CONTROL the same grep over the same tree DOES find 'for-each-ref' (instrument is live)
+
+== RESULT ==
+arms passed : 28
+arms failed : 0
+VERDICT: ALL PASS

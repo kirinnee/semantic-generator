@@ -66,8 +66,32 @@ would have waved those two through.
 The guard therefore reads **ref names only**. The `TagReader` interface exposes
 `All()`, `Visible()` and `IsShallow()` and offers no way to read a tag's tagger,
 committer, date or message. Identity is not "not consulted by convention" — it is
-**unrepresentable in the interface**, and the shipped bundle is asserted to
-contain no `taggername` / `taggeremail` / `taggerdate` / `committername` token.
+**unrepresentable in the interface**.
+
+That is enforced two ways, because one of them is behavioural and one is
+structural and they fail independently:
+
+- **Behaviourally** (`sabotage/wf4-tag-collision-guard.sh` ARM 3 + ARM 4): the
+  same version is refused when its tag is minted by `kirinnee` and when it is
+  minted by `atomi-bot`. The _pair_ is the proof — either arm alone is consistent
+  with a guard that happens to care about identity.
+- **Structurally** (ARM 14): the shipped `dist/` tree is asserted to contain none
+  of the git ref-format tokens that could extract identity — `taggername`,
+  `taggeremail`, `taggerdate`, `tagger`, `committername`, `committeremail`,
+  `committerdate`, `creator`, `creatordate`, `authorname`, `authoremail`. The
+  vocabulary is listed because an absence claim is only as wide as its word list.
+  The subject is that token set and **not** English words: the guard's own
+  refusal message legitimately contains "author" and "minted", so an English-word
+  sweep would report a false hit and invite someone to delete the explanation to
+  make the check pass.
+
+**Note for anyone extending ARM 14:** `tsc` does **not** bundle. It emits ~40
+separate files and `dist/semantic-generator.js` is a ~2.9 KB entry point that
+merely requires the others; the guard's bytes live in
+`dist/classLibrary/release/tag-guard.js`. Scanning the entry file alone examines
+nothing and passes unconditionally. The first draft of ARM 14 did exactly that
+and was caught only by its own must-differ control, which asserts the same grep
+over the same population still finds a token that _is_ present.
 
 `All()` uses `git for-each-ref refs/tags`, not `git tag --list`, because
 `for-each-ref` applies no implicit reachability filter and returns names only.
