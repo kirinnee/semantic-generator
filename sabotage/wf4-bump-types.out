@@ -1,0 +1,180 @@
+# WF4 BUMP TYPES — sabotage run
+# commit: 502479a5c7fc1cce9fb02858d4e6c4de846936b3
+# branch: wf4-bump-types
+# base:   origin/local-install = e34031ab428a9715a493c38e3bfd44ec66b6f226
+# built:  dist/ rebuilt from THIS commit via 'pls build' immediately before this run
+# node:   v22.0.0 (as resolved INSIDE the run, not the outer shell)
+# tree:   0 uncommitted source change(s); 0 means this run is against committed bytes
+
+[0mdirenv: loading ~/Workspace/wt-sg-bump-types/.envrc
+[0mdirenv: using flake
+[0mdirenv: nix-direnv: Using cached dev shell
+
+=== 0. preconditions ===
+PASS  built entry exists: dist/semantic-generator.js
+note  dist .js file count (population for every structural grep): 42
+PASS  dist is a multi-file emit, so structural greps must scan the tree (count=42)
+
+=== 1. node-version — MUTATION on <case>/package.json, field .version ===
+note  before=1.3.1 after=1.4.0 exit=0
+PASS  pre-state named and confirmed: .version was 1.3.1
+PASS  exits zero on a valid bump
+PASS  MUTATION: .version is 1.4.0 on disk
+PASS  before != after, so the bump was not a no-op
+PASS  collateral: the name field survived the rewrite
+
+=== 1b. SELFTEST — the same assertion must REJECT an unbumped file ===
+PASS  SELFTEST: an unbumped file reads as '1.3.1', so the check can go red
+
+=== 2. dotnet-version — MUTATION on <case>/Version.props, field <Version> ===
+PASS  pre-state named and confirmed: Version.props <Version> was 0.0.0
+note  exit=0  output=Version.props: 0.0.0 -> 2.1.0 (dotnet-version, a <Version> MSBuild property) [override: this repo keeps its version in Version.props]|
+PASS  MUTATION: Version.props <Version> is 2.1.0 on disk
+PASS  the old value 0.0.0 is gone
+PASS  collateral: TargetFramework survived
+
+=== 2b. dotnet-version — the OTHER real location, App/App.csproj ===
+note  exit=0  output=App/App.csproj: 0.0.0 -> 2.1.0 (dotnet-version, a <Version> MSBuild property) [override: this repo keeps its version in the App project]|
+PASS  MUTATION: App/App.csproj <Version> is 2.1.0 on disk
+
+=== 3. dart-version — MUTATION on <case>/pubspec.yaml, top-level version key ===
+PASS  pre-state named and confirmed: version was 1.2.3
+note  exit=0  output=pubspec.yaml: 1.2.3 -> 1.3.0 (dart-version, a top-level version key)|
+PASS  MUTATION: top-level version is 1.3.0 on disk
+PASS  collateral: the environment block survived
+
+=== 4. all three in ONE pass — three files, three fields ===
+note  exit=0  output=package.json: 1.3.1 -> 3.0.0 (node-version, a top-level "version" string)|Version.props: 0.0.0 -> 3.0.0 (dotnet-version, a <Version> MSBuild property) [override: this repo keeps its version in Version.props]|pubspec.yaml: 1.2.3 -> 3.0.0 (dart-version, a top-level version key)|
+PASS  MUTATION: package.json .version is 3.0.0
+PASS  MUTATION: Version.props <Version> is 3.0.0
+PASS  MUTATION: pubspec.yaml version is 3.0.0
+
+=== 5. RED — dotnet-version naming NO file must FAIL, not pick something plausible ===
+note  exit=1  output=bumps.0: is a `dotnet-version` entry, which has no built-in default path and so must name a `file` (with a `reason`). Measured across the authoritative dotnet trees, the version field lives in a different file in each one, so any default this preset shipped would be wrong somewhere and would write to the wrong file rather than complain|
+PASS  exits non-zero when dotnet-version names no file
+PASS  MUTATION ABSENT: Directory.Build.props is byte-identical
+PASS  MUTATION ABSENT: Version.props is byte-identical
+PASS  the message says the entry must name a file
+
+=== 5b. RED — a NAMED file that lacks the field must FAIL, not no-op ===
+note  exit=1  output=Directory.Build.props: does not declare a <Version> MSBuild property. The releaser bumps a version, it does not introduce one: adding this field changes the shape of the project, which is the owner's decision, not the releaser's. Add a <Version> MSBuild property once, deliberately, then this bump takes over the number [dotnet-version]|
+PASS  exits non-zero on a named file with no <Version>
+PASS  MUTATION ABSENT: the un-seeded file is byte-identical
+PASS  the message names the missing field rather than failing vaguely
+
+=== 6. RED — wrong file for the type must FAIL and mutate nothing ===
+note  exit=1
+PASS  exits non-zero when node-version is pointed at pubspec.yaml
+PASS  MUTATION ABSENT: pubspec.yaml (the wrong target) is byte-identical
+PASS  MUTATION ABSENT: package.json (the untargeted file) is byte-identical
+
+=== 7. RED — missing target file must FAIL and mutate nothing ===
+note  exit=1
+PASS  exits non-zero when the named path does not exist
+PASS  MUTATION ABSENT: the real package.json is byte-identical
+
+=== 8. RED — naming a file with NO reason must be refused by validation ===
+note  exit=1  output=bumps.0: names `file: App/App.csproj` but states no `reason`. A file is allowed only with a stated reason, so that pointing a bump at a path can never be silent|
+PASS  exits non-zero when a file is named with no reason
+PASS  MUTATION ABSENT: App/App.csproj is byte-identical
+
+=== 8b. CONTROL — the IDENTICAL entry PASSES once a reason is added ===
+note  exit=0
+PASS  exits zero once the reason is stated
+PASS  MUTATION: the NAMED path App/App.csproj is 2.2.0
+PASS  MUTATION ABSENT: the unnamed Directory.Build.props is byte-identical
+
+=== 8c. node-version DEFAULT vs a named path — only the named one is written ===
+note  exit=0  output=packages/api/package.json: 1.3.1 -> 1.4.0 (node-version, a top-level "version" string) [override: the released package is the api workspace, not the root]|
+PASS  MUTATION: packages/api/package.json .version is 1.4.0
+PASS  MUTATION ABSENT: the DEFAULT root package.json is byte-identical
+
+=== 8d. the leading-v strip that every replaced bump.sh performs ===
+note  exit=0  output=package.json: 1.3.1 -> 1.4.0 (node-version, a top-level "version" string)|
+PASS  MUTATION: v1.4.0 was written as 1.4.0, matching the replaced scripts
+PASS  no v-prefixed version reached the manifest
+
+=== 9. RED — an empty bumps list must FAIL rather than report success ===
+note  exit=1  output=no bump entries are configured, so there is nothing to bump. Add a `bumps` list to the release configuration, or do not invoke the bump step at all — succeeding here would report a bump that did not happen|
+PASS  exits non-zero on an empty bumps list
+PASS  the message says nothing was configured
+
+=== 10. the --version flag trap, verified against the CLI's OWN parser ===
+note  bump --version 1.4.0 exit=0 output=0.11.0|
+PASS  MUTATION ABSENT: '--version' did not silently bump package.json
+note  it exited 0 and printed a version string — exactly why the arg is positional
+note  bump with no argument exit=1 output=error: missing required argument 'version'|
+PASS  a missing version argument is refused, not defaulted
+PASS  MUTATION ABSENT: no-argument invocation left package.json byte-identical
+
+=== 10b. RED — a version that is not a version must be refused ===
+note  exit=1 output="1.4.0 && echo pwned" is not a usable version: expected only alphanumerics, dot, plus and hyphen, starting with an alphanumeric|
+PASS  a shell-metacharacter version is refused
+PASS  MUTATION ABSENT: package.json byte-identical after the junk version
+
+=== 11. structural — the wiring shipped in the BUILT tree (whole dist, not the shim) ===
+PASS  the exec plugin module name shipped (found in 2 dist file(s))
+PASS  the prepareCmd key shipped (found in 1 dist file(s))
+PASS  the nextRelease.version template shipped literally (found in 1 dist file(s))
+PASS  the never-create refusal message shipped (found in 1 dist file(s))
+PASS  the stated-reason rule shipped (found in 1 dist file(s))
+PASS  the no-default refusal message shipped (found in 2 dist file(s))
+PASS  node-version default path is code, not just prose (found in 1 dist file(s))
+PASS  dart-version default path is code, not just prose (found in 1 dist file(s))
+PASS  dotnet-version ships defaultFile null, i.e. NO default (found in 1 dist file(s))
+
+=== 11a. the RETRACTED default must NOT be a default in the shipped code ===
+PASS  Directory.Build.props is NOT assigned as any preset's defaultFile
+
+=== 11b. SELFTEST — the structural checker must go red on an absent string ===
+PASS  SELFTEST: a deliberately absent string yields 0 hits, so check_dist can fail
+
+=== 12. D5 — this change adds NO bump script or hook TO THIS REPO ===
+note  population: 18 changed/added tracked path(s)
+note    .pre-commit-config.yaml
+note    docs/developer/04-Version Bumping.md
+note    sabotage/wf4-bump-types.sh
+note    src/classLibrary/release/ReleaseExecutor.ts
+note    src/classLibrary/release/bump/bump-types.ts
+note    src/classLibrary/release/bump/bumper.ts
+note    src/classLibrary/release/bump/self-command.ts
+note    src/classLibrary/release/configuration.ts
+note    src/classLibrary/release/releaseParser.ts
+note    src/classLibrary/release/verison-manager.ts
+note    src/controllers/bump-controller.ts
+note    src/controllers/release-controller.ts
+note    src/semantic-generator.ts
+note    tests/release/bump-types.spec.ts
+note    tests/release/bumper.spec.ts
+note    tests/release/configuration.spec.ts
+note    tests/release/releaseParser.spec.ts
+note    tests/release/self-command.spec.ts
+note    prose (allowed) sabotage/wf4-bump-types.sh:573:#   bare noun            -> "bump script", "bump hook" (code lines only)
+note    prose (allowed) sabotage/wf4-bump-types.sh:596:# repository needs a bump hook" documents the rule and is the opposite of a
+note    prose (allowed) sabotage/wf4-bump-types.sh:628:# that is THIS script, which is a test harness rather than a release bump script.
+note    harness self-match (excluded) sabotage/wf4-bump-types.sh:559:hdr "12. D5 — this change adds NO bump script or hook TO THIS REPO"
+note    harness self-match (excluded) sabotage/wf4-bump-types.sh:625:v_report "package.json lifecycle/bump script keys" "$N2" "see note above"
+note    prose (allowed) src/classLibrary/release/bump/bump-types.ts:65: * that every bump script being replaced performs.
+note    prose (allowed) src/classLibrary/release/bump/bumper.ts:10: * runtime it releases; nothing downstream needs a bump script or a bump hook.
+note    prose (allowed) src/classLibrary/release/bump/bumper.ts:68:      // written as `1.2.3`, exactly as the bump scripts being replaced do.
+note    prose (allowed) src/classLibrary/release/releaseParser.ts:127:   * script and no repository needs a bump hook.
+note    prose (allowed) tests/release/bumper.spec.ts:389:      // SUBJECT: <tmp>/package.json given the version "v1.4.0". The bump scripts
+PASS  vocabulary [bare noun in CODE (comments + this harness excluded)]: 0 occurrences
+note  package.json scripts keys: build, dev, test, test:coverage
+PASS  vocabulary [package.json lifecycle/bump script keys]: 0 occurrences
+note  files with bump in the PATH (sabotage/ excluded): tests/release/bumper.spec.ts tests/release/bump-types.spec.ts src/controllers/bump-controller.ts src/classLibrary/release/bump/bump-types.ts src/classLibrary/release/bump/bumper.ts dist/controllers/bump-controller.js dist/controllers/bump-controller.js.map dist/classLibrary/release/bump/bumper.js.map dist/classLibrary/release/bump/bumper.js dist/classLibrary/release/bump/bump-types.js dist/classLibrary/release/bump/bump-types.js.map 
+PASS  vocabulary [shell scripts named bump*]: 0 occurrences
+note  template/ file count: 16, of which lockfiles: 2
+PASS  vocabulary [bump under template/ (lockfiles excluded)]: 0 occurrences
+PASS  vocabulary [bump entries in this repo's own atomi_release.yaml]: 0 occurrences
+
+=== 13. D6 one-config-name — exactly one default config filename in src/ ===
+note  occurrences of the default config filename in src/:
+note    /home/kirin/Workspace/wt-sg-bump-types/src/classLibrary/release/config-reader.ts:13:    return ReadFile(c.unwrapOr("atomi_release.yaml"))
+PASS  exactly one occurrence in src/, so the rename stays a one-line change
+
+=== SUMMARY ===
+pass=64 fail=0
+RESULT: GREEN
+
+# sabotage exit: 0
