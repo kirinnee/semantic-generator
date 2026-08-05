@@ -1,0 +1,387 @@
+sabotage/conventions-check.sh
+repo   : /home/kirin/Workspace/wt-sg-conventions-check
+HEAD   : a2f2fc6f8341261fc446612f75706b3e34d1dce9
+subject: sg conventions --check   (D9: generated docs are regenerate-only)
+config : atomi_release.yaml
+doc    : docs/developer/03-Commit Conventions.md
+
+==============================================================================
+P1  the arms will run against COMMITTED bytes
+==============================================================================
+  subject of this control: the working tree status of src/, tests/,
+  atomi_release.yaml and the generated doc. .pre-commit-config.yaml is
+  deliberately OUT of scope: it is a /nix/store symlink that this machine
+  rewrites on every direnv load and that is never committed.
+  PASS  P1 subject paths are clean; HEAD == what the arms will read
+
+==============================================================================
+P2  rebuild dist/ from the committed source
+==============================================================================
+  --- command output (whole, unpiped) ------------------------------------
+  | task: [clean:build] rm -rf dist
+  | task: [build] tsc
+  | task: [build] sd var___INJECT_VERSION___ $(cat package.json | jq .version | sd \" '') dist/semantic-generator.js
+  ------------------------------------------------------------------------
+  PASS  P2 build exited 0 and produced /home/kirin/Workspace/wt-sg-conventions-check/dist/semantic-generator.js
+
+==============================================================================
+P3  the rebuilt dist/ actually contains the new code
+==============================================================================
+  subject: the FILES tsc emitted under dist/, named individually.
+  tsc does NOT bundle -- dist/semantic-generator.js is a small require
+  shim -- so a structural grep over the entry file alone examines almost
+  nothing and would pass unconditionally. These are the emitted modules
+  this feature consists of.
+  present: dist/controllers/conventions-controller.js
+  present: dist/classLibrary/release/conventions-checker.js
+  present: dist/classLibrary/lineDiff.js
+  PASS  P3 all 3 expected emitted modules exist under dist/
+  files mentioning 'ConventionsChecker' (population: every file under dist/): 2
+
+==============================================================================
+P4  --check and --config are on the SUBCOMMAND'S OWN parser
+==============================================================================
+  subject: the help commander itself emits for 'conventions', not the
+  program-level help. A flag silently swallowed by an outer parser exits
+  0 and checks nothing -- the way a subcommand --version is shadowed by
+  the program-level -V, --version.
+  --- command output (whole, unpiped) ------------------------------------
+  | Usage: Semantic Generator conventions [options]
+  | 
+  | Generate the commit convention document from the release configuration
+  | 
+  | Options:
+  |   -c, --config <cfg>  path to configuration. default: atomi_release.yaml
+  |   --check             do not write; verify the document on disk matches the
+  |                       generated one and exit 1 if it does not
+  |   -h, --help          display help for command
+  ------------------------------------------------------------------------
+  PASS  P4 'conventions --help' exits 0
+  PASS  P4 commander lists --check on the conventions subcommand
+  PASS  P4 commander lists --config on the conventions subcommand
+
+==============================================================================
+A1  GREEN ARM  -- committed doc vs committed config
+==============================================================================
+  doc sha256: bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  --- command output (whole, unpiped) ------------------------------------
+  | docs/developer/03-Commit Conventions.md is up to date with atomi_release.yaml
+  ------------------------------------------------------------------------
+  exit code : 0
+  PASS  A1 committed bytes pass the check (exit 0)
+
+==============================================================================
+A2  RED ARM  -- hand-edit the doc BODY (the real historical drift)
+==============================================================================
+  subject: the 'fix' scope table row inside the generated doc.
+  The edit reintroduces the exact drift a076d18 left in this repo for two
+  years: config says 'old-nix derivations', doc said 'nix derivations'.
+  PASS  A2 precondition: the needle is present, so the edit cannot no-op
+  doc sha256 before: bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  doc sha256 after : 6531f4463c68f1f14f3e71770149f169336359997886f739487fe3d6243e0679
+  PASS  A2 MUTATION ASSERTED: the bytes on disk actually changed
+  --- command output (whole, unpiped) ------------------------------------
+  | docs/developer/03-Commit Conventions.md does not match the document generated from atomi_release.yaml.
+  | 
+  | docs/developer/03-Commit Conventions.md is a GENERATED file: it is produced from the "conventionMarkdown"
+  | section of atomi_release.yaml and is regenerate-only. Hand-edits are not allowed.
+  | 
+  | To fix: change atomi_release.yaml, run "sg conventions", and commit the result.
+  | 
+  | --- expected: regenerated from atomi_release.yaml
+  | +++ actual:   docs/developer/03-Commit Conventions.md on disk
+  | @@ -44,7 +44,7 @@
+  |  | Scope    | Description                                    | Bump    |
+  |  | -------- | ---------------------------------------------- | ------- |
+  |  | default  | Generic fixes not under `drv` or `patch`       | `patch` |
+  | -| `drv`    | Fixes in old-nix derivations in the repository | `patch` |
+  | +| `drv`    | Fixes in nix derivations in the repository | `patch` |
+  |  | `config` | Fixes in configuration                         | `nil`   |
+  |  
+  |  ## new
+  ------------------------------------------------------------------------
+  exit code : 1
+  PASS  A2 hand-edited doc is REJECTED (exit 1)
+  PASS  A2 the diff names both sides of the edit
+  PASS  A2 the failure states the rule and a runnable remedy
+
+==============================================================================
+A3  RED ARM  -- one whitespace byte appended to the doc
+==============================================================================
+  subject: the final byte of the generated doc. This separates a
+  byte-exact comparison from a trimmed/normalised one.
+  doc bytes before: 5649   after: 5650
+  PASS  A3 MUTATION ASSERTED: exactly one byte longer, sha changed
+  --- command output (whole, unpiped) ------------------------------------
+  | docs/developer/03-Commit Conventions.md does not match the document generated from atomi_release.yaml.
+  | 
+  | docs/developer/03-Commit Conventions.md is a GENERATED file: it is produced from the "conventionMarkdown"
+  | section of atomi_release.yaml and is regenerate-only. Hand-edits are not allowed.
+  | 
+  | To fix: change atomi_release.yaml, run "sg conventions", and commit the result.
+  | 
+  | --- expected: regenerated from atomi_release.yaml
+  | +++ actual:   docs/developer/03-Commit Conventions.md on disk
+  | @@ -132,3 +132,4 @@
+  |  | Scope        | Description                    | Bump  |
+  |  | ------------ | ------------------------------ | ----- |
+  |  | `no-release` | Prevent release from happening | `nil` |
+  | +
+  ------------------------------------------------------------------------
+  exit code : 1
+  PASS  A3 a whitespace-only hand-edit is REJECTED (exit 1)
+
+==============================================================================
+A4  RED ARM  -- the doc is missing entirely
+==============================================================================
+  subject: the existence of the generated doc.
+  PASS  A4 MUTATION ASSERTED: the doc is gone from the sandbox
+  --- command output (whole, unpiped) ------------------------------------
+  | cannot read docs/developer/03-Commit Conventions.md: ENOENT: no such file or directory, open '/tmp/tmp.h1qSLiEdWg/a4/docs/developer/03-Commit Conventions.md'
+  | 
+  | docs/developer/03-Commit Conventions.md is a GENERATED file: it is produced from the "conventionMarkdown"
+  | section of atomi_release.yaml and is regenerate-only. Hand-edits are not allowed.
+  | 
+  | To fix: change atomi_release.yaml, run "sg conventions", and commit the result.
+  ------------------------------------------------------------------------
+  exit code : 1
+  PASS  A4 a missing doc is REJECTED (exit 1)
+
+==============================================================================
+A5  RED ARM  -- drift on the CONFIG side, doc untouched
+==============================================================================
+  subject: atomi_release.yaml. The doc keeps its committed bytes; the config
+  gains a scope. This is the direction real drift took in a076d18, and it
+  proves the check regenerates from the config rather than comparing the
+  doc to a stored copy of itself.
+  anchor '^      config:$' occurrences in the config: 1
+  PASS  A5 precondition: exactly one anchor line, so the injection is unambiguous
+  config sha256 before: 7df730db2172121a29aade3050b302ecfb4565a3cfe6009edde3ccbe4e677ece
+  config sha256 after : d0ebe77674134b2b4157c9944adf79441ab6cfb148349360b8077b14782e0e4d
+  doc    sha256 before: bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  doc    sha256 after : bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  PASS  A5 MUTATION ASSERTED: the config bytes changed
+  PASS  A5 CONTROL: the doc was NOT touched, so only the config moved
+  --- command output (whole, unpiped) ------------------------------------
+  | docs/developer/03-Commit Conventions.md does not match the document generated from atomi_release.yaml.
+  | 
+  | docs/developer/03-Commit Conventions.md is a GENERATED file: it is produced from the "conventionMarkdown"
+  | section of atomi_release.yaml and is regenerate-only. Hand-edits are not allowed.
+  | 
+  | To fix: change atomi_release.yaml, run "sg conventions", and commit the result.
+  | 
+  | --- expected: regenerated from atomi_release.yaml
+  | +++ actual:   docs/developer/03-Commit Conventions.md on disk
+  | @@ -41,12 +41,11 @@
+  |  | example         | fix: dropdown flickering                                           |
+  |  | example applied | when this commit is applied, it will _fix_ **dropdown flickering** |
+  |  
+  | -| Scope            | Description                                    | Bump    |
+  | -| ---------------- | ---------------------------------------------- | ------- |
+  | -| default          | Generic fixes not under `drv` or `patch`       | `patch` |
+  | -| `drv`            | Fixes in old-nix derivations in the repository | `patch` |
+  | -| `sabotage-scope` | injected by the sabotage harness               | `nil`   |
+  | -| `config`         | Fixes in configuration                         | `nil`   |
+  | +| Scope    | Description                                    | Bump    |
+  | +| -------- | ---------------------------------------------- | ------- |
+  | +| default  | Generic fixes not under `drv` or `patch`       | `patch` |
+  | +| `drv`    | Fixes in old-nix derivations in the repository | `patch` |
+  | +| `config` | Fixes in configuration                         | `nil`   |
+  |  
+  |  ## new
+  |  
+  ------------------------------------------------------------------------
+  exit code : 1
+  PASS  A5 a doc left stale by a config change is REJECTED (exit 1)
+  PASS  A5 the diff names the scope that was added to the config
+
+==============================================================================
+A6  NON-MUTATION CONTROL  -- rewrite the doc with IDENTICAL bytes
+==============================================================================
+  subject: the discrimination of the check itself. If A2/A3/A4 went red
+  merely because the file had been written to, this arm would go red too
+  and the red arms above would carry no information.
+  doc sha256 before: bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  doc sha256 after : bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  PASS  A6 NON-MUTATION ASSERTED: the file was rewritten, bytes identical
+  --- command output (whole, unpiped) ------------------------------------
+  | docs/developer/03-Commit Conventions.md is up to date with atomi_release.yaml
+  ------------------------------------------------------------------------
+  exit code : 0
+  PASS  A6 an identical rewrite is ACCEPTED (exit 0) -- the check reads content
+
+==============================================================================
+A7  READ-ONLY CONTROL  -- --check must not repair the file
+==============================================================================
+  subject: the doc's bytes across a failing --check run. A check that
+  silently rewrites the file would go green on the second CI run and
+  hide the violation instead of reporting it.
+  --- command output (whole, unpiped) ------------------------------------
+  | docs/developer/03-Commit Conventions.md does not match the document generated from atomi_release.yaml.
+  | 
+  | docs/developer/03-Commit Conventions.md is a GENERATED file: it is produced from the "conventionMarkdown"
+  | section of atomi_release.yaml and is regenerate-only. Hand-edits are not allowed.
+  | 
+  | To fix: change atomi_release.yaml, run "sg conventions", and commit the result.
+  | 
+  | --- expected: regenerated from atomi_release.yaml
+  | +++ actual:   docs/developer/03-Commit Conventions.md on disk
+  | @@ -132,3 +132,5 @@
+  |  | Scope        | Description                    | Bump  |
+  |  | ------------ | ------------------------------ | ----- |
+  |  | `no-release` | Prevent release from happening | `nil` |
+  | +
+  | +hand written paragraph
+  ------------------------------------------------------------------------
+  exit code : 1
+  doc sha256 before check: f5ffe3dccf7d96592ec0571cbd29abefb64900c6ce08e94fe6d0681d9c2fbfef
+  doc sha256 after  check: f5ffe3dccf7d96592ec0571cbd29abefb64900c6ce08e94fe6d0681d9c2fbfef
+  PASS  A7 the tampered doc is REJECTED (exit 1)
+  PASS  A7 --check left the file byte-identical
+
+==============================================================================
+A8  UNREADABLE-CONFIG CONTROL  -- must not pass when it cannot read
+==============================================================================
+  subject: the -c flag pointed at a path that does not exist. A checker
+  that exits 0 when its input is missing reports 'safe' for the wrong
+  reason -- the single most common way a guard turns inert.
+  PASS  A8 precondition: the config path really is absent
+  --- command output (whole, unpiped) ------------------------------------
+  | ENOENT: no such file or directory, open 'definitely-not-here.yaml'
+  ------------------------------------------------------------------------
+  exit code : 1
+  PASS  A8 an unreadable config is REJECTED (exit 1)
+
+==============================================================================
+A9  REMEDY ARM  -- 'sg conventions' repairs what --check rejects
+==============================================================================
+  subject: the doc's bytes before and after the remedy command. D9's
+  remedy has to be a runnable command; if it were not, the only way to
+  clear the check would be the hand-edit D9 forbids.
+  PASS  A9 MUTATION ASSERTED: the doc no longer matches the committed bytes
+  --check before remedy exit: 1
+  --- command output (whole, unpiped) ------------------------------------
+  | regenerated docs/developer/03-Commit Conventions.md from atomi_release.yaml
+  ------------------------------------------------------------------------
+  write exit code : 0
+  doc sha256 committed : bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  doc sha256 tampered  : f5ffe3dccf7d96592ec0571cbd29abefb64900c6ce08e94fe6d0681d9c2fbfef
+  doc sha256 after 'sg conventions' : bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  --- command output (whole, unpiped) ------------------------------------
+  | docs/developer/03-Commit Conventions.md is up to date with atomi_release.yaml
+  ------------------------------------------------------------------------
+  --check after remedy exit: 0
+  PASS  A9 the tampered doc was RED before the remedy
+  PASS  A9 'sg conventions' restored the exact committed bytes
+  PASS  A9 --check is GREEN after the remedy
+
+==============================================================================
+B1  WRITE ARM  -- renamed config (the WF3 end state), doc absent
+==============================================================================
+  subject: docs/developer/03-Commit Conventions.md as an OUTPUT. The
+  sandbox holds release.yaml and no atomi_release.yaml at all.
+  The exit code is not the finding here; the file appearing is.
+  PASS  B1 precondition: the old config name is absent from the sandbox
+  PASS  B1 precondition: the doc does not exist before the run
+  --- command output (whole, unpiped) ------------------------------------
+  | regenerated docs/developer/03-Commit Conventions.md from release.yaml
+  ------------------------------------------------------------------------
+  exit code : 0
+  doc sha256 written   : bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  doc sha256 committed : bcf6b4ef1858027173fcd407b8a3a65bfdbc1b1badcd67b108905da472c26829
+  PASS  B1 MUTATION ASSERTED: the doc did not exist before and exists now
+  PASS  B1 the written bytes are identical to the committed doc
+  PASS  B1 'conventions -c release.yaml' exits 0 on the WF3 end state
+
+==============================================================================
+B2  WRITE ARM, NEGATIVE  -- -c points at a config that is not there
+==============================================================================
+  subject: the -c path on the WRITE path specifically. Without this the
+  B1 exit 0 cannot be told apart from a command that ignores -c.
+  PASS  B2 precondition: nope.yaml really is absent
+  --- command output (whole, unpiped) ------------------------------------
+  | ENOENT: no such file or directory, open 'nope.yaml'
+  ------------------------------------------------------------------------
+  exit code : 1
+  PASS  B2 a missing config is REJECTED on the write path (exit 1)
+  PASS  B2 the failure names the config path it could not read
+  PASS  B2 NON-MUTATION ASSERTED: nothing was written on the failing path
+
+==============================================================================
+B3  WRITE DISCRIMINATOR  -- BOTH config names present, -c must decide
+==============================================================================
+  subject: which of two present configs the write path actually read.
+  B1 and B2 together still cannot separate 'read release.yaml' from
+  'ignored -c and found atomi_release.yaml anyway', because in a sandbox
+  holding only one config both behaviours look identical. Here both
+  names exist; only release.yaml carries the marker.
+  PASS  B3 MUTATION ASSERTED: the marker is in release.yaml
+  PASS  B3 CONTROL: the marker is absent from atomi_release.yaml, so it discriminates
+  PASS  B3 precondition: BOTH config names are present in the sandbox
+  --- command output (whole, unpiped) ------------------------------------
+  | regenerated docs/developer/03-Commit Conventions.md from release.yaml
+  ------------------------------------------------------------------------
+  exit code : 0
+  PASS  B3 the write succeeded and produced a file
+  PASS  B3 the written doc carries the marker -- -c release.yaml WAS read
+
+==============================================================================
+B4  CHECK DISCRIMINATOR  -- --check must honour -c too
+==============================================================================
+  subject: which of two present configs --check regenerated from. The
+  doc on disk is the committed one, which matches atomi_release.yaml exactly.
+  If --check ignored -c it would read atomi_release.yaml and go GREEN. Honouring
+  -c means regenerating from the marked release.yaml and going RED.
+  PASS  B4 precondition: the doc on disk is byte-identical to the committed doc
+  CONTROL, --check -c atomi_release.yaml (the UNMARKED config) exit: 0
+  PASS  B4 CONTROL: against the unmarked config the same doc is GREEN
+  --- command output (whole, unpiped) ------------------------------------
+  | docs/developer/03-Commit Conventions.md does not match the document generated from release.yaml.
+  | 
+  | docs/developer/03-Commit Conventions.md is a GENERATED file: it is produced from the "conventionMarkdown"
+  | section of release.yaml and is regenerate-only. Hand-edits are not allowed.
+  | 
+  | To fix: change release.yaml, run "sg conventions", and commit the result.
+  | 
+  | --- expected: regenerated from release.yaml
+  | +++ actual:   docs/developer/03-Commit Conventions.md on disk
+  | @@ -45,7 +45,7 @@
+  |  | -------- | ---------------------------------------------- | ------- |
+  |  | default  | Generic fixes not under `drv` or `patch`       | `patch` |
+  |  | `drv`    | Fixes in old-nix derivations in the repository | `patch` |
+  | -| `config` | MARKER-ONLY-IN-RELEASE-YAML                    | `nil`   |
+  | +| `config` | Fixes in configuration                         | `nil`   |
+  |  
+  |  ## new
+  |  
+  ------------------------------------------------------------------------
+  exit code : 1
+  PASS  B4 --check -c release.yaml is RED -- it regenerated from the named config
+  PASS  B4 the diff names the marker that exists only in release.yaml
+  PASS  B4 --check left the doc byte-identical, as on the A-series
+
+==============================================================================
+SUMMARY
+==============================================================================
+  population: 4 preflight controls (P1-P4), 9 D9 arms (A1-A9) and 4
+  config-flag arms (B1-B4), run against the committed bytes of HEAD with
+  a dist/ rebuilt from that same source.
+  assertions executed: 50
+  passed: 50
+  failed: 0
+
+  RESULT: every arm behaved as specified.
+
+  D9 half (--check refuses a stale generated doc). Shown ABLE TO GO RED
+  on four distinct sabotages -- doc body, doc trailing byte, missing
+  doc, config-side drift -- each with the sabotage itself asserted to
+  have landed, and ABLE TO STAY GREEN on a byte-identical rewrite.
+  STRONG.
+
+  D6/WF3 half (-c reads a renamed config). Shown to WRITE on the
+  renamed end state with the written bytes asserted, to go RED on a
+  missing config without writing anything, and -- with BOTH config
+  names present and only the named one marked -- to follow the marker
+  on the write path and on the check path. That last pair is what
+  separates 'read my config' from 'ignored my flag and found
+  atomi_release.yaml anyway'. STRONG.
